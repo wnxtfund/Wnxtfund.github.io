@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head> 
+  <meta charset="UTF-8" />
+  <title>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962)</title>
+  
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style> 
+    body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      background: url('https://www.dga.or.th/wp-content/uploads/2025/06/20250612_074641550_iOS-1120x746.jpg') center/cover no-repeat;
+      background-attachment: fixed;
+      color: #000;
+    }
+    .dashboard-container {
+      padding: 40px;
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .header-text h1 { margin: 0; font-size: 2rem; color: navy; text-align: left; }
+    .header-text h2 { margin: 0; font-size: 1.3rem; color: deeppink; }
+    .report-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+    .report-info .month,
+    .report-info .year { color: red; }
+    .logo-container img { 
+      height: 60px; 
+      margin-left: 10px; 
+    }
+    .section-title {
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      color: black;
+    }
+    .summary-table th, .summary-table td {
+      padding: 4px;
+      border: 1px solid #ccc;
+      text-align: center; /* ทั้ง header และ body อยู่ตรงกลาง */
+      font-weight: bold;
+    }
+    .summary-table td { font-weight: normal; }
+    .summary-table tr:nth-child(even) { background-color: #fce4ec; }
+    .summary-table tr:nth-child(odd) { background-color: white; }
+
+    /* START: CSS สำหรับ FixedHeader */
+    table.dataTable.fixedHeader-floating {
+        background-color: white;
+    }
+    /* END: CSS */
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-container { padding: 20px; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .logo-container img { height: 40px; margin-bottom:10px; }
+      .summary-table { font-size: 0.65rem; }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="header">
+      <div class="header-text">
+        <h1>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962)</h1>
+        <div class="report-info">
+          <h2>
+            รายงานประจำ <span class="month">ตุลาคม</span> พ.ศ. <span class="year">2567</span>
+          </h2>
+          <h2 class="report-code">สกส.02/2568</h2>
+        </div>
+      </div>
+      <div class="logo-container">
+        <img src="https://i.postimg.cc/507bjy9Z/cdd.png" alt="CDD Logo" width="60" height="140" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Additional Logo" />
+      </div>
+    </div>
+
+    <div class="section-title">ตารางทะเบียนคุมการรับ-จ่ายเงินฝากคลัง</div>
+
+    <div style="overflow-x:auto;">
+      <table class="summary-table" id="mainTable">
+        <thead>
+          <tr>
+            <th rowspan="2" style="background-color:#FF8FAB;">ลำดับ</th>
+            <th rowspan="2" style="background-color:#FF8FAB;">จังหวัด</th>
+            <th rowspan="2" style="background-color:#FF8FAB;">ยกมา</th>
+            <th colspan="4" style="background-color:#76BC43;">รายรับ (รับโอนขายบิลจาก สกส.)</th>
+            <th colspan="7" style="background-color:#76BC43;">เงินรับ (จากธนาคารรับชำระหนี้จาก อกส.จ.)</th>
+            <th colspan="6" style="background-color:#76BC43;">รายการรับอื่น ๆ</th>
+            <th colspan="10" style="background-color:#FF9967;">รายจ่าย โอนขายบิลให้ สกส.(ส่วนกลาง)</th>
+            <th colspan="27" style="background-color:#FF9967;">รายการเบิกจ่ายของจังหวัด</th>
+            <th rowspan="2" style="background-color:#C0E4F6;">ยอดเงินคงเหลือเงินฝากคลัง</th>
+            <th rowspan="2" style="background-color:#FFCAC9;">หมายเหตุ (คีย์จำนวนเงินคงเหลือในGF)</th>
+            <th rowspan="2" style="background-color:#F7D07A;">ผลต่างเงินฝากคลัง</th>
+          </tr>
+          <tr>
+            <th style="background-color:#CCFFCC;">ทุนหมุนเวียน</th>
+            <th style="background-color:#CCFFCC;">อุดหนุน</th>
+            <th style="background-color:#CCFFCC;">บริหาร</th>
+            <th style="background-color:#CCFFCC;">คืนเงินรับฝาก</th>
+            <th style="background-color:#ADD88D;">เงินต้น</th>
+            <th style="background-color:#ADD88D;">ดอกเบี้ยเงินกู้</th>
+            <th style="background-color:#ADD88D;">ค่าปรับ</th>
+            <th style="background-color:#ADD88D;">ดอกเบี้ยผิดนัด</th>
+            <th style="background-color:#ADD88D;">เงินรอตรวจสอบ</th>
+            <th style="background-color:#ADD88D;">ดอกเบี้ยเงินฝากธ.</th>
+            <th style="background-color:#ADD88D;">เงินรับฝาก</th>
+            <th style="background-color:#92CA68;">รับคืนทุนหมุนเวียน</th>
+            <th style="background-color:#92CA68;">รับคืนเงินอุดหนุน</th>
+            <th style="background-color:#92CA68;">คืนเงินงบบริหาร</th>
+            <th style="background-color:#92CA68;">รายได้อื่น</th>
+            <th style="background-color:#92CA68;">รับเงินผิดบัญชี</th>
+            <th style="background-color:#92CA68;">รวมรายรับ</th>
+            <th style="background-color:#FDDF8E;">เงินต้น</th>
+            <th style="background-color:#FDDF8E;">ดอกเบี้ยเงินกู้</th>
+            <th style="background-color:#FDDF8E;">ค่าปรับ</th>
+            <th style="background-color:#FDDF8E;">ดอกเบี้ยผิดนัด</th>
+            <th style="background-color:#FDDF8E;">เงินรอตรวจสอบ</th>
+            <th style="background-color:#FDDF8E;">ดอกเบี้ยเงินฝากธ.</th>
+            <th style="background-color:#FDDF8E;">เงินรับฝาก</th>
+            <th style="background-color:#FDDF8E;">หมุนเวียน</th>
+            <th style="background-color:#FDDF8E;">อุดหนุน</th>
+            <th style="background-color:#FDDF8E;">บริหาร</th>
+            <th style="background-color:#FCF695;">เงินอุดหนุน</th>
+            <th style="background-color:#FCF695;">เงินทุนหมุนเวียน</th>
+            <th style="background-color:#FCF695;">ลูกหนี้เงินยืม</th>
+            <th style="background-color:#FCF695;">ฝึกอบรมในประเทศ</th>
+            <th style="background-color:#FCF695;">ฝึกอบรมภายนอก</th>
+            <th style="background-color:#FCF695;">ประชุมเบี้ยประชุม</th>
+            <th style="background-color:#FCF695;">ค่าจัดประชุม</th>
+            <th style="background-color:#FCF695;">เดินทาง-พาหนะ</th>
+            <th style="background-color:#FCF695;">เดินทาง-เบี้ยเลี้ยง</th>
+            <th style="background-color:#FCF695;">เดินทาง-ที่พัก</th>
+            <th style="background-color:#FCF695;">ค่าวัสดุ</th>
+            <th style="background-color:#FCF695;">ค่าไฟฟ้า</th>
+            <th style="background-color:#FCF695;">ค่าโทรศัพท์</th>
+            <th style="background-color:#FCF695;">ค่าอินเตอร์เน็ต</th>
+            <th style="background-color:#FCF695;">ค่าไปรษณีย์</th>
+            <th style="background-color:#FCF695;">ค่าน้ำ</th>
+            <th style="background-color:#FCF695;">ค่าธรรมเนียมธ.</th>
+            <th style="background-color:#FCF695;">คืนเงินชำระเกิน</th>
+            <th style="background-color:#FCF695;">ค่าซ่อมบำรุง</th>
+            <th style="background-color:#FCF695;">ครุภัณฑ์</th>
+            <th style="background-color:#FCF695;">ค่าล่วงเวลา</th>
+            <th style="background-color:#FCF695;">ค่าธรรมเนียมศาล</th>
+            <th style="background-color:#FCF695;">ค่าจ้างเหมาบริการ</th>
+            <th style="background-color:#FCF695;">ประชาสัมพันธ์</th>
+            <th style="background-color:#FCF695;">ค่าใช้จ่ายอื่น</th>
+            <th style="background-color:#FCF695;">รวมรายจ่าย</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzT63fJqpCYznIkNvGD8Z0Ca7ADTYmSUlwonfS1CIZHIGayEdJf3GoLgwy9NLAq7NMV/exec";
+
+function formatNumber(num) {
+  if (num === null || num === undefined || num === "") return "0.00";
+  return Number(num.toString().replace(/,/g,"")).toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const tbody = document.querySelector("#mainTable tbody");
+    tbody.innerHTML = "";
+
+    data.rows.forEach((row, index) => {
+      const tr = document.createElement("tr");
+      if(row.isSummary) {
+        tr.innerHTML = `<td colspan="2" style="background-color:#FF8FAB; font-weight:bold; text-align:center;">${row.summaryLabel || row.province}</td>
+          <td>${formatNumber(row.start)}</td>
+          <td>${formatNumber(row.fund)}</td>
+          <td>${formatNumber(row.subsidy)}</td>
+          <td>${formatNumber(row.admin)}</td>
+          <td>${formatNumber(row.returnDeposit)}</td>
+          <td>${formatNumber(row.principal)}</td>
+          <td>${formatNumber(row.interest)}</td>
+          <td>${formatNumber(row.penalty)}</td>
+          <td>${formatNumber(row.overdueInterest)}</td>
+          <td>${formatNumber(row.pending)}</td>
+          <td>${formatNumber(row.bankInterest)}</td>
+          <td>${formatNumber(row.extraDeposit)}</td>
+          <td>${formatNumber(row.returnFund)}</td>
+          <td>${formatNumber(row.returnSubsidy)}</td>
+          <td>${formatNumber(row.returnAdmin)}</td>
+          <td>${formatNumber(row.otherIncome)}</td>
+          <td>${formatNumber(row.mistakeIncome)}</td>
+          <td>${formatNumber(row.totalIncome)}</td>
+          <td>${formatNumber(row.expPrincipal)}</td>
+          <td>${formatNumber(row.expInterest)}</td>
+          <td>${formatNumber(row.expPenalty)}</td>
+          <td>${formatNumber(row.expOverdueInterest)}</td>
+          <td>${formatNumber(row.expPending)}</td>
+          <td>${formatNumber(row.expBankInterest)}</td>
+          <td>${formatNumber(row.expExtraDeposit)}</td>
+          <td>${formatNumber(row.expFundRemain)}</td>
+          <td>${formatNumber(row.expSubsidyRemain)}</td>
+          <td>${formatNumber(row.expAdminRemain)}</td>
+          <td>${formatNumber(row.provSubsidy)}</td>
+          <td>${formatNumber(row.provFund)}</td>
+          <td>${formatNumber(row.provLoan)}</td>
+          <td>${formatNumber(row.provTrainIn)}</td>
+          <td>${formatNumber(row.provTrainOut)}</td>
+          <td>${formatNumber(row.provMeetingFee)}</td>
+          <td>${formatNumber(row.provMeeting)}</td>
+          <td>${formatNumber(row.provTravel)}</td>
+          <td>${formatNumber(row.provPerdiem)}</td>
+          <td>${formatNumber(row.provHotel)}</td>
+          <td>${formatNumber(row.provMaterial)}</td>
+          <td>${formatNumber(row.provElectric)}</td>
+          <td>${formatNumber(row.provPhone)}</td>
+          <td>${formatNumber(row.provInternet)}</td>
+          <td>${formatNumber(row.provPost)}</td>
+          <td>${formatNumber(row.provWater)}</td>
+          <td>${formatNumber(row.provBankFee)}</td>
+          <td>${formatNumber(row.provRefund)}</td>
+          <td>${formatNumber(row.provRepair)}</td>
+          <td>${formatNumber(row.provAsset)}</td>
+          <td>${formatNumber(row.provOvertime)}</td>
+          <td>${formatNumber(row.provCourt)}</td>
+          <td>${formatNumber(row.provHire)}</td>
+          <td>${formatNumber(row.provPR)}</td>
+          <td>${formatNumber(row.provActivity)}</td>
+          <td>${formatNumber(row.provOther)}</td>
+          <td>${formatNumber(row.provTotalExp)}</td>
+          <td>${formatNumber(row.balance)}</td>
+          <td>${row.note || ""}</td>
+          <td>${formatNumber(row.diff)}</td>`;
+      } else {
+        tr.innerHTML = `<td>${index+1}</td>
+          <td>${row.province}</td>
+          <td>${formatNumber(row.start)}</td>
+          <td>${formatNumber(row.fund)}</td>
+          <td>${formatNumber(row.subsidy)}</td>
+          <td>${formatNumber(row.admin)}</td>
+          <td>${formatNumber(row.returnDeposit)}</td>
+          <td>${formatNumber(row.principal)}</td>
+          <td>${formatNumber(row.interest)}</td>
+          <td>${formatNumber(row.penalty)}</td>
+          <td>${formatNumber(row.overdueInterest)}</td>
+          <td>${formatNumber(row.pending)}</td>
+          <td>${formatNumber(row.bankInterest)}</td>
+          <td>${formatNumber(row.extraDeposit)}</td>
+          <td>${formatNumber(row.returnFund)}</td>
+          <td>${formatNumber(row.returnSubsidy)}</td>
+          <td>${formatNumber(row.returnAdmin)}</td>
+          <td>${formatNumber(row.otherIncome)}</td>
+          <td>${formatNumber(row.mistakeIncome)}</td>
+          <td>${formatNumber(row.totalIncome)}</td>
+          <td>${formatNumber(row.expPrincipal)}</td>
+          <td>${formatNumber(row.expInterest)}</td>
+          <td>${formatNumber(row.expPenalty)}</td>
+          <td>${formatNumber(row.expOverdueInterest)}</td>
+          <td>${formatNumber(row.expPending)}</td>
+          <td>${formatNumber(row.expBankInterest)}</td>
+          <td>${formatNumber(row.expExtraDeposit)}</td>
+          <td>${formatNumber(row.expFundRemain)}</td>
+          <td>${formatNumber(row.expSubsidyRemain)}</td>
+          <td>${formatNumber(row.expAdminRemain)}</td>
+          <td>${formatNumber(row.provSubsidy)}</td>
+          <td>${formatNumber(row.provFund)}</td>
+          <td>${formatNumber(row.provLoan)}</td>
+          <td>${formatNumber(row.provTrainIn)}</td>
+          <td>${formatNumber(row.provTrainOut)}</td>
+          <td>${formatNumber(row.provMeetingFee)}</td>
+          <td>${formatNumber(row.provMeeting)}</td>
+          <td>${formatNumber(row.provTravel)}</td>
+          <td>${formatNumber(row.provPerdiem)}</td>
+          <td>${formatNumber(row.provHotel)}</td>
+          <td>${formatNumber(row.provMaterial)}</td>
+          <td>${formatNumber(row.provElectric)}</td>
+          <td>${formatNumber(row.provPhone)}</td>
+          <td>${formatNumber(row.provInternet)}</td>
+          <td>${formatNumber(row.provPost)}</td>
+          <td>${formatNumber(row.provWater)}</td>
+          <td>${formatNumber(row.provBankFee)}</td>
+          <td>${formatNumber(row.provRefund)}</td>
+          <td>${formatNumber(row.provRepair)}</td>
+          <td>${formatNumber(row.provAsset)}</td>
+          <td>${formatNumber(row.provOvertime)}</td>
+          <td>${formatNumber(row.provCourt)}</td>
+          <td>${formatNumber(row.provHire)}</td>
+          <td>${formatNumber(row.provPR)}</td>
+          <td>${formatNumber(row.provActivity)}</td>
+          <td>${formatNumber(row.provOther)}</td>
+          <td>${formatNumber(row.provTotalExp)}</td>
+          <td>${formatNumber(row.balance)}</td>
+          <td>${row.note || ""}</td>
+          <td>${formatNumber(row.diff)}</td>`;
+      }
+      tbody.appendChild(tr);
+    });
+
+    $('#mainTable').DataTable({
+      destroy: true,
+      scrollX: true,
+      fixedHeader: { header: true },
+      pageLength: 50,
+      autoWidth: false
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+  }
+}
+
+fetchData();
+</script>
+</body>
+</html>

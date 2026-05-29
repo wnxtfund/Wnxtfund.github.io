@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDD Women Fund – Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #e91e63;
+      --deep-pink: #d81b60;
+      --navy: #1a237e;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: #000;
+    }
+
+    /* จุด indicator */
+    .dots {
+      position: absolute;
+      bottom: 12px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      background: #ccc;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 0 4px;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: #e91e63;
+    }
+
+    /* ===== Nav ===== */
+    .navbar {
+      background: #1a237e;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .navbar button {
+      background: #fff;
+      color: #1a237e;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'Sarabun';
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .navbar button:hover {
+      background: #e91e63;
+      border-color: #e91e63;
+      color: #fff;
+    }
+
+    .navbar button.home {
+      background: #e91e63;
+      border-color: #e91e63;
+      color: #fff;
+    }
+
+    /* ===== Main ===== */
+    .main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* ===== Cards ===== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .card .value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-top: 6px;
+    }
+
+    /* ===== Sections ===== */
+    .section {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+    }
+
+    .section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--deep-pink);
+    }
+
+    /* ===== Placeholder ===== */
+    .placeholder {
+      height: 220px;
+      background: #fce4ec;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ad1457;
+      font-weight: 600;
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 768px) {
+      .slides img {
+        max-height: 220px;
+        aspect-ratio: 16 / 9;
+      }
+    }
+
+    /* Responsive */
+    @media(max-width:768px) {
+      .map-layout {
+        flex-direction: column;
+      }
+    }
+
+    /* MAP */
+    /* ===== Overview Map ===== */
+    .map-layout {
+      display: flex;
+      gap: 16px;
+    }
+
+    .map-area {
+      flex: 1;
+      height: 520px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #fafafa;
+
+      padding-left: 80px;
+      padding-top: 60px;
+      /* ⭐ เพิ่มแค่นี้ */
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #map svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-control {
+      flex: 1;
+    }
+
+    .map-control select {
+      padding: 6px 10px;
+      margin-right: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: 'Sarabun';
+    }
+
+    .map-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .map-table th,
+    .map-table td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: .85rem;
+      text-align: right;
+    }
+
+    .map-table th:first-child,
+    .map-table td:first-child {
+      text-align: left;
+    }
+
+    /* tooltip */
+    .map-tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 8px 10px;
+      font-size: 13px;
+      border-radius: 6px;
+      pointer-events: none;
+      display: none;
+      z-index: 999;
+    }
+
+    /* map hover */
+    /* สีจังหวัดที่ไม่ติดอันดับ */
+    .map-default {
+      fill: #e98ae7 !important;
+      transition: fill 0.2s ease;
+    }
+
+    /* เมื่อ hover */
+    .map-default:hover {
+      fill: #85f06a !important;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 9999;
+    }
+
+    .zoom-controls button {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .zoom-controls button:hover {
+      background: #f0f0f0;
+    }
+
+    #mapTable .section-header {
+      background: #f0f0f0;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-btn {
+      padding: 10px 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #fff;
+      min-width: 180px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 12px;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <div class="navbar">
+    <button class="home" onclick="location.href='https://thititwf-creator.github.io/test1.html'">หน้าแรก</button>
+    <button onclick="location.href='https://thititwf-creator.github.io/twf-year/2568/twf-year-2568.html'">งานปี
+      2568</button>
+    <button onclick="location.href='https://thititwf-creator.github.io/twf-year/2569/twf-year-2569.html'">งานปี
+      2569</button>
+    <button
+      onclick="location.href='https://tnah097.github.io/cdwomenpod-dashboard/missed_payment.html'">โปรแกรมคำนวนดอกเบี้ย</button>
+    <div class="dropdown">
+      <button class="dropdown-btn" data-target="menu1">มาตรการบริหารจัดการหนี้ ▾</button>
+      <div id="menu1" class="dropdown-content">
+        <a
+          href="https://tnah097.github.io/cdwomenpod-dashboard/law001.html">มาตรการไกล่เกลี่ยและประนีประนอมยอมความกรณีลูกหนี้ผิดนัด</a>
+        <a href="https://tnah097.github.io/cdwomenpod-dashboard/law002.html">หลักเกณฑ์ วิธีการ และเงื่อนไข
+          การพิจารณาลด/งดเบี้ยปรับ/ดอกเบี้ยผิดนัด</a>
+        <a
+          href="https://tnah097.github.io/cdwomenpod-dashboard/law003.html">มาตรการยกเลิกสัญญาค้ำประกันเงินกู้รายบุคคลและการปลดหนี้รายบุคคล</a>
+        <a href="https://tnah097.github.io/cdwomenpod-dashboard/law004.html">หลักเกณฑ์ วิธีการ
+          และเงื่อนไขการลดอัตราดอกเบี้ยเงินกู้และดอกเบี้ยผิดนัด พ.ศ. 2566</a>
+        <a href="https://tnah097.github.io/cdwomenpod-dashboard/law005.html">มาตรการให้ความช่วยเหลือกรณีทุพพลภาพ ชราภาพ
+          ถึงแก่ความตาย หรือไม่สามารถประกอบอาชีพได้ตามปกติ พ.ศ. 2568</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropdown-btn" data-target="menu2">ตรวจสอบสมาชิก ▾</button>
+      <div id="menu2" class="dropdown-content">
+        <a href="/member-total.html">บุคคลธรรมดา</a>
+        <a href="/org-total.html">องค์กรสตรี</a>
+      </div>
+    </div>
+    <button onclick="location.href='https://thititwf-creator.github.io/q&a.html'">Q&A</button>
+  </div>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+
+    <!-- Summary Cards -->
+    <div class="cards">
+      <div class="card">
+        <h3>จำนวนโครงการ</h3>
+        <div class="value" id="projectTotal">-</div>
+      </div>
+      <div class="card">
+        <h3>สมาชิกกองทุน</h3>
+        <div class="value" id="memberTotal">-</div>
+      </div>
+      <div class="card">
+        <h3>ผลการใช้จ่ายเงินทุนหมุนเวียน</h3>
+        <div class="value" id="disburseRate">-</div>
+      </div>
+      <div class="card">
+        <h3>อัตราชำระคืน</h3>
+        <div class="value" id="dueRate">-</div>
+      </div>
+      <div class="card">
+        <h3>อัตราหนี้เกินกำหนดชำระ</h3>
+        <div class="value" id="overdueRate">-</div>
+      </div>
+    </div>
+
+    <!-- ===== Overview Map Section ===== -->
+    <div class="section">
+      <h2>ภาพรวมรายจังหวัด</h2>
+
+      <div class="map-layout">
+        <!-- Map -->
+        <div class="map-area">
+
+          <!-- ปุ่ม Zoom -->
+          <div class="zoom-controls">
+            <button id="zoomIn">＋</button>
+            <button id="zoomOut">－</button>
+          </div>
+
+          <div id="map"></div>
+          <div class="map-tooltip" id="mapTooltip"></div>
+        </div>
+
+        <!-- Control -->
+        <div class="map-control">
+          ประเภทของข้อมูล
+          <select id="typeSelect">
+            <option value="due">การรับชำระคืน</option>
+            <option value="overdue">หนี้เกินกำหนดชำระ</option>
+            <option value="disburse">ผลการใช้จ่ายเงินทุนหมุนเวียน</option>
+          </select>
+
+          <!-- <select id="yearSelect"></select> -->
+          <!-- <select id="monthSelect"></select> -->
+
+          <table class="map-table" id="mapTable">
+            <thead>
+              <tr>
+                <th>จังหวัด</th>
+                <th>ค่าเป้าหมาย</th>
+                <th>ค่าผลลัพธ์</th>
+                <th>ร้อยละ</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      สำหรับกราฟเปรียบเทียบข้อมูลรายปี
+      <div>
+
+
+      </div>
+    </div>
+
+    <script src="map/mapping_pv.js"></script>
+    <script src="map/map2.js"></script>
+    <script>
+      function toggleDropdown(targetId) {
+        const menu = document.getElementById(targetId);
+
+        // ปิด dropdown อื่นทั้งหมดก่อน
+        document.querySelectorAll('.dropdown-content').forEach(m => {
+          if (m.id !== targetId) m.style.display = 'none';
+        });
+
+        // เปิด/ปิด dropdown ที่กดอยู่
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+      }
+
+      // คลิกปุ่ม dropdown
+      document.querySelectorAll('.dropdown-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation(); // กันไม่ให้ใน window onclick ทำงานซ้อน
+          toggleDropdown(this.dataset.target);
+        });
+      });
+
+      // ปิดทั้งหมดเมื่อคลิกนอกพื้นที่
+      window.addEventListener('click', function () {
+        document.querySelectorAll('.dropdown-content').forEach(m => {
+          m.style.display = 'none';
+        });
+      });
+
+    </script>
+
+    <script src="JS/summary_cards.js"></script>
+  </div>
+
+</body>
+
+</html>

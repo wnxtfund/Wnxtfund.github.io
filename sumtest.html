@@ -1,0 +1,163 @@
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbxKba4uG2nhNlWzQh7I-OL1uT16UHboBS6wapcppxyWrnR7a1a29aQ2IPoJ1Gqeh8TA/exec";
+
+  function formatNumber(num) {
+    return Number(num || 0).toLocaleString("th-TH");
+  }
+
+  async function fetchData() {
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      const tbody = document.querySelector("#mainTable tbody");
+      tbody.innerHTML = "";
+
+      data.rows.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${index+1}</td>
+          <td>${row.province}</td>
+          <td>${formatNumber(row.start)}</td>
+          <td>${formatNumber(row.fund)}</td>
+          <td>${formatNumber(row.subsidy)}</td>
+          <td>${formatNumber(row.admin)}</td>
+          <td>${formatNumber(row.returnDeposit)}</td>
+          <td>${formatNumber(row.principal)}</td>
+          <td>${formatNumber(row.interest)}</td>
+          <td>${formatNumber(row.penalty)}</td>
+          <td>${formatNumber(row.overdueInterest)}</td>
+          <td>${formatNumber(row.pending)}</td>
+          <td>${formatNumber(row.bankInterest)}</td>
+          <td>${formatNumber(row.extraDeposit)}</td>
+          <td>${formatNumber(row.returnFund)}</td>
+          <td>${formatNumber(row.returnSubsidy)}</td>
+          <td>${formatNumber(row.returnAdmin)}</td>
+          <td>${formatNumber(row.otherIncome)}</td>
+          <td>${formatNumber(row.mistakeIncome)}</td>
+          <td>${formatNumber(row.totalIncome)}</td>
+          <td>${formatNumber(row.expPrincipal)}</td>
+          <td>${formatNumber(row.expInterest)}</td>
+          <td>${formatNumber(row.expPenalty)}</td>
+          <td>${formatNumber(row.expOverdueInterest)}</td>
+          <td>${formatNumber(row.expPending)}</td>
+          <td>${formatNumber(row.expBankInterest)}</td>
+          <td>${formatNumber(row.expExtraDeposit)}</td>
+          <td>${formatNumber(row.expFundRemain)}</td>
+          <td>${formatNumber(row.expSubsidyRemain)}</td>
+          <td>${formatNumber(row.expAdminRemain)}</td>
+          <td>${formatNumber(row.provSubsidy)}</td>
+          <td>${formatNumber(row.provFund)}</td>
+          <td>${formatNumber(row.provLoan)}</td>
+          <td>${formatNumber(row.provTrainIn)}</td>
+          <td>${formatNumber(row.provTrainOut)}</td>
+          <td>${formatNumber(row.provMeetingFee)}</td>
+          <td>${formatNumber(row.provMeeting)}</td>
+          <td>${formatNumber(row.provTravel)}</td>
+          <td>${formatNumber(row.provPerdiem)}</td>
+          <td>${formatNumber(row.provHotel)}</td>
+          <td>${formatNumber(row.provMaterial)}</td>
+          <td>${formatNumber(row.provElectric)}</td>
+          <td>${formatNumber(row.provPhone)}</td>
+          <td>${formatNumber(row.provInternet)}</td>
+          <td>${formatNumber(row.provPost)}</td>
+          <td>${formatNumber(row.provWater)}</td>
+          <td>${formatNumber(row.provBankFee)}</td>
+          <td>${formatNumber(row.provRefund)}</td>
+          <td>${formatNumber(row.provRepair)}</td>
+          <td>${formatNumber(row.provAsset)}</td>
+          <td>${formatNumber(row.provOvertime)}</td>
+          <td>${formatNumber(row.provCourt)}</td>
+          <td>${formatNumber(row.provHire)}</td>
+          <td>${formatNumber(row.provPR)}</td>
+          <td>${formatNumber(row.provActivity)}</td>
+          <td>${formatNumber(row.provOther)}</td>
+          <td>${formatNumber(row.provTotalExp)}</td>
+          <td>${formatNumber(row.balance)}</td>
+          <td>${row.note || ""}</td>
+          <td>${formatNumber(row.diff)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // --- แถวรวมระหว่างเดือน ---
+      const trMonth = document.createElement("tr");
+      trMonth.innerHTML = `
+        <td rowspan="2">รวมระหว่างเดือน</td>
+        <td colspan="2">-</td>
+        <td>${formatNumber(data.summary.month.fund)}</td>
+        <td>${formatNumber(data.summary.month.subsidy)}</td>
+        <td>${formatNumber(data.summary.month.admin)}</td>
+        <td>${formatNumber(data.summary.month.returnDeposit)}</td>
+        <td>${formatNumber(data.summary.month.principal)}</td>
+        <td>${formatNumber(data.summary.month.interest)}</td>
+        <td>${formatNumber(data.summary.month.penalty)}</td>
+        <td>${formatNumber(data.summary.month.overdueInterest)}</td>
+        <td>${formatNumber(data.summary.month.pending)}</td>
+        <td>${formatNumber(data.summary.month.bankInterest)}</td>
+        <td>${formatNumber(data.summary.month.extraDeposit)}</td>
+        <td>${formatNumber(data.summary.month.returnFund)}</td>
+        <td>${formatNumber(data.summary.month.returnSubsidy)}</td>
+        <td>${formatNumber(data.summary.month.returnAdmin)}</td>
+        <td>${formatNumber(data.summary.month.otherIncome)}</td>
+        <td>${formatNumber(data.summary.month.mistakeIncome)}</td>
+        <td>${formatNumber(data.summary.month.totalIncome)}</td>
+        <td colspan="38">...</td>
+      `;
+      tbody.appendChild(trMonth);
+
+      // --- แถวรวมตั้งแต่ต้นปี ---
+      const trYear = document.createElement("tr");
+      trYear.innerHTML = `
+        <td colspan="2">-</td>
+        <td>${formatNumber(data.summary.year.fund)}</td>
+        <td>${formatNumber(data.summary.year.subsidy)}</td>
+        <td>${formatNumber(data.summary.year.admin)}</td>
+        <td>${formatNumber(data.summary.year.returnDeposit)}</td>
+        <td>${formatNumber(data.summary.year.principal)}</td>
+        <td>${formatNumber(data.summary.year.interest)}</td>
+        <td>${formatNumber(data.summary.year.penalty)}</td>
+        <td>${formatNumber(data.summary.year.overdueInterest)}</td>
+        <td>${formatNumber(data.summary.year.pending)}</td>
+        <td>${formatNumber(data.summary.year.bankInterest)}</td>
+        <td>${formatNumber(data.summary.year.extraDeposit)}</td>
+        <td>${formatNumber(data.summary.year.returnFund)}</td>
+        <td>${formatNumber(data.summary.year.returnSubsidy)}</td>
+        <td>${formatNumber(data.summary.year.returnAdmin)}</td>
+        <td>${formatNumber(data.summary.year.otherIncome)}</td>
+        <td>${formatNumber(data.summary.year.mistakeIncome)}</td>
+        <td>${formatNumber(data.summary.year.totalIncome)}</td>
+        <td colspan="38">...</td>
+      `;
+      tbody.appendChild(trYear);
+
+      // --- Initialize DataTable ---
+      if ($.fn.DataTable.isDataTable('#mainTable')) {
+        $('#mainTable').DataTable().clear().destroy();
+      }
+
+      const table = $('#mainTable').DataTable({
+        paging: true,
+        pageLength: 10,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"] ],
+        fixedHeader: true,
+        scrollX: true,
+        scrollCollapse: true,
+        language: {
+          search: "ค้นหา:",
+          lengthMenu: "แสดง _MENU_ รายการ",
+          info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+          infoEmpty: "ไม่มีข้อมูล",
+          zeroRecords: "ไม่พบข้อมูลที่ตรงกัน",
+          paginate: { first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า" }
+        }
+      });
+
+      table.on('draw', function () { table.fixedHeader.adjust(); });
+
+    } catch (err) {
+      console.error("โหลดข้อมูลผิดพลาด:", err);
+    }
+  }
+
+  fetchData();
+</script>

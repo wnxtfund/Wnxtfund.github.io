@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>งานปี 2568 – CDD Women Fund</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink: #e91e63;
+            --navy: #1a237e;
+            --bg: #f5f5f5;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            background: var(--bg);
+        }
+
+        /* ===== Top Navbar ===== */
+        .navbar {
+            background: var(--navy);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: white;
+        }
+
+        .navbar-title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-right: 20px;
+        }
+
+        .navbar button {
+            background: #fff;
+            color: var(--navy);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .navbar button:hover,
+        .navbar button.active {
+            background: var(--pink);
+            color: #fff;
+        }
+
+        /* ===== Layout: Sidebar + Content ===== */
+        .layout {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 16px;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar h3 {
+            color: var(--pink);
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 4px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar a:hover {
+            background: #f7d7e5;
+        }
+
+        /* ===== Content ===== */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .section {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            color: var(--pink);
+            margin-bottom: 10px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background: #fff;
+            color: var(--navy);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .dropdown:hover .dropbtn {
+            background: var(--pink);
+            color: #fff;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: white;
+            min-width: 220px;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .dropdown-content a {
+            padding: 10px 14px;
+            display: block;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-content a:hover {
+            background: #f7d7e5;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* ===== Dropdown (Sidebar Version) ===== */
+        .sidebar .dropdown {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .sidebar .dropdown-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 8px 4px;
+            text-align: left;
+            cursor: pointer;
+            color: #333;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+        .sidebar .dropdown-btn:hover {
+            background: #f7d7e5;
+        }
+
+        .sidebar .dropdown-content {
+            display: none;
+            background: #fafafa;
+            border-left: 3px solid var(--pink);
+            margin-top: 4px;
+            margin-bottom: 8px;
+            padding-left: 6px;
+            border-radius: 4px;
+        }
+
+        .sidebar .dropdown-content a {
+            display: block;
+            padding: 6px 10px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .sidebar .dropdown-content a:hover {
+            background: #f7d7e5;
+        }
+
+        /* =========================
+        MAP (จำเป็นต้องมี)
+        ========================= */
+
+        .map-layout {
+            display: flex;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .map-layout {
+                flex-direction: column;
+            }
+        }
+
+        .map-area {
+            flex: 1;
+            height: 520px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            /* ⭐ สำคัญ */
+            background: #fafafa;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        #map svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== Control ===== */
+        .map-control {
+            flex: 1;
+        }
+
+        .map-control select {
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: 'Sarabun';
+        }
+
+        /* ===== Table ===== */
+        .map-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .map-table th,
+        .map-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            font-size: .85rem;
+            text-align: right;
+        }
+
+        .map-table th:first-child,
+        .map-table td:first-child {
+            text-align: left;
+        }
+
+        #mapTable .section-header {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* ===== Tooltip ===== */
+        .map-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 8px 10px;
+            font-size: 13px;
+            border-radius: 6px;
+            pointer-events: none;
+            display: none;
+            z-index: 999;
+        }
+
+        /* ===== จังหวัดไม่ติดอันดับ ===== */
+        .map-default {
+            fill: #e98ae7 !important;
+            transition: fill 0.2s ease;
+        }
+
+        .map-default:hover {
+            fill: #85f06a !important;
+        }
+
+        /* ===== Zoom ===== */
+        .zoom-controls {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 9999;
+        }
+
+        .zoom-controls button {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .zoom-controls button:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== Top Navbar ===== -->
+    <div class="navbar">
+        <div class="navbar-title">งานปี 2568</div>
+
+        <button onclick="location.href='https://thititwf-creator.github.io/test1.html'">หน้าแรก</button>
+
+        <!-- งานปี 2568 — ปุ่มธรรมดา -->
+        <button class="active"
+            onclick="location.href='https://thititwf-creator.github.io/twf-year/2568/twf-year-2568.html'">
+            งานปี 2568
+        </button>
+
+        <button onclick="location.href='https://thititwf-creator.github.io/twf-year/2569/twf-year-2569.html'">
+            งานปี 2569
+        </button>
+
+        <!-- dropdown: มาตรการบริหารจัดการหนี้ -->
+        <div class="dropdown">
+            <button class="dropbtn">มาตรการบริหารจัดการหนี้ ▾</button>
+            <div class="dropdown-content">
+                <a
+                    href="https://tnah097.github.io/cdwomenpod-dashboard/law001.html">มาตรการไกล่เกลี่ยและประนีประนอมยอมความกรณีลูกหนี้ผิดนัด</a>
+                <a href="https://tnah097.github.io/cdwomenpod-dashboard/law002.html">หลักเกณฑ์ วิธีการ
+                    และเงื่อนไขการพิจารณาลด/งดเบี้ยปรับ/ดอกเบี้ยผิดนัด</a>
+                <a
+                    href="https://tnah097.github.io/cdwomenpod-dashboard/law003.html">มาตรการยกเลิกสัญญาค้ำประกันเงินกู้รายบุคคลและการปลดหนี้รายบุคคล</a>
+                <a href="https://tnah097.github.io/cdwomenpod-dashboard/law004.html">หลักเกณฑ์ วิธีการ
+                    และเงื่อนไขการลดอัตราดอกเบี้ยเงินกู้</a>
+                <a href="https://tnah097.github.io/cdwomenpod-dashboard/law005.html">มาตรการให้ความช่วยเหลือกรณีทุพพลภาพ
+                    ชราภาพ ถึงแก่ความตาย</a>
+            </div>
+        </div>
+
+        <!-- dropdown: ตรวจสอบสมาชิก -->
+        <div class="dropdown">
+            <button class="dropbtn">ตรวจสอบสมาชิก ▾</button>
+            <div class="dropdown-content">
+                <a href="/member-total.html">บุคคลธรรมดา</a>
+                <a href="/org-total.html">องค์กรสตรี</a>
+            </div>
+        </div>
+
+        <button onclick="location.href='https://thititwf-creator.github.io/q&a.html'">Q&A</button>
+    </div>
+
+
+    <!-- ===== Layout ===== -->
+    <div class="layout">
+
+        <!-- ===== Sidebar ===== -->
+        <div class="sidebar">
+            <h3>เมนูงานปี 2568</h3>
+            <a href="#" onclick="loadPage('KPI2568.html', this)">ข้อมูลหนี้เกินกำหนดชำระ</a>
+            <a href="#" onclick="loadPage('Duedep2568.html', this)">ข้อมูลการรับชำระคืน</a>
+            <a href="#" onclick="loadPage('Disburse2568.html', this)">ข้อมูลผลการใช้จ่ายงบประมาณ</a>
+            <a href="#" onclick="loadPage('Tris2568.html', this)">การประเมินของกองทุนพัฒนาบทบาทสตรี(TRIS CORP)</a>
+        </div>
+
+        <!-- ===== Content ===== -->
+        <div class="content">
+
+            <!-- ✅ หน้าแรก: แผนที่ -->
+            <div id="homeSection" class="section">
+                <h2>ภาพรวมรายจังหวัด (ปีงบ 2568)</h2>
+
+                <div class="map-layout">
+                    <!-- Map -->
+                    <div class="map-area">
+                        <div class="zoom-controls">
+                            <button id="zoomIn">＋</button>
+                            <button id="zoomOut">－</button>
+                        </div>
+
+                        <div id="map"></div>
+                        <div class="map-tooltip" id="mapTooltip"></div>
+                    </div>
+
+                    <!-- Control -->
+                    <div class="map-control">
+                        ประเภทของข้อมูล
+                        <select id="typeSelect">
+                            <option value="due">การรับชำระคืน</option>
+                            <option value="overdue">หนี้เกินกำหนดชำระ</option>
+                            <option value="disburse">ผลการใช้จ่ายเงินทุนหมุนเวียน</option>
+                        </select>
+
+                        <table class="map-table" id="mapTable">
+                            <thead>
+                                <tr>
+                                    <th>จังหวัด</th>
+                                    <th>ค่าเป้าหมาย</th>
+                                    <th>ค่าผลลัพธ์</th>
+                                    <th>ร้อยละ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ จุดโหลด iframe -->
+            <div id="loadArea" class="section" style="display:none;"></div>
+
+        </div>
+    </div>
+
+    <script src="sidebar/KPI68/map/mapping_pv.js"></script>
+    <script src="sidebar/KPI68/map/mapfor68.js"></script>
+
+
+    <script>
+        function loadPage(page, element) {
+            // active menu
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            element.classList.add('active');
+
+            // ซ่อนหน้าแรก (map)
+            document.getElementById('homeSection').style.display = 'none';
+
+            // แสดง iframe
+            const loadArea = document.getElementById('loadArea');
+            loadArea.style.display = 'block';
+            loadArea.innerHTML = `
+        <iframe src="sidebar/KPI68/${page}"
+            style="width:100%; height:1600px; border:none;"
+            loading="lazy"></iframe>
+    `;
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".dropdown-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const content = this.nextElementSibling;
+                    content.style.display = content.style.display === "block" ? "none" : "block";
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

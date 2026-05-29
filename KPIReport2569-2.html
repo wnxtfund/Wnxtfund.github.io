@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานผลกองทุนพัฒนาบทบาทสตรี</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            #root { padding: 0 !important; }
+            .container-box { 
+                box-shadow: none !important; 
+                border: none !important; 
+                padding: 0 !important; 
+                max-width: none !important; 
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            .table-wrapper { overflow: visible !important; max-height: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            th, td { 
+                border: 0.5pt solid #666 !important; 
+                padding: 4pt !important; 
+                font-size: 8pt !important; 
+                background-color: transparent !important;
+                color: black !important;
+            }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #fdfdfd; border-radius: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 6px; border: 2px solid #fdfdfd; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+        
+        /* Sticky Column shadows and hover effects */
+        table tbody tr:hover td[style*="position: sticky"] { background-color: #fff1f6 !important; }
+        .sticky-col-shadow { box-shadow: inset -1.5px 0 0 rgba(0,0,0,0.1); }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "xlsx": "https://esm.sh/xlsx@0.18.5",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+ <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+        import ReactDOM from 'react-dom/client';
+        import * as XLSX from 'xlsx';
+
+        // --- Configuration & Constants ---
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxIDBqQkRdzRZsFsqTrxcdCg0FXY-NoxZ8UaFFKNG9oOGWr3G67vYmjw4vEpXoKLbH1_Q/exec';
+        const LOGO_CDD = 'https://i.postimg.cc/507bjy9Z/cdd.png';
+        const LOGO_WOMEN = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s';
+        const ICON_HOME = 'https://cdn-icons-png.flaticon.com/512/25/25694.png';
+
+        const START_HEADER_ROW = 3;
+        const END_HEADER_ROW = 4; 
+        const START_BODY_ROW = 5; // เริ่มที่แถวที่ 6 (จังหวัดกระบี่)
+
+        const THEMES = {
+            'ไตรมาส 1-2': {
+                main: '#f8bbd0',
+                dark: '#880e4f',
+                gradient: 'linear-gradient(to bottom right, #ffe6f0, #ffd1e6)',
+                border: '#f48fb1'
+            },
+            'ไตรมาส 3-4': {
+                main: '#e1bee7',
+                dark: '#6a1b9a',
+                gradient: 'linear-gradient(to bottom right, #f3e5f5, #e1bee7)',
+                border: '#ce93d8'
+            }
+        };
+
+        const App = () => {
+            const [currentQuarter, setCurrentQuarter] = useState('ไตรมาส 1-2');
+            const [data, setData] = useState([]);
+            const [merged, setMerged] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [isExportOpen, setIsExportOpen] = useState(false);
+            const exportRef = useRef(null);
+
+            const theme = THEMES[currentQuarter];
+
+            const fetchData = useCallback(async (quarter) => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await fetch(`${API_URL}?sheetName=${encodeURIComponent(quarter)}`);
+                    if (!response.ok) throw new Error('ไม่สามารถเชื่อมต่อระบบข้อมูลได้');
+                    const resJson = await response.json();
+                    
+                    const rawData = resJson.data || [];
+                    const rawMerged = resJson.merged || [];
+                    
+                    if (!rawData.length) throw new Error('ไม่พบข้อมูลในฐานข้อมูล');
+                    
+                    setData(rawData);
+                    setMerged(rawMerged);
+                } catch (err) {
+                    setError(err.message);
+                } finally {
+                    setLoading(false);
+                }
+            }, []);
+
+            useEffect(() => {
+                fetchData(currentQuarter);
+                const handleClickOutside = (e) => {
+                    if (exportRef.current && !exportRef.current.contains(e.target)) setIsExportOpen(false);
+                };
+                window.addEventListener('mousedown', handleClickOutside);
+                return () => window.removeEventListener('mousedown', handleClickOutside);
+            }, [currentQuarter, fetchData]);
+
+            const reportInfo = useMemo(() => {
+                if (data.length < 2) return 'กำลังเตรียมข้อมูลรายงาน...';
+                return data.slice(0, 2).map(r => r.filter(c => c).join(' ')).join('\n');
+            }, [data]);
+
+            const reportDate = useMemo(() => {
+                const row = data.find(r => r.some(c => String(c).includes('ข้อมูล ณ วันที่')));
+                return row ? row.join(' ').trim() : '';
+            }, [data]);
+
+            const formatValue = (val, col) => {
+                if (val === null || val === undefined || val === '') return '';
+                if (col <= 2) return val;
+                
+                const strVal = String(val).trim();
+                if (strVal.length > 30) return val; // กรณีเป็นข้อความยาวๆ
+
+                const numStr = strVal.replace(/,/g, '');
+                const num = parseFloat(numStr);
+                return isNaN(num) ? val : num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            const getStickyLeft = (c) => {
+                if (c === 0) return 0;
+                if (c === 1) return 60;
+                if (c === 2) return 220;
+                return null;
+            };
+
+            const bodyRows = useMemo(() => {
+                const body = data.slice(START_BODY_ROW);
+                if (!searchQuery.trim()) return body;
+                const q = searchQuery.toLowerCase();
+                return body.filter(r => r.some(c => String(c).toLowerCase().includes(q)));
+            }, [data, searchQuery]);
+
+            const bodyHiddenMap = useMemo(() => {
+                const hidden = bodyRows.map(row => new Array(row.length).fill(false));
+                if (searchQuery.trim()) return hidden;
+
+                merged.forEach(m => {
+                    const startR = Math.max(0, m.row - START_BODY_ROW);
+                    const endR = Math.min(bodyRows.length - 1, m.row + m.height - 1 - START_BODY_ROW);
+                    const startC = m.col;
+                    const endC = m.col + m.width - 1;
+
+                    if (m.row + m.height > START_BODY_ROW && m.row < START_BODY_ROW + bodyRows.length) {
+                        for (let r = startR; r <= endR; r++) {
+                            for (let c = startC; c <= endC; c++) {
+                                if (r === m.row - START_BODY_ROW && c === m.col) continue;
+                                if (hidden[r] && c < hidden[r].length) hidden[r][c] = true;
+                            }
+                        }
+                    }
+                });
+                return hidden;
+            }, [bodyRows, merged, searchQuery]);
+
+            const exportExcel = () => {
+                const ws = XLSX.utils.aoa_to_sheet(data.slice(START_HEADER_ROW));
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "รายงาน");
+                XLSX.writeFile(wb, `รายงาน_${currentQuarter}.xlsx`);
+                setIsExportOpen(false);
+            };
+
+            return (
+                <div className="min-h-screen p-2 md:p-8 flex justify-center transition-all duration-700" style={{ background: theme.gradient }}>
+                    <div className="w-full max-w-[1700px] bg-white rounded-[35px] p-4 md:p-10 shadow-2xl relative flex flex-col border border-white/60 container-box">
+                        
+                        {/* Logos */}
+                        <div className="absolute top-6 right-8 flex items-center gap-4 z-10 no-print">
+                            <img src={LOGO_CDD} alt="CDD" className="h-10 md:h-16 object-contain" />
+                            <img src={LOGO_WOMEN} alt="Women Fund" className="h-10 md:h-16 object-contain" />
+                        </div>
+
+                        {/* Header */}
+                        <div className="mt-12 mb-8 text-center px-4">
+                            <h1 className="text-base md:text-1xl font-bold whitespace-pre-line leading-snug" style={{ color: theme.dark }}>
+                                {reportInfo}
+                            </h1>
+                            <p className="text-right mt-4 text-sm md:text-lg font-bold" style={{ color: theme.dark }}>
+                                {reportDate}
+                            </p>
+                        </div>
+
+                        {/* Toolbar */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 bg-gray-50/80 p-4 rounded-[25px] border border-gray-100 shadow-sm w-full no-print mb-8">
+                            
+
+                            <div className="flex flex-wrap items-center gap-4 flex-1 justify-end">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-bold text-gray-700">ไตรมาส:</span>
+                                    <select 
+                                        value={currentQuarter}
+                                        onChange={(e) => setCurrentQuarter(e.target.value)}
+                                        className="px-3 py-2 rounded-xl border bg-white focus:ring-4 focus:ring-pink-100 outline-none text-sm font-bold cursor-pointer"
+                                        style={{ borderColor: theme.border }}
+                                    >
+                                        <option value="ไตรมาส 1-2">ไตรมาส 1-2</option>
+                                        <option value="ไตรมาส 3-4">ไตรมาส 3-4</option>
+                                    </select>
+                                </div>
+                                
+                                <div className="flex items-center gap-3 border-l-2 pl-4 border-gray-200 flex-1 max-w-md min-w-[200px]">
+                                    <span className="text-lg">🔍</span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="ค้นหาข้อมูล..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="px-4 py-2 rounded-xl border bg-white focus:ring-4 focus:ring-pink-100 outline-none text-sm w-full"
+                                        style={{ borderColor: theme.border }}
+                                    />
+                                </div>
+
+                                <div className="relative border-l-2 pl-4 border-gray-200" ref={exportRef}>
+                                    <button 
+                                        onClick={() => setIsExportOpen(!isExportOpen)}
+                                        className="flex items-center gap-2 px-5 py-2 rounded-xl font-bold border-2 transition-all hover:brightness-95 active:scale-95 text-sm whitespace-nowrap"
+                                        style={{ backgroundColor: theme.main, color: theme.dark, borderColor: theme.dark }}
+                                    >
+                                        📥 ส่งออกข้อมูล ▾
+                                    </button>
+                                    {isExportOpen && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl z-[200] overflow-hidden">
+                                            <button onClick={exportExcel} className="w-full text-left px-4 py-3 text-sm font-bold hover:bg-green-50 text-green-700 border-b flex items-center gap-2">
+                                                📊 ไฟล์ Excel (.xlsx)
+                                            </button>
+                                            <button onClick={() => window.print()} className="w-full text-left px-4 py-3 text-sm font-bold hover:bg-red-50 text-red-700 flex items-center gap-2">
+                                                📄 ไฟล์ PDF (Print)
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Table */}
+                        <div className="flex-1 overflow-auto rounded-2xl border border-gray-200 bg-white custom-scrollbar max-h-[60vh] shadow-inner relative table-wrapper">
+                            <table className="w-full border-collapse">
+                                <thead className="z-50">
+                                    {data.slice(START_HEADER_ROW, END_HEADER_ROW + 1).map((row, r) => (
+                                        <tr key={`h-${r}`} style={{ height: '48px' }}>
+                                            {row.map((cell, c) => {
+                                                const stickyLeft = getStickyLeft(c);
+                                                const merge = merged.find(m => m.row === r + START_HEADER_ROW && m.col === c);
+                                                if (merged.some(m => 
+                                                    m.row <= r + START_HEADER_ROW && r + START_HEADER_ROW < m.row + m.height && 
+                                                    m.col <= c && c < m.col + m.width && 
+                                                    (m.row !== r + START_HEADER_ROW || m.col !== c)
+                                                )) return null;
+                                                
+                                                return (
+                                                    <th
+                                                        key={`hc-${c}`}
+                                                        rowSpan={merge?.height || 1}
+                                                        colSpan={merge?.width || 1}
+                                                        className="border p-2 text-center text-xs md:text-sm font-bold transition-all"
+                                                        style={{
+                                                            backgroundColor: theme.main,
+                                                            color: theme.dark,
+                                                            borderColor: theme.dark,
+                                                            position: 'sticky',
+                                                            top: r * 48,
+                                                            left: stickyLeft !== null ? stickyLeft : undefined,
+                                                            zIndex: stickyLeft !== null ? 110 : 100 - r,
+                                                            minWidth: c === 0 ? '60px' : c === 1 ? '160px' : c === 2 ? '240px' : '110px',
+                                                            whiteSpace: 'nowrap',
+                                                            boxShadow: `inset 0 0 0 0.5px ${theme.dark}${stickyLeft !== null ? `, 2.5px 0 0 ${theme.dark}` : ''}`
+                                                        }}
+                                                    >
+                                                        {cell}
+                                                    </th>
+                                                );
+                                            })}
+                                        </tr>
+                                    ))}
+                                </thead>
+                                <tbody>
+                                    {loading ? (
+                                        <tr><td colSpan={30} className="p-20 text-center italic text-pink-500 font-bold animate-pulse">กำลังโหลดข้อมูล...</td></tr>
+                                    ) : error ? (
+                                        <tr><td colSpan={30} className="p-20 text-center text-red-500 font-bold">❌ {error}</td></tr>
+                                    ) : (
+                                        bodyRows.map((row, r) => (
+                                            <tr key={`br-${r}`} className={`${r % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'} hover:bg-pink-50 transition-colors`}>
+                                                {row.map((cell, c) => {
+                                                    if (bodyHiddenMap[r][c]) return null;
+
+                                                    const stickyLeft = getStickyLeft(c);
+                                                    const merge = merged.find(m => m.row === r + START_BODY_ROW && m.col === c);
+                                                    const isSpecialRow = cell && (String(cell).includes('รวม') || String(cell).includes('หมายเหตุ'));
+
+                                                    return (
+                                                        <td
+                                                            key={`bc-${c}`}
+                                                            rowSpan={merge?.height || 1}
+                                                            colSpan={merge?.width || 1}
+                                                            className={`border p-2 text-xs md:text-sm ${c === 0 ? 'text-center' : 'text-left'}`}
+                                                            style={{
+                                                                position: stickyLeft !== null ? 'sticky' : 'relative',
+                                                                left: stickyLeft !== null ? stickyLeft : undefined,
+                                                                zIndex: stickyLeft !== null ? 40 : 1,
+                                                                backgroundColor: stickyLeft !== null ? (r % 2 === 0 ? 'white' : '#fdfdfd') : 'inherit',
+                                                                fontWeight: (stickyLeft !== null || isSpecialRow) ? 'bold' : 'normal',
+                                                                boxShadow: stickyLeft !== null ? 'inset -1.5px 0 0 rgba(0,0,0,0.1)' : undefined,
+                                                                whiteSpace: (c === 2 && !isSpecialRow) ? 'nowrap' : 'normal',
+                                                                verticalAlign: 'top'
+                                                            }}
+                                                        >
+                                                            {formatValue(cell, c)}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <style>{`
+                        table thead th { border-bottom-width: 0px !important; }
+                        table tbody td { border-color: #eee; }
+                    `}</style>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>

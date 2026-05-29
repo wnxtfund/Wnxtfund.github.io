@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <title>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962) กองทุนพัฒนาบทบาทสตรี - รายจังหวัด</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ========================
+           💅 Global Styles 
+           ======================== */
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            /* ใช้พื้นหลังตามที่กำหนด */
+            background: url('https://www.dga.or.th/wp-content/uploads/2025/06/20250612_074641550_iOS-1120x746.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: #000;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            /* ปรับความทึบแสง */
+            background-color: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* ========================
+           🖼️ Header Section 
+           ======================== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: navy;
+        }
+
+        .header-text h2 {
+            margin: 5px 0 0 0;
+            font-size: 1.2rem;
+            color: deeppink;
+        }
+
+        .logo-container {
+             display: flex;
+             align-items: flex-start;
+        }
+        .logo-container img {
+            height: 60px;
+            margin-left: 10px;
+        }
+
+        /* ========================
+           ✍️ Tables 
+           ======================== */
+        table.dataTable {
+            width: 100% !important;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            color: black;
+            table-layout: fixed;
+        }
+
+        table.dataTable th,
+        table.dataTable td {
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        
+        /* สลับสีแถว (ถึงแม้หน้านี้จะมีแถวเดียวก็ตาม) */
+        table.dataTable tbody tr:nth-child(even) { background-color: #fce4ec; }
+        table.dataTable tbody tr:nth-child(odd) { background-color: white; }
+        
+
+        /* สี Header ตามที่ตกลงกัน */
+        .income-group { background-color:#76BC43; color: black; }
+        .exp-group { background-color:#FF9967; color: black; }
+        .sub-group-a { background-color:#CCFFCC; }
+        .sub-group-b { background-color:#ADD88D; }
+        .sub-group-c { background-color:#92CA68; }
+        .sub-group-d { background-color:#FDDF8E; }
+        .sub-group-e { background-color:#FCF695; }
+
+        /* ปรับสีคอลัมน์พิเศษ */
+        .col-start { background-color:#FF8FAB !important; }
+        .col-balance { background-color:#C0E4F6 !important; }
+        .col-note { background-color:#FFCAC9 !important; }
+        .col-diff { background-color:#F7D07A !important; }
+
+        /* CSS สำหรับ FixedHeader */
+        table.dataTable.fixedHeader-floating { background-color: white; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 20px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .logo-container img { height: 40px; }
+            .header-text h1 { font-size: 1.5rem; }
+            .header-text h2 { font-size: 1rem; }
+            table.dataTable { font-size: 0.7rem; }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="header-text">
+                <h1>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962) กองทุนพัฒนาบทบาทสตรี</h1>
+                <h2>
+                    <span id="province-display-name" style="color: deeppink;">(กำลังโหลดจังหวัด...)</span>
+                    | ประจำเดือน ณ <span style="color: red;">30 สิงหาคม 2567</span>
+                </h2>
+            </div>
+            <div class="logo-container">
+                <img src="https://cddadg.cdd.go.th/wp-content/uploads/sites/101/2017/06/CDD-NEW-LOGO3.png" alt="CDD Logo" />
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Additional Logo" />
+            </div>
+        </div>
+
+        <div style="overflow-x:auto; margin-top: 20px;">
+            <table class="display" id="provinceTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="col-start">ลำดับ</th>
+                        <th rowspan="2" class="col-start">จังหวัด</th>
+                        <th rowspan="2" class="col-start">ยกมา</th>
+                        <th colspan="4" class="income-group">รายรับรับโอนขายบิลจาก สกส.</th>
+                        <th colspan="7" class="income-group">เงินรับ (จากธนาคารรับชำระหนี้จาก อกส.จ.)</th>
+                        <th colspan="6" class="income-group">รายการรับอื่น ๆ</th>
+                        <th colspan="10" class="exp-group">รายจ่าย โอนขายบิลให้ สกส.(ส่วนกลาง)</th>
+                        <th colspan="27" class="exp-group">รายการเบิกจ่ายของจังหวัด</th>
+                        <th rowspan="2" class="col-balance">ยอดเงินคงเหลือเงินฝากคลัง</th>
+                        <th rowspan="2" class="col-note">หมายเหตุ (คีย์จำนวนเงินคงเหลือในGF)</th>
+                        <th rowspan="2" class="col-diff">ผลต่างเงินฝากคลัง</th>
+                    </tr>
+                    <tr>
+                        <th class="sub-group-a">ทุนหมุนเวียน</th>
+                        <th class="sub-group-a">อุดหนุน</th>
+                        <th class="sub-group-a">บริหาร</th>
+                        <th class="sub-group-a">คืนเงินรับฝาก (สมาชิกชำระเกิน)</th>
+                        <th class="sub-group-b">เงินต้น</th>
+                        <th class="sub-group-b">ดอกเบี้ยเงินกู้</th>
+                        <th class="sub-group-b">ค่าปรับ</th>
+                        <th class="sub-group-b">ดอกเบี้ยผิดนัด</th>
+                        <th class="sub-group-b">เงินรอตรวจสอบ</th>
+                        <th class="sub-group-b">ดอกเบี้ยเงินฝากธนาคาร</th>
+                        <th class="sub-group-b">เงินรับฝาก (เงินที่สมาชิกชำระเกิน)</th>
+                        <th class="sub-group-c">รับคืนทุนหมุนเวียน (ยกเลิกโครงการ)</th>
+                        <th class="sub-group-c">รับคืนเงินอุดหนุน (ยกเลิกโครงการ)</th>
+                        <th class="sub-group-c">คืนเงินงบบริหาร(เหลือจ่าย) ในปีปัจจุบัน</th>
+                        <th class="sub-group-c">รายได้อื่น</th>
+                        <th class="sub-group-c">รับเงินผิดบัญชี</th>
+                        <th class="sub-group-c">รวมรายรับ</th>
+                        <th class="sub-group-d">เงินต้น</th>
+                        <th class="sub-group-d">ดอกเบี้ยเงินกู้</th>
+                        <th class="sub-group-d">ค่าปรับ</th>
+                        <th class="sub-group-d">ดอกเบี้ยผิดนัด</th>
+                        <th class="sub-group-d">เงินรอตรวจสอบ</th>
+                        <th class="sub-group-d">ดอกเบี้ยเงินฝากธนาคาร</th>
+                        <th class="sub-group-d">เงินรับฝาก (เงินที่สมาชิกชำระเกิน)</th>
+                        <th class="sub-group-d">หมุนเวียน (เหลือจ่าย)</th>
+                        <th class="sub-group-d">อุดหนุน (เหลือจ่าย)</th>
+                        <th class="sub-group-d">บริหาร (เหลือจ่าย)</th>
+                        <th class="sub-group-e">เงินอุดหนุน</th>
+                        <th class="sub-group-e">เงินทุนหมุนเวียน (เงินให้กู้ยืม)</th>
+                        <th class="sub-group-e">ลูกหนี้เงินยืม (งบบริหาร)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการฝึกอบรมในประเทศ</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการฝึกอบรมบุคคล ภายนอก</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการประชุมเบี้ยประชุม (ค่าตอบแทนปฏิบัติงาน)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการประชุม (ค่าจัดประชุม)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการเดินทางไปราชการ (ค่าพาหนะ)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการเดินทางไปราชการ (ค่าเบี้ยเลี้ยง)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายในการเดินทางไปราชการ (ค่าที่พัก)</th>
+                        <th class="sub-group-e">ค่าวัสดุ</th>
+                        <th class="sub-group-e">ค่าไฟฟ้า</th>
+                        <th class="sub-group-e">ค่าโทรศัพท์</th>
+                        <th class="sub-group-e">ค่าอินเตอร์เน็ต</th>
+                        <th class="sub-group-e">ค่าไปรษณีย์</th>
+                        <th class="sub-group-e">ค่าน้ำ</th>
+                        <th class="sub-group-e">ค่าธรรมเนียมธนาคาร</th>
+                        <th class="sub-group-e">คืนเงินรับชำระเกินให้สมาชิก</th>
+                        <th class="sub-group-e">ค่าซ่อมแซมและบำรุงรักษา</th>
+                        <th class="sub-group-e">ครุภัณฑ์/สินทรัพย์</th>
+                        <th class="sub-group-e">ค่าล่วงเวลา</th>
+                        <th class="sub-group-e">ค่าธรรมเนียมศาล</th>
+                        <th class="sub-group-e">ค่าจ้างเหมาบริการ</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายประชาสัมพันธ์</th>
+                        <th class="sub-group-e">ค่าใช้สอย (กิจกรรมเชิดชูเกียรติ)</th>
+                        <th class="sub-group-e">ค่าใช้จ่ายอื่น</th>
+                        <th class="sub-group-e">รวมรายจ่าย</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ สำคัญ: แทนที่ด้วย URL ที่ได้จากการ Deploy Apps Script ข้างบน
+        const API_URL_PROVINCE = "https://script.google.com/a/macros/thaimooc.ac.th/s/AKfycbyskgsJJbyMraDwcbf-D15M7hRcT4EXYTTjAe6yD4xVUd_8LiQyXSQLueqAQWWLu_K3/exec"; 
+
+        // ฟังก์ชันสำหรับอ่านค่าจาก URL Parameter (เพื่อรับชื่อจังหวัด)
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // ฟังก์ชันจัดรูปแบบตัวเลข
+        function formatNumber(num) {
+            // ต้องแปลงเป็น Number ก่อนเพื่อป้องกันค่า null/undefined และใช้ toLocaleString
+            return Number(num || 0).toLocaleString("th-TH");
+        }
+
+        async function fetchDataProvince() {
+            const provinceName = getUrlParameter('province');
+            const provinceTitleElement = document.getElementById('province-display-name');
+            const tbody = document.querySelector("#provinceTable tbody");
+
+            if (!provinceName) {
+                provinceTitleElement.textContent = '(ไม่พบจังหวัดที่เลือก)';
+                tbody.innerHTML = '<tr><td colspan="55" style="text-align: center;">ไม่พบจังหวัดที่ต้องการแสดงข้อมูล กรุณากดจากหน้า Dashboard Accounting</td></tr>';
+                if ($.fn.DataTable.isDataTable('#provinceTable')) {
+                    $('#provinceTable').DataTable().destroy(); 
+                }
+                return;
+            }
+
+            provinceTitleElement.textContent = `จังหวัด: ${provinceName}`;
+            tbody.innerHTML = '<tr><td colspan="55" style="text-align: center;">กำลังโหลดข้อมูล...</td></tr>';
+
+            try {
+                // เรียก Apps Script พร้อมส่งชื่อจังหวัดเป็น parameter
+                const fullUrl = `${API_URL_PROVINCE}?province=${encodeURIComponent(provinceName)}`;
+                const res = await fetch(fullUrl);
+                const data = await res.json();
+
+                tbody.innerHTML = "";
+                
+                // ตรวจสอบว่าได้ข้อมูลมาหรือไม่ (Apps Script จะส่งมา 1 แถวใน rows[0])
+                const row = Array.isArray(data.rows) && data.rows.length > 0 ? data.rows[0] : null;
+
+                if (!row) {
+                    tbody.innerHTML = `<tr><td colspan="55" style="text-align: center;">ไม่พบข้อมูลบัญชีสำหรับจังหวัด ${provinceName}</td></tr>`;
+                } else {
+                    const tr = document.createElement("tr");
+                    
+                    // ส่วนแสดงข้อมูล (เรียงตามลำดับคีย์ 55 คอลัมน์)
+                    tr.innerHTML = `
+                        <td>1</td>
+                        <td>${row.province}</td>
+                        <td class="col-start">${formatNumber(row.start)}</td>
+                        <td>${formatNumber(row.fund)}</td>
+                        <td>${formatNumber(row.subsidy)}</td>
+                        <td>${formatNumber(row.admin)}</td>
+                        <td>${formatNumber(row.returnDeposit)}</td>
+                        <td>${formatNumber(row.principal)}</td>
+                        <td>${formatNumber(row.interest)}</td>
+                        <td>${formatNumber(row.penalty)}</td>
+                        <td>${formatNumber(row.overdueInterest)}</td>
+                        <td>${formatNumber(row.pending)}</td>
+                        <td>${formatNumber(row.bankInterest)}</td>
+                        <td>${formatNumber(row.extraDeposit)}</td>
+                        <td>${formatNumber(row.returnFund)}</td>
+                        <td>${formatNumber(row.returnSubsidy)}</td>
+                        <td>${formatNumber(row.returnAdmin)}</td>
+                        <td>${formatNumber(row.otherIncome)}</td>
+                        <td>${formatNumber(row.mistakeIncome)}</td>
+                        <td>${formatNumber(row.totalIncome)}</td>
+                        <td>${formatNumber(row.expPrincipal)}</td>
+                        <td>${formatNumber(row.expInterest)}</td>
+                        <td>${formatNumber(row.expPenalty)}</td>
+                        <td>${formatNumber(row.expOverdueInterest)}</td>
+                        <td>${formatNumber(row.expPending)}</td>
+                        <td>${formatNumber(row.expBankInterest)}</td>
+                        <td>${formatNumber(row.expExtraDeposit)}</td>
+                        <td>${formatNumber(row.expFundRemain)}</td>
+                        <td>${formatNumber(row.expSubsidyRemain)}</td>
+                        <td>${formatNumber(row.expAdminRemain)}</td>
+                        <td>${formatNumber(row.provSubsidy)}</td>
+                        <td>${formatNumber(row.provFund)}</td>
+                        <td>${formatNumber(row.provLoan)}</td>
+                        <td>${formatNumber(row.provTrainIn)}</td>
+                        <td>${formatNumber(row.provTrainOut)}</td>
+                        <td>${formatNumber(row.provMeetingFee)}</td>
+                        <td>${formatNumber(row.provMeeting)}</td>
+                        <td>${formatNumber(row.provTravel)}</td>
+                        <td>${formatNumber(row.provPerdiem)}</td>
+                        <td>${formatNumber(row.provHotel)}</td>
+                        <td>${formatNumber(row.provMaterial)}</td>
+                        <td>${formatNumber(row.provElectric)}</td>
+                        <td>${formatNumber(row.provPhone)}</td>
+                        <td>${formatNumber(row.provInternet)}</td>
+                        <td>${formatNumber(row.provPost)}</td>
+                        <td>${formatNumber(row.provWater)}</td>
+                        <td>${formatNumber(row.provBankFee)}</td>
+                        <td>${formatNumber(row.provRefund)}</td>
+                        <td>${formatNumber(row.provRepair)}</td>
+                        <td>${formatNumber(row.provAsset)}</td>
+                        <td>${formatNumber(row.provOvertime)}</td>
+                        <td>${formatNumber(row.provCourt)}</td>
+                        <td>${formatNumber(row.provHire)}</td>
+                        <td>${formatNumber(row.provPR)}</td>
+                        <td>${formatNumber(row.provActivity)}</td>
+                        <td>${formatNumber(row.provOther)}</td>
+                        <td>${formatNumber(row.provTotalExp)}</td>
+                        <td class="col-balance">${formatNumber(row.balance)}</td>
+                        <td class="col-note">${row.note || ""}</td>
+                        <td class="col-diff">${formatNumber(row.diff)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                // Initialize/Re-initialize DataTable
+                if ($.fn.DataTable.isDataTable('#provinceTable')) {
+                    $('#provinceTable').DataTable().destroy();
+                }
+
+                // กำหนด DataTables สำหรับการเลื่อนแนวนอนและหัวตารางลอย
+                const table = $('#provinceTable').DataTable({
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    ordering: false,
+                    fixedHeader: true,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    language: {
+                        zeroRecords: "ไม่พบข้อมูลที่ตรงกัน",
+                    }
+                });
+                
+                table.fixedHeader.adjust(); 
+
+            } catch (err) {
+                console.error("โหลดข้อมูลผิดพลาด:", err);
+                provinceTitleElement.textContent = `จังหวัด: ${provinceName} (ผิดพลาดในการเชื่อมต่อ)`;
+                tbody.innerHTML = `<tr><td colspan="55" style="text-align: center;">เกิดข้อผิดพลาดในการเชื่อมต่อหรือโหลดข้อมูล: ${err.message}</td></tr>`;
+                if ($.fn.DataTable.isDataTable('#provinceTable')) {
+                    $('#provinceTable').DataTable().destroy();
+                }
+            }
+        }
+
+        // เริ่มโหลดข้อมูลเมื่อเพจโหลดเสร็จ
+        $(document).ready(fetchDataProvince);
+    </script>
+</body>
+</html>

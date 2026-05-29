@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head> 
+  <meta charset="UTF-8" />
+  <title>CDD Women Fund Province 2569</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+  <style>
+    body { font-family:'Sarabun',sans-serif;margin:0;background:linear-gradient(to bottom right,#fce4ec,#f3e5f5);color:#000; }
+    .dashboard-container { padding:40px;background-color:rgba(255,255,255,0.95);width:100%;min-height:100vh;box-sizing:border-box; }
+    .header { display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap; }
+    .header-text h1 { margin:0;font-size:2.5rem; }
+    .header-text h2 { margin:0;font-size:1.5rem; } 
+    .cards { display:flex;gap:20px;margin-top:30px;flex-wrap:wrap; }
+    .card { flex:1;min-width:200px;padding:20px;border-radius:12px;color:white;font-weight:bold; }
+    .card .value { font-size:1.75rem;color:black;margin-top:10px;font-weight:normal;white-space:nowrap; }
+    .pink { background-color:#e91e63; } .light-pink { background-color:#f8bbd0; } .orange { background-color:#ff9800; } .deep-pink { background-color:#f06292; }
+    table.dataTable { width:100%!important;border-collapse:collapse;font-size:0.85rem;color:black; }
+    table.dataTable th,table.dataTable td { border:1px solid #ccc;padding:4px 6px;text-align:center;vertical-align:middle;white-space:nowrap; }
+    table.dataTable thead th { background-color:#f06292;color:black;font-weight:bold; }
+    .filter-container { display:flex;flex-wrap:wrap;align-items:flex-end;gap:15px;padding:15px;background-color:#f8bbd0;border-radius:8px;margin-bottom:20px;margin-top:20px; }
+    .filter-item { display:flex;flex-direction:column;min-width:160px;flex-grow:1; }
+    .filter-item label { font-weight:bold;font-size:0.8rem;margin-bottom:4px;color:#333; }
+    .filter-item select { width:100%;padding:6px;border:1px solid #aaa;border-radius:4px;font-family:'Sarabun',sans-serif;font-size:0.85rem;height:35px; }
+    .action-button-container { display:flex;gap:10px; }
+    button { padding:6px 15px;border:none;border-radius:4px;color:white;font-weight:bold;cursor:pointer; }
+    #btnResetFilter { background-color:#d9534f; } #btnDownload { background-color:#5cb85c; }
+
+
+
+.top-menu-bar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:1rem;
+}
+
+.top-buttons {
+  display:flex;
+  gap:10px;
+}
+
+.top-buttons a {
+  padding:6px 14px;
+  border-radius:6px;
+  font-weight:bold;
+  text-decoration:none;
+  color:white;
+  font-size:0.9rem;
+}
+
+.btn-menu { background:#6c757d; }
+.btn-negative { background:#9c27b0; }
+.btn-incomplete { background:#ff5722; }
+
+.top-buttons a:hover {
+  opacity:0.85;
+}
+
+
+
+
+    
+
+
+    
+     /* header ยังอยู่กลาง */
+table.dataTable thead th {
+  text-align: center;
+}
+
+/* คอลัมน์ข้อความให้ข้อมูลชิดซ้าย */
+table.dataTable td:nth-child(6),
+table.dataTable td:nth-child(7),
+table.dataTable td:nth-child(15),
+table.dataTable td:nth-child(16),
+table.dataTable td:nth-child(17) {
+  text-align: left;
+}
+    
+  </style>
+
+ 
+
+  
+</head>
+
+<body>
+ <div class="dashboard-container">
+  <div class="header">
+
+    <div class="header-text">
+      <h1><span style="color:navy;">CDD</span> 
+          <span style="color:deeppink;">Women</span> 
+          <span style="color:red;">Fund</span></h1>
+
+      <h2><span style="color:black;">รายจังหวัด:</span> 
+          <span style="color:red;" id="province-title"></span></h2>
+    </div>
+
+    <div class="logo-container">
+       <img src="https://i.postimg.cc/507bjy9Z/cdd.png" width="60" height="100" />
+       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" width="70" height="100" />
+    </div>
+
+  </div>
+
+
+   <div class="top-menu-bar">
+
+ <div class="top-buttons">
+
+  <a href="#"
+     class="btn-menu"
+     onclick="window.open('https://tnah097.github.io/cdwomenpod-dashboard/Menu.html','_blank')">
+     ⬅ กลับสู่เมนูหลัก
+  </a>
+
+  <a href="#"
+     class="btn-negative"
+     onclick="window.open('https://tnah097.github.io/cdwomenpod-dashboard/promiseerror.html','_blank')">
+     📊 โครงการที่ติดลบ
+  </a>
+
+  <a href="#"
+     class="btn-incomplete"
+     onclick="window.open('https://tnah097.github.io/cdwomenpod-dashboard/promiseincomplete.html','_blank')">
+     ⚠ โครงการที่ข้อมูลไม่สมบูรณ์
+  </a>
+
+</div>
+
+  <div style="font-weight:bold;color:navy;font-size:1.2rem;">
+    <span id="update-date">ข้อมูล ณ วันที่ 19 กุมภาพันธ์ 2569</span>
+  </div>
+
+</div>
+
+
+    <!-- 🔹 Summary Cards -->
+    <div class="cards">
+      <div class="card pink">จำนวนโครงการ<div class="value" id="num-projects">-</div></div>
+      <div class="card light-pink">เงินอนุมัติ<div class="value" id="approved-money">-</div></div>
+      <div class="card orange">ลูกหนี้คงเหลือ ณ 1 ต.ค. 2568 (A)<div class="value" id="debt-start">-</div>ลูกหนี้คงเหลือ ณ ปัจจุบัน (ก)<div class="value" id="debt-now">-</div></div>
+      <div class="card deep-pink">หนี้ที่เกินกำหนดชำระ (B)<div class="value" id="overdue">-</div>ร้อยละหนี้เกินกำหนด<div class="value" id="percent-overdue">-</div></div>
+      <div class="card deep-pink">ลูกหนี้ที่ได้ดำเนินการตามกฎหมาย (ง)<div class="value" id="legal">-</div></div>
+    </div>
+
+    <h3>ตัวกรองข้อมูล</h3>
+    <div id="filter-section" class="filter-container"></div>
+
+    <div class="filter-container">
+      <div class="filter-item">
+        <label for="downloadType">ดาวน์โหลดข้อมูล:</label>
+        <select id="downloadType">
+          <option value="excel">Excel</option>
+        </select>
+      </div>
+      <div class="action-button-container">
+        <button id="btnDownload">ดาวน์โหลด</button>
+        <button id="btnResetFilter">ล้างตัวกรอง</button>
+      </div>
+    </div>
+
+    <h3>ตารางรายละเอียดข้อมูลโครงการรายอำเภอ</h3>
+<div style="width:100%; overflow-x:auto;">
+
+  <table id="detailsTable" class="display" style="width:100%">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+</div>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+   <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwwxjRdiPSd7SOuZAOO5OmWi5NHCBMOf3d1923ik9QBY7iiZ0gJl6ppcQQUHGrxuLRTAg/exec";
+    let allData = [], dataTable;
+
+    const formatNumber = v => isNaN(parseFloat(v)) ? "-" : parseFloat(v).toLocaleString("th-TH", { minimumFractionDigits: 2 });
+    const formatPercent = v => isNaN(parseFloat(v)) ? "-" : `${parseFloat(v).toFixed(2)}%`;
+    const formatDate = v => (!v || v === "-") ? "-" : new Date(v).toLocaleDateString("th-TH");
+
+    $(document).ready(async function () {
+      const province = new URLSearchParams(window.location.search).get("province");
+      $("#province-title").text(province || "-");
+
+      $("#btnResetFilter").on("click", () => { $("#filter-section select").val("").trigger("change"); });
+      $("#btnDownload").on("click", downloadData);
+
+      await fetchData(province);
+    });
+
+    async function fetchData(province) {
+      try {
+        const res = await fetch(`${API_URL}?province=${encodeURIComponent(province)}`);
+        const json = await res.json();
+        if (json.error) throw new Error(json.error);
+
+        allData = json.data || [];
+        updateSummaryCards(json.summary);
+        renderTable(allData);
+        setupFilters(allData);
+      } catch (err) {
+        alert("เกิดข้อผิดพลาด: " + err.message);
+      }
+    }
+
+   function renderTable(data) {
+  const headers = Object.keys(data[0] || {});
+  const thead = $("#detailsTable thead")
+    .empty()
+    .append(`<tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>`);
+  const tbody = $("#detailsTable tbody").empty();
+
+  data.forEach((row, idx) => {
+    const tds = headers.map(h => {
+      let value = row[h];
+
+      // ✅ ให้คอลัมน์ "ลำดับ" รันเลขใหม่ 1,2,3,... ตามลำดับแถวที่แสดง
+      if (h === "ลำดับ") {
+        value = idx + 1;           // ไม่ใช้ค่าจาก Google Sheet แล้ว
+        return `<td>${value}</td>`; // แสดงเป็นเลขตรง ๆ ไม่ format ทศนิยม
+      }
+
+     return `<td>${formatValue(value, h)}</td>`;
+    }).join("");
+
+    tbody.append(`<tr>${tds}</tr>`);
+  });
+
+  if ($.fn.DataTable.isDataTable("#detailsTable")) {
+  dataTable.clear().rows.add(data).draw();
+  return;
+}
+
+  dataTable = $("#detailsTable").DataTable({
+    scrollX: true,
+    pageLength: 10,
+    fixedHeader: true,
+    language: {
+      search: "ค้นหา:",
+      info: "แสดง _START_ ถึง _END_ จาก _TOTAL_"
+    }
+  });
+
+}
+
+
+ function formatValue(v, columnName) {
+
+  // ================== TEXT-ONLY (3 ช่องนี้เท่านั้น) ==================
+  const dashIfZeroColumns = [
+    "หมายเหตุ",
+    "*หมายเหตุจากจว.*",
+    "มาตรการ"
+  ];
+
+  if (dashIfZeroColumns.includes(columnName)) {
+    if (
+      v === null ||
+      v === undefined ||
+      v === "" ||
+      v === 0 ||
+      v === "0" ||
+      v === "0.0" ||
+      v === "0.00"
+    ) {
+      return "-";
+    }
+    return String(v);
+  }
+
+  // ================== TEXT ปกติ ==================
+  const normalTextColumns = [
+    "ชื่อโครงการ",
+    "ผู้เสนอโครงการ/ผู้ร่วมโครงการ"
+  ];
+
+  if (normalTextColumns.includes(columnName)) {
+    return v == null || v === "" ? "-" : String(v);
+  }
+
+  // ================== ปีงบประมาณ ==================
+  if (columnName === "ปีงบประมาณ") {
+    return v == null || v === "" ? "-" : parseInt(v, 10);
+  }
+
+  // ================== เลขที่สัญญา ==================
+  if (columnName === "เลขที่สัญญา") {
+    return v == null || v === "" ? "-" : String(v);
+  }
+
+  // ================== เปอร์เซ็นต์ ==================
+  if (String(v).includes("%")) return v;
+
+  // ================== ตัวเลข / เงิน ==================
+  if (typeof v === "number" || !isNaN(v)) {
+    return formatNumber(v);
+  }
+
+  // ================== ค่าอื่น ==================
+  return v ?? "-";
+}
+
+
+
+    function setupFilters(data) {
+      const keys = ["อำเภอ/เขต", "ตำบล", "ปีงบประมาณ", "สถานะโครงการ"];
+      const container = $("#filter-section").empty();
+      keys.forEach(k => {
+        const values = [...new Set(data.map(r => r[k]).filter(Boolean))].sort();
+        const select = $(`<select data-key="${k}"><option value="">-- ทั้งหมด --</option>${values.map(v => `<option>${v}</option>`).join("")}</select>`);
+   const item = $(`
+  <div class="filter-item">
+    <label>${k}</label>
+    ${select.prop('outerHTML')}
+  </div>
+`);
+container.append(item);
+      });
+  $("#filter-section select").on("change", applyFilters);
+      
+    }
+
+  function applyFilters() {
+  dataTable.columns().search("");
+
+  $("#filter-section select").each(function () {
+    const key = $(this).data("key");
+    const val = $(this).val();
+    if (!val) return;
+
+    const colIndex = dataTable
+      .columns()
+      .indexes()
+      .filter(i => dataTable.settings()[0].aoColumns[i].sTitle === key)[0];
+
+    if (colIndex !== undefined) {
+      dataTable.column(colIndex).search(`^${val}$`, true, false);
+    }
+  });
+
+  dataTable.draw();
+}
+    
+    function updateSummaryCards(s) {
+      $("#num-projects").text(s.totalProjects.toLocaleString("th-TH"));
+      $("#approved-money").text(formatNumber(s.approvedMoney));
+      $("#debt-start").text(formatNumber(s.debtStart));
+      $("#debt-now").text(formatNumber(s.debtNow));
+      $("#overdue").text(formatNumber(s.overdue));
+      $("#legal").text(formatNumber(s.legal));
+      $("#percent-overdue").text(formatPercent(s.percentOverdue));
+     
+    
+    }
+
+    function downloadData() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(allData);
+      XLSX.utils.book_append_sheet(wb, ws, "Province");
+      XLSX.writeFile(wb, `${$("#province-title").text()}_KPI69.xlsx`);
+    }
+  </script>
+</body>
+</html>

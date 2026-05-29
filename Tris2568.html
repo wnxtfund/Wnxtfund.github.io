@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>สรุปผลตัวชี้วัดกองทุนพัฒนาบทบาทสตรี</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Sarabun', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(to bottom right, #ffe6f0, #ffd1e6);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.header h1 {
+  color: deeppink;
+  margin: 0;
+  font-size: 2rem;
+}
+.header p {
+  color: #880e4f;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.logos {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.logos img { height: 60px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+th, td {
+  border: 1px solid #f0a5bc;
+  padding: 8px 12px;
+  text-align: center;
+}
+th {
+  background-color: #f8bbd0;
+  color: #880e4f;
+}
+tr:nth-child(even) {
+  background-color: rgba(255,182,193,0.2);
+}
+tr:nth-child(odd) {
+  background-color: rgba(255,192,203,0.1);
+}
+tr.summary-row {
+  background-color: #f48fb1 !important;
+  font-weight: bold;
+}
+tr.summary-row td {
+  color: #880e4f;
+  text-align: right;
+}
+
+/* Modal */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 25px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  position: relative;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header h2 {
+    color: deeppink;
+}
+
+.clickable-kpi {
+    cursor: pointer;
+    color: #d81b60;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.clickable-kpi:hover {
+    color: #880e4f;
+}
+
+#evidenceTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+#evidenceTable th, #evidenceTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+#evidenceTable th {
+    background-color: #f2f2f2;
+}
+#evidenceTable td:nth-child(2) {
+    text-align: center;
+    font-size: 1.2rem;
+}
+.status-true { color: green; }
+.status-false { color: red; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>สรุปผลการดำเนินงานตามตัวชี้วัดของกองทุนพัฒนาบทบาทสตรี</h1>
+    <p>กรมการพัฒนาชุมชน ประจำปีบัญชี 2568 จำนวน 6 ด้าน 15 ตัวชี้วัด ข้อมูล ณ วันที่ 15 กันยายน 2568</p>
+    <p>ข้อมูลอ้างอิงค์จาก ... วันที่ ...</p>
+  </div>
+
+  <div class="logos">
+    <img src="https://i.postimg.cc/507bjy9Z/cdd.png">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s">
+  </div>
+
+  <table id="kpiTable">
+    <thead>
+      <tr>
+        <th>ด้าน</th>
+        <th>ตัวชี้วัด</th>
+        <th>หน่วยวัด</th>
+        <th>เป้าหมาย</th>
+        <th>ผลงาน</th>
+        <th>คะแนน</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="7"><i>กำลังโหลดข้อมูล...</i></td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+
+    <div class="modal-header">
+      <h2>รายละเอียดตัวชี้วัดที่ 1.1</h2>
+      <p><strong>ชื่อ:</strong> ร้อยละของการรับชำระคืนเงินกู้ยืม (น้ำหนักร้อยละ 8)</p>
+    </div>
+
+    <div class="modal-body">
+      <p><strong>รายการตรวจสอบหลักฐาน (Checklist)</strong></p>
+
+      <div id="evidence-container">
+        <p><i>กำลังโหลดข้อมูลหลักฐาน...</i></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById('myModal');
+const closeBtn = document.querySelector('.close-button');
+
+function closeModal() {
+  modal.style.display = "none";
+}
+closeBtn.onclick = closeModal;
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    closeModal();
+  }
+};
+
+async function loadEvidenceData() {
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSLP2abdmfs82BBhiCZg16caXGOzNo7o_3NMrETEc5NttXgwaVW4JaJwx6Ez0wXRhRm-ZGSAPL8J1vR/pub?gid=0&single=true&output=csv";
+
+    const container = document.getElementById('evidence-container');
+    container.innerHTML = '<p><i>กำลังโหลดข้อมูลหลักฐาน...</i></p>';
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("โหลดข้อมูลไม่ได้");
+
+        const csv = await response.text();
+        const rows = csv.trim().split("\n");
+
+        const table = document.createElement("table");
+        table.id = "evidenceTable";
+
+        const header = rows[0].split(",");
+        table.innerHTML = `<thead><tr><th>${header[0]}</th><th>${header[1]}</th></tr></thead>`;
+
+        const tbody = document.createElement("tbody");
+
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",");
+            const text = cols[0];
+            const status = cols[1].trim().toUpperCase();
+
+            const symbol = status === "TRUE" ? "✓" : "✗";
+            const css = status === "TRUE" ? "status-true" : "status-false";
+
+            tbody.innerHTML += `
+              <tr>
+                <td>${text}</td>
+                <td class="${css}">${symbol}</td>
+              </tr>
+            `;
+        }
+
+        table.appendChild(tbody);
+        container.innerHTML = "";
+        container.appendChild(table);
+
+    } catch (err) {
+        container.innerHTML = `<p style="color:red;">เกิดข้อผิดพลาด: ${err.message}</p>`;
+    }
+}
+
+function openModal() {
+    modal.style.display = "block";
+    loadEvidenceData();
+}
+
+async function loadAndDisplayData() {
+    const url = "https://script.google.com/macros/s/AKfycbzw1jHwCTESst-B9Pmv-pOlD98vxVenxole4yvOReZ5UJnOmXHMyhD39S7_QMmQt28FOA/exec";
+
+    const tbody = document.querySelector("#kpiTable tbody");
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        tbody.innerHTML = "";
+
+        data.mainData.forEach(row => {
+            const tr = document.createElement("tr");
+
+            const kpi = row["ตัวชี้วัด"] || "";
+
+            tr.innerHTML = `
+              <td>${row["ด้าน"] || ""}</td>
+              <td style="text-align:left">${kpi}</td>
+              <td>${row["หน่วยวัด"] || ""}</td>
+              <td>${row["เป้าหมาย"] || ""}</td>
+              <td>${row["ผลงาน"] || ""}</td>
+              <td>${row["คะแนน"] || ""}</td>
+            `;
+            tbody.appendChild(tr);
+
+            if (kpi.includes("ตัวชี้วัดที่ 1.1")) {
+                const cell = tr.querySelector("td:nth-child(2)");
+                cell.classList.add("clickable-kpi");
+                cell.onclick = openModal;
+            }
+        });
+
+        if (data.summaryData) {
+            const s = data.summaryData;
+            tbody.innerHTML += `
+            <tr class="summary-row">
+              <td colspan="4" style="padding-right:20px;">${s.label}</td>
+              <td colspan="2">${s.value}</td>
+              <td>${s.forecast}</td>
+            </tr>`;
+        }
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:red;">เกิดข้อผิดพลาด: ${err.message}</td></tr>`;
+    }
+}
+
+loadAndDisplayData();
+</script>
+
+</body>
+</html>
