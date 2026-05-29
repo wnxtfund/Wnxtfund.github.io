@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โครงการที่ติดลบ</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Sarabun', sans-serif;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.25);
+  border-radius: 6px;
+}
+th {
+  position: sticky;
+  top: 0;
+  background: #f8bbd0;
+  z-index: 10;
+}
+table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+}
+th, td {
+  white-space: nowrap;
+  vertical-align: top;
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-br from-pink-100 to-purple-100 min-h-screen">
+
+<!-- LOGO -->
+<div class="fixed top-6 right-8 flex gap-4 z-50">
+  <img src="https://i.postimg.cc/507bjy9Z/cdd.png" class="h-14">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" class="h-14">
+</div>
+
+<div class="p-6 flex justify-center">
+  <div class="w-full max-w-[1700px] bg-white rounded-[30px] p-8 shadow-2xl">
+
+    <h1 class="text-center text-xl font-bold text-pink-700 mb-6">
+      โครงการที่ติดลบ
+    </h1>
+
+    <!-- TOOLBAR -->
+    <div class="flex flex-wrap gap-4 mb-4 bg-gray-50 p-4 rounded-2xl shadow">
+      <select id="provinceFilter" class="border rounded px-3 py-2">
+        <option value="ทั้งหมด">ทั้งหมด</option>
+      </select>
+
+      <button onclick="window.print()" class="px-4 py-2 bg-red-500 text-white rounded">
+        Export PDF
+      </button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="overflow-auto custom-scrollbar border rounded-2xl max-h-[70vh]">
+      <table id="dataTable" class="border-collapse text-sm"></table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycby49bqSSp8P82hbdsSVj8-VAKaZ8OOmgsUod7m1sFhIiKwANYH2lSHXzzH2DEHsFHTiJw/exec";
+
+let rawData = [];
+
+/* ===== formatter ตามที่กำหนด ===== */
+function formatNumber(val) {
+  if (val === null || val === undefined || val === "") return "";
+  const n = Number(String(val).replace(/,/g, ""));
+  if (isNaN(n)) return val;
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function formatDate(val) {
+  if (!val) return "";
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return val;
+  return d.toLocaleDateString("en-GB"); // dd/mm/yyyy ค.ศ.
+}
+
+fetch(API_URL)
+  .then(r => r.json())
+  .then(res => {
+    rawData = res.data || [];
+    buildProvinceFilter();
+    renderTable(rawData);
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h2 class='text-red-600 text-center mt-10'>โหลดข้อมูลไม่สำเร็จ</h2>";
+    console.error(err);
+  });
+
+function buildProvinceFilter() {
+  const select = document.getElementById("provinceFilter");
+  const provinces = new Set(rawData.slice(1).map(r => r[0]).filter(Boolean));
+  provinces.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p;
+    opt.textContent = p;
+    select.appendChild(opt);
+  });
+
+  select.onchange = () => {
+    const val = select.value;
+    const filtered = val === "ทั้งหมด"
+      ? rawData
+      : [rawData[0], ...rawData.slice(1).filter(r => r[0] === val)];
+    renderTable(filtered);
+  };
+}
+
+function renderTable(data) {
+  const table = document.getElementById("dataTable");
+  table.innerHTML = "";
+  if (!data.length) return;
+
+  // HEADER
+  const thead = document.createElement("thead");
+  const htr = document.createElement("tr");
+  data[0].forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    th.className = "border px-3 py-2 font-bold";
+    htr.appendChild(th);
+  });
+  thead.appendChild(htr);
+  table.appendChild(thead);
+
+  // BODY
+  const tbody = document.createElement("tbody");
+  data.slice(1).forEach(row => {
+    const tr = document.createElement("tr");
+
+    row.forEach((cell, colIndex) => {
+      const td = document.createElement("td");
+      let value = cell ?? "";
+
+      // ===== mapping ตามที่กำหนด =====
+      if ([6,7,10,11,12].includes(colIndex)) {
+        value = formatNumber(cell);
+      } else if ([8,9].includes(colIndex)) {
+        value = formatDate(cell);
+      }
+
+      td.textContent = value;
+      td.className = "border px-3 py-2";
+
+      // หมายเหตุ (คอลัมน์สุดท้าย) ให้อ่านง่าย
+      if (colIndex === row.length - 1) {
+        td.style.whiteSpace = "normal";
+        td.style.minWidth = "400px";
+      }
+
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <title>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962) กองทุนพัฒนาบทบาทสตรี</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            background: url('https://www.dga.or.th/wp-content/uploads/2025/06/20250612_074641550_iOS-1120x746.jpg') center/cover no-repeat;
+            background-attachment: fixed;
+            color: #000;
+        }
+
+        .dashboard-container {
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: navy;
+        }
+
+        .header-text h2 {
+            margin: 5px 0 0 0;
+            font-size: 1.2rem;
+            color: deeppink;
+        }
+
+        .logo-container img {
+            height: 60px;
+            margin-left: 10px;
+        }
+
+        table.dataTable {
+            width: 100% !important;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            color: black;
+        }
+
+        table.dataTable th,
+        table.dataTable td {
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        table.dataTable tbody tr:nth-child(even) { background-color: #fce4ec; }
+        table.dataTable tbody tr:nth-child(odd) { background-color: white; }
+
+        .income-group { background-color:#76BC43; color: black; }
+        .exp-group { background-color:#FF9967; color: black; }
+        .sub-group-a { background-color:#CCFFCC; }
+        .sub-group-b { background-color:#ADD88D; }
+        .sub-group-c { background-color:#92CA68; }
+        .sub-group-d { background-color:#FDDF8E; }
+        .sub-group-e { background-color:#FCF695; }
+
+        .col-start { background-color:#FF8FAB !important; }
+        .col-balance { background-color:#C0E4F6 !important; }
+        .col-note { background-color:#FFCAC9 !important; }
+        .col-diff { background-color:#F7D07A !important; }
+
+        table.dataTable.fixedHeader-floating { background-color: white; }
+
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 20px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-text h1 { font-size: 1.5rem; }
+            .header-text h2 { font-size: 1rem; }
+            .logo-container img { height: 40px; }
+            table.dataTable { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="dashboard-container">
+    <div class="header">
+        <div class="header-text">
+            <h1>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962) กองทุนพัฒนาบทบาทสตรี</h1>
+            <h2>
+                <span id="province-display-name" style="color: deeppink;">(กรุณาระบุจังหวัด)</span>
+                | ประจำเดือน ณ <span style="color: red;">30 สิงหาคม 2567</span>
+            </h2>
+        </div>
+        <div class="logo-container">
+            <img src="https://cddadg.cdd.go.th/wp-content/uploads/sites/101/2017/06/CDD-NEW-LOGO3.png" alt="CDD Logo" />
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Additional Logo" />
+        </div>
+    </div>
+
+    <div style="overflow-x:auto; margin-top: 20px;">
+        <table class="display" id="provinceTable" style="width:100%">
+            <thead>
+                <!-- (ใช้ header เดิมเหมือนโค้ดตัวเองได้เลย) -->
+                <!-- คุณสามารถคัดลอก header <tr> สองแถวจากโค้ดเดิมมาใส่ตรงนี้ได้ -->
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_URL_PROVINCE = "https://script.google.com/macros/s/AKfycb…/exec"; // ใส่ URL Apps Script ของคุณ
+
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    function formatNumber(num) {
+        return Number(num || 0).toLocaleString("th-TH");
+    }
+
+    async function fetchDataProvince() {
+        const provinceName = getUrlParameter('province');
+        const provinceTitleElement = document.getElementById('province-display-name');
+        const tbody = document.querySelector("#provinceTable tbody");
+
+        if (!provinceName) {
+            provinceTitleElement.textContent = '(ไม่พบจังหวัดที่เลือก)';
+            tbody.innerHTML = '<tr><td colspan="55" style="text-align:center;">กรุณากดจากหน้า Dashboard Accounting</td></tr>';
+            if ($.fn.DataTable.isDataTable('#provinceTable')) $('#provinceTable').DataTable().destroy();
+            return;
+        }
+
+        provinceTitleElement.textContent = `จังหวัด: ${provinceName}`;
+
+        try {
+            const res = await fetch(`${API_URL_PROVINCE}?province=${encodeURIComponent(provinceName)}`);
+            const data = await res.json();
+
+            tbody.innerHTML = "";
+            const rowsToDisplay = Array.isArray(data.rows) ? data.rows : [];
+
+            if (rowsToDisplay.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="55" style="text-align:center;">ไม่พบข้อมูลจังหวัด ${provinceName}</td></tr>`;
+            } else {
+                const row = rowsToDisplay[0]; // แถวเดียว
+                const tr = document.createElement("tr");
+
+                // สร้าง td อัตโนมัติจาก header JSON
+                const cols = Object.keys(row);
+                let tds = `<td>1</td>`; // ลำดับ
+                cols.forEach(c => {
+                    let val = row[c];
+                    if (typeof val === "number") val = formatNumber(val);
+                    tds += `<td>${val || ""}</td>`;
+                });
+                tr.innerHTML = tds;
+                tbody.appendChild(tr);
+            }
+
+            if ($.fn.DataTable.isDataTable('#provinceTable')) $('#provinceTable').DataTable().destroy();
+            const table = $('#provinceTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: false,
+                fixedHeader: true,
+                scrollX: true,
+                scrollCollapse: true,
+                language: {
+                    search: "ค้นหา:",
+                    lengthMenu: "แสดง _MENU_ รายการ",
+                    info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+                    infoEmpty: "ไม่มีข้อมูล",
+                    zeroRecords: "ไม่พบข้อมูลที่ตรงกัน",
+                    paginate: { first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า" }
+                }
+            });
+
+            table.fixedHeader.adjust(); 
+            table.on('draw', function () { table.fixedHeader.adjust(); });
+
+        } catch (err) {
+            console.error("โหลดข้อมูลผิดพลาด:", err);
+            provinceTitleElement.textContent = `จังหวัด: ${provinceName} (ผิดพลาด)`;
+            tbody.innerHTML = `<tr><td colspan="55" style="text-align:center;">เกิดข้อผิดพลาด: ${err.message}</td></tr>`;
+            if ($.fn.DataTable.isDataTable('#provinceTable')) $('#provinceTable').DataTable().destroy();
+        }
+    }
+
+    fetchDataProvince();
+</script>
+</body>
+</html>

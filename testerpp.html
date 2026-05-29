@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962)</title>
+  
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.4.0/css/fixedHeader.dataTables.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style> 
+    body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      background: url('https://www.dga.or.th/wp-content/uploads/2025/06/20250612_074641550_iOS-1120x746.jpg') center/cover no-repeat;
+      background-attachment: fixed;
+      color: #000;
+    }
+    .dashboard-container {
+      padding: 40px;
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .header-text h1 { margin: 0; font-size: 2rem; color: navy; }
+    .header-text h2 { margin: 0; font-size: 1.3rem; color: deeppink; }
+    .report-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+    .report-info .month, .report-info .year { color: red; }
+    .logo-container img { height: 60px; margin-left: 10px; }
+    .section-title {
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      color: black;
+    }
+    .summary-table th, .summary-table td {
+      padding: 4px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-weight: bold;
+    }
+    .summary-table td { font-weight: normal; }
+    .summary-table tr:nth-child(even) { background-color: #fce4ec; }
+    .summary-table tr:nth-child(odd) { background-color: white; }
+    table.dataTable.fixedHeader-floating { background-color: white; }
+
+    tfoot tr {
+      background-color: #FFF4CC !important;
+      font-weight: bold;
+    }
+    @media (max-width: 768px) {
+      .dashboard-container { padding: 20px; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .logo-container img { height: 40px; }
+      .summary-table { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="header">
+      <div class="header-text">
+        <h1>ทะเบียนคุมการรับ-จ่ายเงินฝากคลัง (รหัส 10962)</h1>
+        <div class="report-info">
+          <h2>
+            รายงานประจำ <span class="month">ตุลาคม</span> พ.ศ. <span class="year">2567</span>
+          </h2>
+          <h2 class="report-code">สกส.02/2568</h2>
+        </div>
+      </div>
+      <div class="logo-container">
+        <img src="https://i.postimg.cc/507bjy9Z/cdd.png" alt="CDD Logo" width="60" height="140" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Additional Logo" />
+      </div>
+    </div>
+
+    <div class="section-title">ตารางทะเบียนคุมการรับ-จ่ายเงินฝากคลัง</div>
+
+    <div style="overflow-x:auto;">
+      <table class="summary-table" id="mainTable">
+        <thead> … (คงเดิมทั้งหมด) … </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr id="row-month">
+            <td rowspan="2" style="background-color:#FF8FAB;">รวม</td>
+            <td>รวมระหว่างเดือน</td>
+          </tr>
+          <tr id="row-year">
+            <td>รวมตั้งแต่ต้นปี</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxKba4uG2nhNlWzQh7I-OL1uT16UHboBS6wapcppxyWrnR7a1a29aQ2IPoJ1Gqeh8TA/exec";
+
+function formatNumber(num) {
+  return Number(num || 0).toLocaleString("th-TH");
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const tbody = document.querySelector("#mainTable tbody");
+    const rowMonth = document.querySelector("#row-month");
+    const rowYear = document.querySelector("#row-year");
+
+    tbody.innerHTML = "";
+
+    // ✅ เติมข้อมูลแต่ละจังหวัด
+    data.rows.forEach((row, index) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${row.province}</td>
+        <td>${formatNumber(row.start)}</td>
+        <!-- … คอลัมน์อื่นๆ ตามเดิม … -->
+        <td>${formatNumber(row.diff)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // ✅ เติมข้อมูล “รวมระหว่างเดือน”
+    if (data.summaryMonth) {
+      Object.values(data.summaryMonth).forEach(v => {
+        const td = document.createElement("td");
+        td.textContent = formatNumber(v);
+        rowMonth.appendChild(td);
+      });
+    }
+
+    // ✅ เติมข้อมูล “รวมตั้งแต่ต้นปี”
+    if (data.summaryYear) {
+      Object.values(data.summaryYear).forEach(v => {
+        const td = document.createElement("td");
+        td.textContent = formatNumber(v);
+        rowYear.appendChild(td);
+      });
+    }
+
+    // ✅ DataTable (ตารางหลัก)
+    if ($.fn.DataTable.isDataTable('#mainTable')) {
+      $('#mainTable').DataTable().clear().destroy();
+    }
+
+    const table = $('#mainTable').DataTable({
+      paging: true,
+      pageLength: 10,
+      lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"] ],
+      fixedHeader: true,
+      scrollX: true,
+      scrollCollapse: true,
+      language: {
+        search: "ค้นหา:",
+        lengthMenu: "แสดง _MENU_ รายการ",
+        info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+        infoEmpty: "ไม่มีข้อมูล",
+        zeroRecords: "ไม่พบข้อมูลที่ตรงกัน",
+        paginate: {
+          first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า"
+        }
+      },
+      footerCallback: function () {
+        // ทำให้ tfoot ไม่ขยับเวลา filter
+        $('#mainTable tfoot').css('display', 'table-footer-group');
+      }
+    });
+
+    table.on('draw', function () {
+      table.fixedHeader.adjust();
+    });
+
+  } catch (err) {
+    console.error("โหลดข้อมูลผิดพลาด:", err);
+  }
+}
+
+fetchData();
+</script>
+</body>
+</html>

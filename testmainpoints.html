@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายงานผลกองทุนพัฒนาบทบาทสตรี</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Sarabun', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(to bottom right, #ffe6f0, #ffd1e6);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+.container {
+  width: 100%;
+  max-width: 1400px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.25);
+  position: relative;
+}
+.logos-top {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+.logos-top img { height: 55px; }
+
+.header-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+#reportInfo {
+  flex: 1;
+  text-align: center;
+  color: #880e4f;
+  font-weight: bold;
+  margin-top: 40px;
+  line-height: 1.6em;
+}
+#reportDate {
+  flex-basis: 100%;
+  text-align: right;
+  color: #880e4f;
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-top: 5px;
+}
+
+/* toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.left-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.left-tools button {
+  background-color: #f8bbd0;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #880e4f;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+.left-tools button:hover { background-color: #f48fb1; }
+.left-tools img { height: 18px; }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-bar select, .filter-bar input {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #f48fb1;
+  font-family: 'Sarabun';
+  font-size: 0.9rem;
+}
+#downloadBtn {
+  background-color: #f8bbd0;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #880e4f;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#downloadBtn:hover { background-color: #f48fb1; }
+
+/* table */
+.table-wrapper {
+  overflow: auto;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(233,30,99,0.1);
+  background: white;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+th, td {
+  border: 1px solid #c97a9b;
+  padding: 6px 8px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+thead th {
+  background-color: #f8bbd0;
+  color: #880e4f;
+  font-weight: 700;
+  border: 1.5px solid #b36a84;
+  z-index: 5;
+}
+thead tr:nth-child(1) th { position: sticky; top: 0; }
+thead tr:nth-child(2) th { position: sticky; top: 32px; }
+
+  
+thead tr:last-child th { border-bottom: 2.5px solid #880e4f; }
+tr:nth-child(even) td { background-color: rgba(255,182,193,0.12); }
+tr:nth-child(odd) td { background-color: rgba(255,192,203,0.05); }
+.empty-row td {
+  text-align: center;
+  padding: 15px;
+  font-style: italic;
+  color: #c62828;
+}
+
+/* search + icons */
+.search-wrap { display:flex; gap:10px; align-items:center; }
+.icon-small { width:20px; height:20px; display:inline-block; }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="logos-top">
+    <img src="https://i.postimg.cc/507bjy9Z/cdd.png" alt="CDD Logo" />
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Women Fund Logo" />
+  </div>
+
+  <div class="header-block">
+    <div id="reportInfo">กำลังโหลดข้อมูลรายงาน...</div>
+    <div id="reportDate"></div>
+  </div>
+
+  <!-- toolbar -->
+  <div class="toolbar">
+    <div class="left-tools">
+      <button onclick="window.location.href='Menu.html'">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="home"> กลับสู่เมนูหลัก
+      </button>
+    </div>
+
+    <div class="filter-bar">
+      <label>เลือกเดือน:</label>
+      <select id="sheetSelect" onchange="onSheetChange()">
+        <option>กำลังโหลด...</option>
+      </select>
+
+      <div class="search-wrap">
+        🔍 <input type="text" id="filterInput" placeholder="ค้นหาข้อมูล... เช่น ชื่อจังหวัด หรือคะแนน">
+      </div>
+
+      <button id="downloadBtn" onclick="downloadExcel()">📥 ดาวน์โหลด Excel</button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="dataTable">
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody">
+        <tr class="empty-row"><td colspan="30">กำลังโหลดข้อมูล...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SheetJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+/*
+  IMPORTANT:
+  - เปลี่ยนค่า API_URL ให้เป็น Web App URL ที่ Deploy จาก Apps Script (Code.gs) ด้านบน
+    ตัวอย่าง: const API_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+*/
+const API_URL = 'https://script.google.com/macros/s/AKfycbwlH8Smpn_snzR7K8RTURfMxNpg7l-ucuRGwDeMRKl-zvRElclqX6ywt_8ZqkIbXxGO/exec'; // <-- แก้ตรงนี้ก่อนใช้งาน
+
+let currentSheet = '';
+const START_HEADER_ROW = 3;  // Header 1
+const END_HEADER_ROW = 4;    // Header 2
+const START_BODY_ROW = 5;    // Data row
+  
+// โหลดรายชื่อชีตอัตโนมัติ
+async function loadSheetList() {
+  try {
+    const res = await fetch(`${API_URL}?action=listSheets`);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error || 'ไม่สามารถโหลดรายชื่อชีตได้');
+    const sel = document.getElementById('sheetSelect');
+    sel.innerHTML = '';
+    json.sheets.forEach((name, idx) => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+      if (idx === 0) currentSheet = name;
+    });
+    // ตั้งค่าเริ่มต้นเป็น sheet แรก (หรือชื่อ default)
+    if (!currentSheet && json.sheets.length) currentSheet = json.sheets[0];
+    // โหลด sheet แรก
+    if (currentSheet) loadSheet(currentSheet);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('reportInfo').textContent = '❌ ไม่สามารถโหลดรายการชีต';
+  }
+}
+
+function onSheetChange() {
+  const sel = document.getElementById('sheetSelect');
+  currentSheet = sel.value;
+  loadSheet(currentSheet);
+}
+
+// โหลดข้อมูล sheet ที่ระบุ
+async function loadSheet(sheetName) {
+  const infoEl = document.getElementById('reportInfo');
+  const dateEl = document.getElementById('reportDate');
+  const thead = document.getElementById('tableHead');
+  const tbody = document.getElementById('tableBody');
+
+  infoEl.innerHTML = 'กำลังโหลดข้อมูลรายงาน...';
+  thead.innerHTML = '';
+  tbody.innerHTML = `<tr class="empty-row"><td colspan="30">กำลังโหลดข้อมูล...</td></tr>`;
+
+  try {
+    const res = await fetch(`${API_URL}?sheetName=${encodeURIComponent(sheetName)}`);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+
+    const { data, merged } = json;
+    if (!data || !data.length) throw new Error('ไม่พบข้อมูลในชีต');
+
+    // ส่วน header บนสุด (นำ 2 บรรทัดแรกมาแสดงเหนือหัวตาราง)
+    const topHeaderRows = data.slice(0, START_HEADER_ROW);
+    infoEl.innerHTML = topHeaderRows.map(r => r.join(' ')).slice(0,2).join('<br>');
+    // ข้อมูล ณ วันที่ (แถวที่ 3 ใน sheet ตามตัวอย่างของคุณ)
+    dateEl.textContent = data[2] ? data[2].join(' ').trim() : '';
+
+    // เตรียม header table (แถว START_HEADER_ROW .. END_HEADER_ROW)
+    const headerRows = data.slice(START_HEADER_ROW, END_HEADER_ROW + 1);
+   const headerMerged = merged.filter(m =>
+  m.row >= START_HEADER_ROW && m.row <= END_HEADER_ROW
+).map(m => ({
+  row: m.row - START_HEADER_ROW,
+  col: m.col,
+  width: m.width,
+  height: m.height
+}));
+
+    thead.innerHTML = applyMergedCells(headerRows, headerMerged, true);
+
+    // body (ตั้งแต่ START_BODY_ROW เป็นต้นไป)
+    const bodyRows = data.slice(START_BODY_ROW);
+    renderTableBody(bodyRows);
+
+    // update theme color - ใช้ชื่อ sheet (สามารถปรับกฏสีได้)
+    updateThemeColorBySheet(sheetName);
+
+  } catch (err) {
+    console.error(err);
+    infoEl.textContent = '❌ เกิดข้อผิดพลาด';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="30">❌ ${err.message}</td></tr>`;
+  }
+}
+
+// สร้าง thead / tbody โดยรองรับ merged cells
+// isHeader: ถ้าเป็น true ให้สร้าง <th> แทน <td>
+function applyMergedCells(cellData, mergedInfo, isHeader=false) {
+  if (!cellData || cellData.length === 0) return '';
+  const rows = cellData.length;
+  const cols = cellData[0].length;
+  const hidden = Array(rows).fill(0).map(()=>Array(cols).fill(false));
+  let html = '';
+  const tag = isHeader ? 'th' : 'td';
+
+  for (let r=0; r<rows; r++) {
+    html += '<tr>';
+    for (let c=0; c<cols; c++) {
+      if (hidden[r][c]) continue;
+      const m = mergedInfo.find(mm => mm.row === r && mm.col === c);
+      let attr = '';
+      if (m && (m.height>1 || m.width>1)) {
+        attr += ` rowspan="${m.height}" colspan="${m.width}"`;
+        // ซ่อนช่องอื่นๆ
+        for (let i=0;i<m.height;i++){
+          for (let j=0;j<m.width;j++){
+            if (i===0 && j===0) continue;
+            if (r+i < rows && c+j < cols) hidden[r+i][c+j] = true;
+          }
+        }
+      }
+      const cellVal = (cellData[r][c] !== undefined && cellData[r][c] !== null) ? cellData[r][c] : '';
+      html += `<${tag}${attr}>${cellVal}</${tag}>`;
+    }
+    html += '</tr>';
+  }
+  return html;
+}
+
+// render body rows (ไม่มี merged cell สำหรับ body ที่ซับซ้อน)
+function renderTableBody(rows) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  rows.forEach(row => {
+    let tr = '<tr>';
+    row.forEach(cell => {
+      const value = (typeof cell === 'number') ? cell.toLocaleString('th-TH') : (cell || '');
+      tr += `<td>${value}</td>`;
+    });
+    tr += '</tr>';
+    tbody.innerHTML += tr;
+  });
+}
+
+// เปลี่ยนธีมสีโดยง่าย: sheet name contains '68' -> pink, if contains '69' and wants purple etc.
+// คุณสามารถปรับกฎนี้ได้ตามต้องการ
+function updateThemeColorBySheet(sheetName) {
+  const ths = document.querySelectorAll("thead th");
+  const header = document.getElementById("reportInfo");
+  const date = document.getElementById("reportDate");
+  const downloadBtn = document.getElementById("downloadBtn");
+  // default pink
+  let mainColor = "#f8bbd0", darkColor = "#880e4f", bg = "linear-gradient(to bottom right, #ffe6f0, #ffd1e6)";
+  // ถ้าชื่อชีตมีคำว่า '69' ให้เปลี่ยนเป็นม่วงตัวอย่าง (คุณขอให้สีไตรมาส3-4 เป็นม่วง)
+  if (/69/.test(sheetName)) {
+    mainColor = "#e1bee7"; darkColor = "#6a1b9a";
+    bg = "linear-gradient(to bottom right, #f3e5f5, #e1bee7)";
+  }
+  document.body.style.background = bg;
+  header.style.color = darkColor;
+  date.style.color = darkColor;
+  downloadBtn.style.backgroundColor = mainColor;
+  downloadBtn.style.color = darkColor;
+  ths.forEach(th => { th.style.backgroundColor = mainColor; th.style.color = darkColor; });
+}
+
+// ค้นหา filter
+document.getElementById('filterInput').addEventListener('keyup', function() {
+  const keyword = this.value.toLowerCase();
+  const rows = document.querySelectorAll('#tableBody tr');
+  rows.forEach(r => {
+    const text = r.innerText.toLowerCase();
+    r.style.display = text.includes(keyword) ? '' : 'none';
+  });
+});
+
+// ดาวน์โหลด Excel (SheetJS) — พยายามแมป header styling (สี,ตัวหนา) ตาม theme ปัจจุบัน
+async function downloadExcel() {
+  const table = document.getElementById('dataTable');
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.table_to_sheet(table);
+
+  // ธีมสีตาม sheetName (แทนสี header)
+  let colorHeader = /69/.test(currentSheet) ? "E1BEE7" : "F8BBD0";
+  let colorText = /69/.test(currentSheet) ? "6A1B9A" : "880E4F";
+
+  // Add simple style for first few header rows (SheetJS styling)
+  if (ws['!ref']) {
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let R = 0; R <= END_HEADER_ROW; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+        if (!ws[cellRef]) continue;
+        ws[cellRef].s = {
+          fill: { fgColor: { rgb: colorHeader } },
+          font: { bold: true, color: { rgb: colorText } },
+          alignment: { horizontal: "center", vertical: "center" },
+          border: {
+            top: { style: "thin", color: { rgb: "B36A84" } },
+            left: { style: "thin", color: { rgb: "B36A84" } },
+            right: { style: "thin", color: { rgb: "B36A84" } },
+            bottom: { style: "thin", color: { rgb: "B36A84" } }
+          }
+        };
+      }
+    }
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, currentSheet || 'Report');
+  const fileName = `ผลการดำเนินงาน_${currentSheet || 'report'}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+// เริ่มต้น
+window.onload = () => {
+  loadSheetList();
+};
+</script>
+</body>
+</html>
