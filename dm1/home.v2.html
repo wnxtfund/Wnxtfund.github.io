@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDD Women Fund Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-pink: #E02B72;
+            --light-pink-bg: #FFF0F5;
+            --text-dark: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-pink-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 40px;
+            position: relative;
+        }
+
+        /* --- 1. ส่วนหัว (Header) --- */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .header-title-container {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .main-title {
+            color: var(--primary-pink);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sub-title-eng {
+            color: var(--primary-pink);
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: -5px;
+            display: block;
+        }
+
+        .sub-title-th {
+            color: #555;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .logos-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .logo-right-img {
+            height: 50px;
+            width: auto;
+        }
+
+        /* --- 2. โครงสร้างเมนูวงกลมแบบเต็มแผ่น 4 ส่วน (4-Item Pie Menu Wheel) --- */
+        .menu-wheel-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* ปรับขนาดสัดส่วนวงกลมให้กระชับพอดีตา */
+            margin: 40px auto;
+            aspect-ratio: 1 / 1;
+            display: grid;
+            place-items: center;
+        }
+
+        .donut-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: grid;
+            grid-template-areas: "layer";
+            overflow: hidden; /* ล็อคให้เป็นวงกลมสมบูรณ์ */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        }
+
+        .menu-item {
+            grid-area: layer;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: var(--text-dark);
+            
+            /* ตัดสัดส่วนกล่องเหลี่ยมให้เหลือแฉกสามเหลี่ยม 90 องศาพุ่งจากศูนย์กลาง */
+            clip-path: polygon(50% 50%, 0% 0%, 100% 0%); 
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 55px; /* ดันเนื้อหาให้อยู่ในจุดที่เหมาะสมของแผ่นพาย */
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 190px; /* ขนาดพื้นที่กำลังดี ไม่ชิดขอบพายเกินไป */
+        }
+
+        .menu-icon {
+            width: 52px;
+            height: 52px;
+            margin-bottom: 12px;
+            object-fit: contain;
+            background: #ffffff;
+            padding: 9px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .menu-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .menu-desc {
+            font-size: 11px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        /* จัดมุมเฉียงกากบาท 4 ทิศทาง (ชิ้นละ 90 องศา) พร้อมดึง Content กลับมาตั้งตรง */
+        /* ชิ้นที่ 1: การเงินและลูกหนี้ (ขวาบน: 45°) */
+        .item-orange {
+            background-color: #FFF2D9;
+            transform: rotate(45deg);
+        }
+        .item-orange .menu-content { transform: rotate(-45deg) translateY(-5px); }
+
+        /* ชิ้นที่ 2: ศูนย์ช่วยเหลือและองค์ความรู้ (ขวาล่าง: 135°) */
+        .item-blue {
+            background-color: #E3F5FF;
+            transform: rotate(135deg);
+        }
+        .item-blue .menu-content { transform: rotate(-135deg) translateY(-5px); }
+
+        /* ชิ้นที่ 3: บริหารจัดการและกำกับติดตาม (ซ้ายล่าง: 225°) */
+        .item-green {
+            background-color: #E2F9F3;
+            transform: rotate(225deg);
+        }
+        .item-green .menu-content { transform: rotate(-225deg) translateY(-5px); }
+
+        /* ชิ้นที่ 4: ตัวชี้วัดและการติดตามผล (ซ้ายบน: 315°) */
+        .item-pink {
+            background-color: #FFE6EE;
+            transform: rotate(315deg);
+        }
+        .item-pink .menu-content { transform: rotate(-315deg) translateY(-5px); }
+
+
+        /* Hover Effects: เมื่อดึงชิ้นเมนูใด ชิ้นนั้นจะยื่นตัวออกจากศูนย์กลางตามแนวองศา */
+        .item-orange:hover { transform: rotate(45deg)  translateY(-15px); z-index: 5; }
+        .item-blue:hover   { transform: rotate(135deg) translateY(-15px); z-index: 5; }
+        .item-green:hover  { transform: rotate(225deg) translateY(-15px); z-index: 5; }
+        .item-pink:hover   { transform: rotate(315deg) translateY(-15px); z-index: 5; }
+
+
+        /* --- 3. แถบปุ่มด้านล่าง (Footer Button) --- */
+        .footer-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #E02B72 0%, #F6418C 100%);
+            color: white;
+            padding: 16px 30px;
+            border-radius: 18px;
+            text-decoration: none;
+            max-width: 750px;
+            margin: 25px auto 0 auto;
+            box-shadow: 0 8px 20px rgba(224, 43, 114, 0.2);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .footer-button:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-icon {
+            width: 35px;
+            height: 35px;
+        }
+
+        .footer-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .footer-text p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .footer-arrow {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Responsive: บนหน้าจอสมาร์ทโฟน จะคลี่การจัดวางออกมาเป็นแถวแนวตั้งเรียงลงมาให้อ่านง่าย */
+        @media (max-width: 650px) {
+            .header-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .logos-right {
+                order: -1;
+            }
+            .main-title { font-size: 26px; }
+            .sub-title-eng { font-size: 18px; }
+            
+            .menu-wheel-wrapper {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                gap: 15px;
+                margin: 20px auto;
+            }
+            .donut-ring {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                gap: 12px;
+                overflow: visible;
+                box-shadow: none;
+            }
+            .menu-item {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-radius: 16px !important;
+                clip-path: none !important;
+                transform: none !important;
+                padding: 15px 20px;
+            }
+            .menu-item:hover {
+                transform: translateY(-3px) !important;
+            }
+            .menu-content {
+                flex-direction: row;
+                text-align: left;
+                width: 100%;
+                gap: 15px;
+                transform: none !important;
+            }
+            .menu-icon { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <header class="header-section">
+            <div class="header-title-container">
+                <h1 class="main-title">CDD Women Fund</h1>
+                <span class="sub-title-eng">— Dashboard —</span>
+                <p class="sub-title-th">ฐานข้อมูล ระดับประเทศ รายจังหวัด ลูกหนี้กองทุนพัฒนาบทบาทสตรีระดับประเทศ</p>
+            </div>
+            
+            <div class="logos-right">
+                <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
+                <img class="logo-right-img" src="img/logo.png" alt="Gov Logo 2">
+            </div>
+        </header>
+
+        <div class="menu-wheel-wrapper">
+
+            <div class="donut-ring">
+
+                <a href="finance_debtors.html" class="menu-item item-orange">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/moneybag.png" alt="Icon">
+                        <div class="menu-title">การเงินและลูกหนี้</div>
+                        <div class="menu-desc">ข้อมูลการเบิกจ่าย การชำระคืนเงินต้น หนี้ค้างชำระ และดอกเบี้ยผิดนัด</div>
+                    </div>
+                </a>
+
+                <a href="" class="menu-item item-blue">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/chat.png" alt="Icon">
+                        <div class="menu-title">ศูนย์ช่วยเหลือ<br>และองค์ความรู้</div>
+                        <div class="menu-desc">ถาม-ตอบปัญหา<br>และคลังความรู้ที่เกี่ยวข้อง</div>
+                    </div>
+                </a>
+
+                <a href="" class="menu-item item-green">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/checklist.png" alt="Icon">
+                        <div class="menu-title">บริหารจัดการและ<br>กำกับติดตาม</div>
+                        <div class="menu-desc">มาตรการ แนวทาง<br>และเครื่องมือบริหารจัดการหนี้</div>
+                    </div>
+                </a>
+
+                <a href="" class="menu-item item-pink">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/arrow.png" alt="Icon">
+                        <div class="menu-title">ตัวชี้วัดและ<br>การติดตามผล</div>
+                        <div class="menu-desc">ตัวชี้วัด ปฏิบัติราชการ<br>ประเด็นเน้นย้ำ</div>
+                    </div>
+                </a>
+
+            </div>
+
+        </div>
+
+        <a href="" class="footer-button">
+            <div class="footer-left">
+                <img class="footer-icon" src="img/perm.png" alt="Dashboard Icon">
+                <div class="footer-text">
+                    <h3>CDDWomen Dashboard</h3>
+                    <p>Dashboard สำหรับผู้บริหาร</p>
+                </div>
+            </div>
+            <div class="footer-arrow">❯</div>
+        </a>
+
+    </div>
+
+</body>
+</html>
