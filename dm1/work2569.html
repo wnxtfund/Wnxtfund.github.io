@@ -34,7 +34,7 @@
         .dashboard-container {
             background: #ffffff;
             width: 100%;
-            max-width: 950px; /* ขยายขนาดกรอบเล็กน้อยเพื่อให้สอดรับกับเมนู 6 ช่อง */
+            max-width: 950px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             padding: 40px;
@@ -92,11 +92,11 @@
             width: auto;
         }
 
-        /* --- 2. โครงสร้างเมนูวงกลมแบบ 6 ส่วน (6-Item Pie Menu Wheel) --- */
+        /* --- 2. โครงสร้างเมนูวงกลมแบบ 6 ส่วน (ปรับแก้แกนเอียง) --- */
         .menu-wheel-wrapper {
             position: relative;
             width: 100%;
-            max-width: 540px; /* ปรับขนาดความกว้างวงล้อให้เหมาะสมเพื่อให้อ่านง่ายขึ้น */
+            max-width: 550px; 
             margin: 40px auto;
             aspect-ratio: 1 / 1;
             display: grid;
@@ -121,14 +121,14 @@
             text-decoration: none;
             color: var(--text-dark);
             
-            /* ตัดแผ่นพายให้เป็นมุม 60 องศาเป๊ะๆ (พุ่งจากจุดกึ่งกลาง 50% 50%) */
+            /* ตัดแผ่นพายขนาด 60 องศาให้สมมาตรจากจุดศูนย์กลาง */
             clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 28.87%); 
             
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 45px; /* ดันคอนเทนต์ขึ้นมาให้อยู่ในระยะสายตาที่พอดี */
+            padding-top: 40px; /* ขยับระยะคอนเทนต์ให้พอดีพื้นที่แผ่นพาย */
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
         }
@@ -138,13 +138,13 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            width: 155px; /* บีบความกว้างกล่องข้อความลงเพื่อให้พอดีชิ้นพายที่แคบขึ้น */
+            width: 130px; /* ปรับลดหน้ากว้างกล่องให้กระชับเข้ากับชิ้นงาน 60 องศา ไม่ให้ตกขอบ */
         }
 
         .menu-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 10px;
+            width: 44px;
+            height: 44px;
+            margin-bottom: 8px;
             object-fit: contain;
             background: #ffffff;
             padding: 8px;
@@ -153,47 +153,50 @@
         }
 
         .menu-title {
-            font-size: 13.5px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 12.5px; /* ปรับขนาดฟอนต์ให้กระชับพอดี ไม่บีบตัวอักษรเกินไป */
+            font-weight: 700;
+            color: #222222;
+            margin-bottom: 4px;
             line-height: 1.3;
         }
 
         .menu-desc {
-            font-size: 10.5px;
-            color: #555;
-            line-height: 1.4;
+            font-size: 10px;
+            color: #666666;
+            line-height: 1.3;
         }
 
-        /* คำนวณการหมุน 6 ทิศทาง (ชิ้นละ 60 องศา) 
-           พร้อมตั้งค่าการดึง Content กลับมาตั้งตรง (ด้วยมุมหักลบเฉลี่ยที่ศูนย์กลางพาย: -30deg)
+        /* คำนวณองศาหมุนแผ่นพาย (ชิ้นละ 60°) 
+          และการดึงข้อความกลับ (ด้วยมุมลบที่ผกผันตามทิศทางร่วมกับตำแหน่งศูนย์กลางแผ่นชิ้นงาน: -30deg)
+          เพื่อให้ข้อความทุกชิ้นตั้งตรงในแนวระนาบระนาบสายตาปกติ
         */
         
-        /* ชิ้นที่ 1: ผลการดำเนินงานทุนหมุนเวียน 2568 (0° - 60°) */
+        /* ชิ้นที่ 1: ผลการดำเนินงานทุนหมุนเวียน (0° - 60°) */
         .item-1 { background-color: #FFF2D9; transform: rotate(0deg); }
-        .item-1 .menu-content { transform: rotate(30deg) translateY(-5px); }
+        .item-1 .menu-content { transform: rotate(30deg) translate(15px, 0px); }
 
-        /* ชิ้นที่ 2: ตัวชี้วัดปฏิบัติราชการ 2568 (60° - 120°) */
+        /* ชิ้นที่ 2: ร้อยละการเบิกจ่ายฯ (60° - 120°) */
         .item-2 { background-color: #E3F5FF; transform: rotate(60deg); }
-        .item-2 .menu-content { transform: rotate(-30deg) translateY(-5px); }
+        .item-2 .menu-content { transform: rotate(-30deg) translate(0px, 15px); }
 
-        /* ชิ้นที่ 3: Dashboard แยกจังหวัด 2568 (120° - 180°) */
+        /* ชิ้นที่ 3: ตัวชี้วัดการปฏิบัติราชการ (120° - 180°) */
         .item-3 { background-color: #E2F9F3; transform: rotate(120deg); }
-        .item-3 .menu-content { transform: rotate(-90deg) translateY(-5px); }
+        .item-3 .menu-content { transform: rotate(-90deg) translate(-15px, 10px); }
 
-        /* ชิ้นที่ 4: ผลการดำเนินงานทุนหมุนเวียน 2569 (180° - 240°) */
+        /* ชิ้นที่ 4: ร้อยละการชำระคืนเงินต้น (180° - 240°) */
         .item-4 { background-color: #FFE6EE; transform: rotate(180deg); }
-        .item-4 .menu-content { transform: rotate(-150deg) translateY(-5px); }
+        .item-4 .menu-content { transform: rotate(-150deg) translate(-15px, -10px); }
 
-        /* ชิ้นที่ 5: ตัวชี้วัดปฏิบัติราชการ 2569 (240° - 300°) */
+        /* ชิ้นที่ 5: ประเด็นเน้นย้ำ 5+1 (240° - 300°) */
         .item-5 { background-color: #F1EAFF; transform: rotate(240deg); }
-        .item-5 .menu-content { transform: rotate(-210deg) translateY(-5px); }
+        .item-5 .menu-content { transform: rotate(-210deg) translate(0px, -20px); }
 
-        /* ชิ้นที่ 6: Dashboard แยกจังหวัด 2569 (300° - 360°) */
+        /* ชิ้นที่ 6: ร้อยละหนี้ค้างชำระ (300° - 360°) */
         .item-6 { background-color: #E6F7FF; transform: rotate(300deg); }
-        .item-6 .menu-content { transform: rotate(-270deg) translateY(-5px); }
+        .item-6 .menu-content { transform: rotate(-270deg) translate(15px, -10px); }
 
-        /* Hover Effects: ชิ้นงานยื่นตัวออกมาตามแนวเฉียงทำมุมของตัวเอง */
+
+        /* Hover Effects: ยื่นตัวขยายออกจากศูนย์กลางตามทิศทางมุมของแผ่นพายชิ้นนั้นๆ */
         .item-1:hover { transform: rotate(0deg)   translateY(-15px); z-index: 5; }
         .item-2:hover { transform: rotate(60deg)  translateY(-15px); z-index: 5; }
         .item-3:hover { transform: rotate(120deg) translateY(-15px); z-index: 5; }
@@ -201,7 +204,8 @@
         .item-5:hover { transform: rotate(240deg) translateY(-15px); z-index: 5; }
         .item-6:hover { transform: rotate(300deg) translateY(-15px); z-index: 5; }
 
-        /* Responsive: คลี่ออกมาเป็นแนวตั้งสวยงามเมื่อเปิดบนสมาร์ทโฟน */
+
+        /* Responsive สำหรับมือถือ: คลี่เป็นลิสต์แนวตั้งให้อ่านและกดง่าย ไม่ซ้อนกัน */
         @media (max-width: 650px) {
             .header-section {
                 flex-direction: column;
@@ -281,48 +285,48 @@
                 <a href="" class="menu-item item-1">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/moneybag.png" alt="Icon">
-                        <div class="menu-title">ผลการดำเนินงานทุนหมุนเวียน</div>
-                        <div class="menu-desc">ผลการดำเนินงานทุนหมุนเวียน<br>ในปี 2569</div>
+                        <div class="menu-title">ผลการดำเนินงาน<br>ทุนหมุนเวียน</div>
+                        <div class="menu-desc">ผลการดำเนินงานปี 2569</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-2">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/chat.png" alt="Icon">
-                        <div class="menu-title">ร้อยละการเบิกจ่ายเงินทุนหมุนเวียน</div>
-                        <div class="menu-desc">ร้อยละการเบิกจ่ายเงินทุนหมุนเวียน<br>ในปี 2569</div>
+                        <div class="menu-title">ร้อยละการเบิกจ่าย<br>เงินทุนหมุนเวียน</div>
+                        <div class="menu-desc">การเบิกจ่ายในปี 2569</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-3">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                        <div class="menu-title">ตัวชี้วัดการปฏิบัติราชการ</div>
-                        <div class="menu-desc">ตัวชี้วัดการปฏิบัติราชการ<br>ในปี 2569</div>
+                        <div class="menu-title">ตัวชี้วัด<br>การปฏิบัติราชการ</div>
+                        <div class="menu-desc">ตัวชี้วัดในปี 2569</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-4">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/moneybag.png" alt="Icon">
-                        <div class="menu-title">ร้อยละการชำระคืนเงินต้น</div>
-                        <div class="menu-desc">ร้อยละการชำระคืนเงินต้น<br>ในปี 2569</div>
+                        <div class="menu-title">ร้อยละการชำระ<br>คืนเงินต้น</div>
+                        <div class="menu-desc">การชำระคืนปี 2569</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-5">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/chat.png" alt="Icon">
-                        <div class="menu-title">ประเด็นเน้นย้ำ 5+1</div>
-                        <div class="menu-desc">ประเด็นเน้นย้ำ 5+1 <br>ในปี 2569</div>
+                        <div class="menu-title">ประเด็นเน้นย้ำ<br>5+1</div>
+                        <div class="menu-desc">ประเด็นสำคัญปี 2569</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-6">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                        <div class="menu-title">ร้อยละหนี้ค้างชำระ</div>
-                        <div class="menu-desc">ร้อยละหนี้ค้างชำระ<br>ในปี 2569</div>
+                        <div class="menu-title">ร้อยละหนี้<br>ค้างชำระ</div>
+                        <div class="menu-desc">หนี้ค้างชำระปี 2569</div>
                     </div>
                 </a>
 
