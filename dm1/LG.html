@@ -1,417 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="ThemeBucket">
-    <link rel="shortcut icon" href="images/twitter_corner_blue.png">
-
     <title>TWF Linkage LM</title>
-</head>
-<!--Core CSS -->
-<link href="bs3/css/bootstrap.min.css" rel="stylesheet">
-<link href="css/bootstrap-reset.css" rel="stylesheet">
-<link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
 
-<link rel="stylesheet" href="css/bootstrap-switch.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-fileupload/bootstrap-fileupload.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-datepicker/css/datepicker.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-timepicker/css/timepicker.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-colorpicker/css/colorpicker.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
-<link rel="stylesheet" type="text/css" href="js/bootstrap-datetimepicker/css/datetimepicker.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery-multi-select/css/multi-select.css" />
-<link rel="stylesheet" type="text/css" href="js/jquery-tags-input/jquery.tagsinput.css" />
-<link rel="stylesheet" type="text/css" href="js/select2/select2.css" />
+    <!-- Bootstrap CSS -->
+    <link href="bs3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-reset.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet" />
 
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="css/bootstrap-switch.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-wysihtml5/bootstrap-wysihtml5.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-timepicker/css/timepicker.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-colorpicker/css/colorpicker.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-daterangepicker/daterangepicker-bs3.css" />
+    <link rel="stylesheet" type="text/css" href="js/bootstrap-datetimepicker/css/datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery-multi-select/css/multi-select.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery-tags-input/jquery.tagsinput.css" />
+    <link rel="stylesheet" type="text/css" href="js/select2/select2.css" />
 
-<!-- Custom styles for this template -->
-<link href="css/style.css" rel="stylesheet">
-<link href="css/style-responsive.css" rel="stylesheet" />
-<style type="text/css">
-    .loader-div {
-        display: none;
-        position: fixed;
-        margin: 0px;
-        padding: 0px;
-        right: 0px;
-        top: 0px;
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        z-index: 30001;
-        opacity: 0.8;
-    }
+    <!-- Custom styles -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
 
-    .loader-img {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: auto;
-    }
-</style>
-<script type="text/javascript">
-
-    function show_loader() {
-        $(".loader-div").show(); // show loader
-    }
-
-
-    document.onkeydown = chkEvent
-    function chkEvent(e) {
-        var keycode;
-        if (window.event) keycode = window.event.keyCode; //*** for IE ***//
-        else if (e) keycode = e.which; //*** for Firefox ***//
-        if (keycode == 13) {
-            return false;
+    <style>
+        .loader-div {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            opacity: 0.8;
+            z-index: 30001;
         }
-    }
-
-
-    function CheckMember13(condition_value, change_select_id) {
-
-
-        var error_id13 = 0;
-        if (document.getElementById(change_select_id).value.length != 13) {
-            alert('รหัสประชาชนไม่ครบ 13 หลักค่ะ');
-            error_id13++;
-            document.getElementById(change_select_id).value = '';
-            document.getElementById(change_select_id).focus();
+        .loader-img {
+            position: absolute;
+            top: 0; bottom: 0; left: 0; right: 0;
+            margin: auto;
         }
-        else {
-            for (i = 0, sum = 0; i < 12; i++) {
-                sum += parseFloat(condition_value.charAt(i)) * (13 - i);
+    </style>
+
+    <!-- Load jQuery first -->
+    <script src="js/jquery-1.8.3.min.js"></script>
+
+    <script>
+        function show_loader() {
+            $(".loader-div").show();
+        }
+
+        document.onkeydown = function(e) {
+            var keycode = e ? e.which : window.event.keyCode;
+            if (keycode == 13) return false; // ป้องกัน Enter submit
+        };
+
+        function CheckMember13(condition_value, change_select_id) {
+            var error_id13 = 0;
+
+            if (condition_value.length != 13) {
+                alert('รหัสประชาชนไม่ครบ 13 หลักค่ะ');
+                error_id13++;
+                document.getElementById(change_select_id).value = '';
+                document.getElementById(change_select_id).focus();
+                return;
             }
-            if ((11 - sum % 11) % 10 != parseFloat(condition_value.charAt(12))) {
+
+            // ตรวจ checksum รหัสประชาชน
+            var sum = 0;
+            for (var i = 0; i < 12; i++) {
+                sum += parseInt(condition_value.charAt(i)) * (13 - i);
+            }
+            if ((11 - sum % 11) % 10 != parseInt(condition_value.charAt(12))) {
                 alert('รหัสประชาชนไม่ถูกต้องค่ะ');
                 error_id13++;
                 document.getElementById(change_select_id).value = '';
                 document.getElementById(change_select_id).focus();
+                return;
             }
-        }
 
-        if (error_id13 == 0) {
-            access = '';
-            $.ajax({
-                url: "chk_id2_A.php",
-                data: "chkid=" + condition_value,
-                type: "POST",
-                async: false,
-                success: function (data, status) {
-                    var result = data.split(",");
-                    //flag = result[0];
-                    //ดึงข้อมูล บัตร ปชช.
-                    var data01 = result[0];
-                    var data02 = result[1];
-                    var data03 = result[2];
-                    var data04 = result[3];
-                    var data05 = result[4];
-                    var data06 = result[5];
-                    var data07 = result[6];
-                    var data08 = result[7];
-                    var data09 = result[8];
-                    var data10 = result[9];
-                    var data11 = result[10];
-                    var data12 = result[11];
-                    var data13 = result[12];
-                    var data14 = result[13];
-                    var data15 = result[14];
-                    var data16 = result[15];
-                    var data17 = result[16];
-                    var data18 = result[17];
-                    // เพิ่มเช็ค
-                    console.log(data01);
-                    console.log(data01.length);
-                    if (data01.length >= 10) {
-                        document.regisform.Title.value = '';
-                        var tokenst = 'ไม่พบ token สำหรับตรวจสอบ';
-                        alert(tokenst);
-                    } else {
+            if (error_id13 == 0) {
+                $.ajax({
+                    url: "chk_id2_A.php",
+                    type: "POST",
+                    data: { chkid: condition_value },
+                    dataType: "text",
+                    async: false,
+                    success: function(data) {
+                        var result = data.split(",");
+                        var data01 = result[0];
+
+                        if (!data01 || data01.length >= 10) {
+                            document.regisform.Title.value = '';
+                            document.getElementById('btnSend').style.display = 'none';
+                            alert('ไม่พบ token สำหรับตรวจสอบ');
+                            return;
+                        }
+
                         document.regisform.Title.value = data01;
                         document.getElementById('btnSend').style.display = 'block';
+
+                        document.regisform.Fname.value = result[1] || '';
+                        document.regisform.Lname.value = result[2] || '';
+                        document.regisform.BIRTHDAY.value = result[3] || '';
+                        document.regisform.Age.value = result[4] || '';
+                        document.regisform.SexN.value = result[5] || '';
+                        document.regisform.SexC.value = result[6] || '';
+                        document.regisform.StatusPer.value = result[7] || '';
+                        document.regisform.StatusPerCode.value = result[8] || '';
+                        document.regisform.houseNo.value = result[9] || '';
+                        document.regisform.villageNo.value = result[10] || '';
+                        document.regisform.roadDesc.value = result[11] || '';
+                        document.regisform.alleyDesc.value = result[12] || '';
+                        document.regisform.subdistrictDesc.value = result[13] || '';
+                        document.regisform.districtDesc.value = result[14] || '';
+                        document.regisform.provinceDesc.value = result[15] || '';
+                        document.regisform.rcodeDesc.value = result[16] || '';
+                        document.regisform.houseTypeDesc.value = result[17] || '';
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert('เกิดข้อผิดพลาด\nStatus: ' + status + '\nError: ' + error);
                     }
-
-
-
-
-                    document.regisform.Fname.value = data02;
-                    document.regisform.Lname.value = data03;
-                    document.regisform.BIRTHDAY.value = data04;
-                    document.regisform.Age.value = data05;
-                    document.regisform.SexN.value = data06;
-                    document.regisform.SexC.value = data07;
-                    document.regisform.StatusPer.value = data08;
-                    document.regisform.StatusPerCode.value = data09;
-                    document.regisform.houseNo.value = data10;
-                    document.regisform.villageNo.value = data11;
-                    document.regisform.roadDesc.value = data12;
-                    document.regisform.alleyDesc.value = data13;
-                    document.regisform.subdistrictDesc.value = data14;
-                    document.regisform.districtDesc.value = data15;
-                    document.regisform.provinceDesc.value = data16;
-                    document.regisform.rcodeDesc.value = data17;
-                    document.regisform.houseTypeDesc.value = data18;
-
-
-
-
-
-
-
-
-                },
-                error: function (xhr, status, exception) { alert(status); }
-            });
-
-
-
-
+                });
+            }
         }
-
-    }
-
-
-</script>
+    </script>
+</head>
 
 <body>
-
-    <p>
-        <!-- end Menu -->
-
-        <!-- ตารางรายการจังหวัด -->
-        <!-- page start-->
     <div class="panel-body profile-information">
-        <div class="row">
-            <div class="col-sm-12">
-                <section class="panel">
-                    <header class="panel-heading">
-                        <h2><b>ตรวจสอบข้อมูลสมาชิกจาก Linkage Center <br /></b></h2>
-                    </header>
-                    <div class="panel-body">
-                        <!-- page start-->
-                        <form class="form-horizontal" name="regisform" id="regisform" action="sendlk_update1.php"
-                            method="post">
-                            <div class="col-xs-15">
-                                <table width="80%" border="0" align="center" class="table-responsive">
-
-                                    <tr>
-                                        <td>
-                                            <div class="row">
-                                                <div class="loader-div">
-                                                    <img class="loader-img" src="loading.gif"
-                                                        style="height: 45px;width: auto;" />
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>หมายเลขบัตรประจำตัวประชาชน</h4>
-                                                    <input type="text" placeholder="" style="color: #008;"
-                                                        maxlength="13" class="form-control" id="Idcard" name="Idcard"
-                                                        value="" required="required">
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>&nbsp;</h4>
-                                                    <input id="btnSearch" class="btn btn-primary btn-block"
-                                                        OnClick="CheckMember13(document.getElementById('Idcard').value, 'Idcard');"
-                                                        value="ค้นหา" readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>&nbsp;</h4>
-                                                    <input type="submit" id="btnSend" class="btn btn-success btn-block"
-                                                        style="display: none;" onclick="show_loader()"
-                                                        value="อัพเดตข้อมูลเข้าสู่ระบบ LM" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <h3>----ข้อมูลตามฐานข้อมูลทะเบียนราษฏร์---</h3>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>๑. คำนำหน้า</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="Title" name="Title" value="" readonly>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-xs-6 col-md-4">
-                                                        <h4>๒. ชื่อ</h4>
-                                                        <input type="text" style="color: #008;" class="form-control"
-                                                            id="Fname" name="Fname" value="" required="required"
-                                                            readonly>
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-4">
-                                                        <h4>๓. นามสกุล</h4>
-                                                        <input type="text" style="color: #008;" class="form-control"
-                                                            id="Lname" name="Lname" value="" required="required"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="row">
-                                                <div class="col-xs-3 col-md-3">
-                                                    <h4>๔. วัน/เดือน/ปีเกิด</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="BIRTHDAY" name="BIRTHDAY" value="" required="required"
-                                                        readonly>
-                                                </div>
-
-                                                <div class="col-xs-3 col-md-2">
-                                                    <h4>๕. อายุ</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="Age" name="Age" value="" required="required" readonly>
-                                                </div>
-
-                                                <div class="col-xs-3 col-md-2">
-                                                    <h4>๖. เพศ</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="SexN" name="SexN" value="" required="required" readonly>
-
-                                                </div>
-
-                                                <div class="col-xs-6 col-md-5">
-                                                    <h4>๗. สถานะ</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="StatusPer" name="StatusPer" value="" required="required"
-                                                        readonly>
-
-                                                </div>
-                                                <input type="hidden" style="color: #008;" class="form-control"
-                                                    id="StatusPerCode" name="StatusPerCode" value="" required="required"
-                                                    readonly>
-                                                <input type="hidden" style="color: #008;" class="form-control" id="SexC"
-                                                    name="SexC" value="" required="required" readonly>
-
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="row">
-                                                <h3>---ที่อยู่ตามฐานข้อมูลทะเบียนบ้าน---</h3>
-
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>บ้านเลขที่</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="houseNo" name="houseNo" value="" required="required"
-                                                        readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>หมู่ที่</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="villageNo" name="villageNo" value="" required="required"
-                                                        readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>ถนน</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="roadDesc" name="roadDesc" value="" required="required"
-                                                        readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>ซอย</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="alleyDesc" name="alleyDesc" value="" required="required"
-                                                        readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>ตำบล/แขวง</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="subdistrictDesc" name="subdistrictDesc" value=""
-                                                        required="required" readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>อำเภอ/เขต</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="districtDesc" name="districtDesc" value=""
-                                                        required="required" readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>จังหวัด</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="provinceDesc" name="provinceDesc" value=""
-                                                        required="required" readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>ประเภทบ้าน</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="houseTypeDesc" name="houseTypeDesc" value=""
-                                                        required="required" readonly>
-                                                </div>
-                                                <div class="col-xs-6 col-md-3">
-                                                    <h4>สำนักทะเบียน</h4>
-                                                    <input type="text" style="color: #008;" class="form-control"
-                                                        id="rcodeDesc" name="rcodeDesc" value="" required="required"
-                                                        readonly>
-                                                </div>
-
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                        </form>
-                </section>
-
-            </div>
+        <div class="loader-div">
+            <img class="loader-img" src="loading.gif" style="height:45px;width:auto;">
         </div>
-    </div>
-    <!--  end ตารางรายการจังหวัด -->
-</body>
-<!--Core js-->
-<script src="js/jquery.js"></script>
-<script src="js/jquery-1.8.3.min.js"></script>
-<script src="bs3/js/bootstrap.min.js"></script>
-<script src="js/jquery-ui-1.9.2.custom.min.js"></script>
-<script class="include" type="text/javascript" src="js/jquery.dcjqaccordion.2.7.js"></script>
-<script src="js/jquery.scrollTo.min.js"></script>
-<script src="js/easypiechart/jquery.easypiechart.js"></script>
-<script src="js/jQuery-slimScroll-1.3.0/jquery.slimscroll.js"></script>
-<script src="js/jquery.nicescroll.js"></script>
-<script src="js/jquery.nicescroll.js"></script>
 
-<script src="js/bootstrap-switch.js"></script>
+        <form class="form-horizontal" name="regisform" id="regisform" action="sendlk_update1.php" method="post" onsubmit="show_loader();">
+            <div class="col-xs-12">
+                <h2>ตรวจสอบข้อมูลสมาชิกจาก Linkage Center</h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <h4>หมายเลขบัตรประจำตัวประชาชน</h4>
+                        <input type="text" id="Idcard" name="Idcard" class="form-control" maxlength="13" required>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>&nbsp;</h4>
+                        <input type="button" id="btnSearch" class="btn btn-primary btn-block"
+                               onclick="CheckMember13(document.getElementById('Idcard').value,'Idcard');"
+                               value="ค้นหา">
+                    </div>
+                    <div class="col-md-3">
+                        <h4>&nbsp;</h4>
+                        <input type="submit" id="btnSend" class="btn btn-success btn-block" style="display:none" value="อัพเดตข้อมูลเข้าสู่ระบบ LM">
+                    </div>
+                </div>
 
-<script type="text/javascript" src="js/fuelux/js/spinner.min.js"></script>
-<script type="text/javascript" src="js/bootstrap-fileupload/bootstrap-fileupload.js"></script>
-<script type="text/javascript" src="js/bootstrap-wysihtml5/wysihtml5-0.3.0.js"></script>
-<script type="text/javascript" src="js/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
-<script type="text/javascript" src="js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="js/bootstrap-daterangepicker/moment.min.js"></script>
-<script type="text/javascript" src="js/bootstrap-daterangepicker/daterangepicker.js"></script>
-<script type="text/javascript" src="js/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
-<script type="text/javascript" src="js/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
-<script type="text/javascript" src="js/jquery-multi-select/js/jquery.multi-select.js"></script>
-<script type="text/javascript" src="js/jquery-multi-select/js/jquery.quicksearch.js"></script>
-
-<script type="text/javascript" src="js/bootstrap-inputmask/bootstrap-inputmask.min.js"></script>
-
-<script src="js/jquery-tags-input/jquery.tagsinput.js"></script>
-
-<script src="js/select2/select2.js"></script>
-<script src="js/select-init.js"></script>
-
-
-
-<!--common script init for all pages-->
-<script src="js/scripts.js"></script>
-
-<script src="js/toggle-init.js"></script>
-
-<script src="js/advanced-form.js"></script>
-<!--Easy Pie Chart-->
-<script src="js/easypiechart/jquery.easypiechart.js"></script>
-<!--Sparkline Chart-->
-<script src="js/sparkline/jquery.sparkline.js"></script>
-<!--jQuery Flot Chart-->
-<script src="js/flot-chart/jquery.flot.js"></script>
-<script src="js/flot-chart/jquery.flot.tooltip.min.js"></script>
-<script src="js/flot-chart/jquery.flot.resize.js"></script>
-<script src="js/flot-chart/jquery.flot.pie.resize.js"></script>
-<script src="js/iCheck/jquery.icheck.js"></script>
-
-</html>
+                <h3>----ข้อมูลตามฐานข้อมูลทะเบียนราษฏร์---</h3>
+                <div class="row">
+                    <div class="col-md-2">
+                        <h4>คำนำหน้า</h4>
+                        <input type="text" id="Title" name="Title" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>ชื่อ</h4>
+                        <input type="text" id="Fname" name="Fname" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>นามสกุล</h4>
+                        <input type="text" id="Lname" name="Lname" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <h4>วัน/เดือน/ปีเกิด</h4>
+                        <input type="text" id="BIRTHDAY" name="BIRTHDAY" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>อายุ</h4>
+                        <input type="text" id="Age" name="Age" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>เพศ</h4>
+                        <input type="text" id="SexN" name="SexN" class="form-control" readonly>
+                        <input type="hidden" id="SexC" name="SexC">
+                    </div>
+                    <
