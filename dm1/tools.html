@@ -41,20 +41,20 @@
             position: relative;
         }
 
-        /* --- 1. ส่วนหัว (Header) ปรับปรุงให้จัดกึ่งกลางสมบูรณ์ --- */
+        /* --- 1. ส่วนหัว (Header) จัดกึ่งกลางสมบูรณ์ --- */
         .header-section {
-            position: relative; /* สร้างกรอบอ้างอิงตำแหน่งให้โลโก้ */
+            position: relative;
             display: flex;
-            justify-content: center; /* บังคับให้ไอเทมหลักอยู่ตรงกลาง */
+            justify-content: center;
             align-items: center;
             margin-bottom: 35px;
-            min-height: 80px; /* คุมความสูงขั้นต่ำป้องกันการขยับ */
+            min-height: 80px;
         }
 
         .header-title-container {
             text-align: center;
-            width: 100%; /* ให้พื้นที่ขยายเต็มเพื่อจัดจุด Center */
-            padding: 0 120px; /* เว้นระยะด้านข้างไว้เพื่อไม่ให้ข้อความยาวๆ ไปซ้อนกับโลโก้ */
+            width: 100%;
+            padding: 0 120px;
         }
 
         .main-title {
@@ -78,7 +78,6 @@
             margin-top: 5px;
         }
 
-        /* ดึงโลโก้ออกมาลอยทางขวา ไม่ให้แย่งพื้นที่และเบียดจุดศูนย์กลาง */
         .logos-right {
             position: absolute;
             right: 0;
@@ -93,7 +92,7 @@
             width: auto;
         }
 
-        /* --- 2. โครงสร้างเมนูวงกลมแบบเต็มแผ่น 4 ส่วน --- */
+        /* --- 2. โครงสร้างเมนูวงกลมแบบ 3 ส่วน (3-Item Pie Menu Wheel) --- */
         .menu-wheel-wrapper {
             position: relative;
             width: 100%;
@@ -121,12 +120,15 @@
             height: 100%;
             text-decoration: none;
             color: var(--text-dark);
-            clip-path: polygon(50% 50%, 0% 0%, 100% 0%); 
+            
+            /* ตัดแผ่นพายให้เป็นมุม 120 องศา (พุ่งจากจุดกึ่งกลาง 50% 50%) */
+            clip-path: polygon(50% 50%, 0% 0%, 100% 0%, 100% 21.13%); 
+            
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 55px;
+            padding-top: 45px; /* ปรับระดับเนื้อหาให้อยู่กลางแผ่นพายที่กว้างขึ้น */
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
         }
@@ -136,7 +138,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            width: 190px;
+            width: 200px; /* ขยายพื้นที่วางตัวอักษรเล็กน้อยตามความกว้างของแผ่นพาย */
         }
 
         .menu-icon {
@@ -163,58 +165,38 @@
             line-height: 1.4;
         }
 
-        /* จัดมุมเฉียงกากบาท 4 ทิศทาง */
-        .item-orange { background-color: #FFF2D9; transform: rotate(45deg); }
-        .item-orange .menu-content { transform: rotate(-45deg) translateY(-5px); }
-
-        .item-blue { background-color: #E3F5FF; transform: rotate(135deg); }
-        .item-blue .menu-content { transform: rotate(-135deg) translateY(-5px); }
-
-        .item-green { background-color: #E2F9F3; transform: rotate(225deg); }
-        .item-green .menu-content { transform: rotate(-225deg) translateY(-5px); }
-
-        .item-pink { background-color: #FFE6EE; transform: rotate(315deg); }
-        .item-pink .menu-content { transform: rotate(-315deg) translateY(-5px); }
-
-        /* Hover Effects */
-        .item-orange:hover { transform: rotate(45deg)  translateY(-15px); z-index: 5; }
-        .item-blue:hover   { transform: rotate(135deg) translateY(-15px); z-index: 5; }
-        .item-green:hover  { transform: rotate(225deg) translateY(-15px); z-index: 5; }
-        .item-pink:hover   { transform: rotate(315deg) translateY(-15px); z-index: 5; }
-
-        /* --- 3. แถบปุ่มด้านล่าง (Footer Button) --- */
-        .footer-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(90deg, #E02B72 0%, #F6418C 100%);
-            color: white;
-            padding: 16px 30px;
-            border-radius: 18px;
-            text-decoration: none;
-            max-width: 750px;
-            margin: 25px auto 0 auto;
-            box-shadow: 0 8px 20px rgba(224, 43, 114, 0.2);
-            transition: transform 0.2s, opacity 0.2s;
+        /* คำนวณองศาจัดวาง 3 ทิศทาง (ชิ้นละ 120 องศา) 
+           พร้อมหมุนข้อความกลับมาเป็นแนวตั้งตรง (ปรับแกนตามสัดส่วนองศาใหม่)
+        */
+        /* ชิ้นที่ 1: งานปี 2568 (หมุนเริ่มที่ 0 องศา เพื่อให้อยู่ด้านบนเฉียงขวา) */
+        .item-orange {
+            background-color: #FFF2D9;
+            transform: rotate(0deg);
         }
+        .item-orange .menu-content { transform: rotate(0deg) translateY(0); }
 
-        .footer-button:hover {
-            opacity: 0.95;
-            transform: translateY(-2px);
+        /* ชิ้นที่ 2: งานปี 2569 (หมุนไป 120 องศา) */
+        .item-blue {
+            background-color: #E3F5FF;
+            transform: rotate(120deg);
         }
+        .item-blue .menu-content { transform: rotate(-120deg) translateY(0); }
 
-        .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        /* ชิ้นที่ 3: เครื่องมือบริหารจัดการหนี้ (หมุนไป 240 องศา) */
+        .item-green {
+            background-color: #E2F9F3;
+            transform: rotate(240deg);
         }
+        .item-green .menu-content { transform: rotate(-240deg) translateY(0); }
 
-        .footer-icon { width: 35px; height: 35px; }
-        .footer-text h3 { font-size: 16px; font-weight: 600; }
-        .footer-text p { font-size: 12px; opacity: 0.9; }
-        .footer-arrow { font-size: 20px; font-weight: bold; }
 
-        /* Responsive: จัดการการแสดงผลบนสมาร์ทโฟน */
+        /* Hover Effects: ยื่นตัวออกจากศูนย์กลางตามมุมเฉียง 120 องศาของตัวเอง */
+        .item-orange:hover { transform: rotate(0deg)   translateY(-15px); z-index: 5; }
+        .item-blue:hover   { transform: rotate(120deg) translateY(-15px); z-index: 5; }
+        .item-green:hover  { transform: rotate(240deg) translateY(-15px); z-index: 5; }
+
+
+        /* Responsive: บนหน้าจอมือถือจะคลี่ออกมาเรียงเป็นแถวแนวตั้งอ่านง่ายอัตโนมัติ */
         @media (max-width: 650px) {
             .header-section {
                 flex-direction: column;
@@ -222,14 +204,14 @@
                 min-height: auto;
             }
             .header-title-container {
-                padding: 0; /* คืนค่าพื้นที่บนหน้าจอเล็ก */
+                padding: 0;
             }
             .logos-right {
-                position: relative; /* ปลดลอยกลับมาจัดแถวปกติบนมือถือ */
+                position: relative;
                 right: auto;
                 top: auto;
                 transform: none;
-                order: -1; /* นำโลโก้ขึ้นไปอยู่ด้านบนหัวข้อ */
+                order: -1;
                 margin-bottom: 5px;
             }
             .main-title { font-size: 26px; }
@@ -281,7 +263,7 @@
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">ฐานข้อมูล ระดับประเทศ รายจังหวัด ลูกหนี้กองทุนพัฒนาบทบาทสตรีระดับประเทศ</p>
+                <p class="sub-title-th">ผลการดำเนินงานปี 2568</p>
             </div>
             
             <div class="logos-right">
@@ -293,51 +275,32 @@
         <div class="menu-wheel-wrapper">
             <div class="donut-ring">
 
-                <a href="finance_debtors.html" class="menu-item item-orange">
+                <a href="" class="menu-item item-orange">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/moneybag.png" alt="Icon">
-                        <div class="menu-title">งานปี 2568</div>
-                        <div class="menu-desc">ผลการดำเนินงาน<br>ในปี 2568</div>
+                        <div class="menu-title">ถาม-ตอบ</div>
+                        <div class="menu-desc">ถาม - ตอบ ปัญหา<br>เกี่ยวกับการดำเนินงาน</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-blue">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/chat.png" alt="Icon">
-                        <div class="menu-title">งานปี 2569</div>
-                        <div class="menu-desc">ผลการดำเนินงาน<br>ในปี2569</div>
+                        <div class="menu-title">มาตรการบริหารจัดการหนี้</div>
+                        <div class="menu-desc">มาตรการบริหารจัดการหนี้<br>สำหรับสำนักงานกองทุนพัฒนาบทบาทสตรี</div>
                     </div>
                 </a>
 
                 <a href="" class="menu-item item-green">
                     <div class="menu-content">
                         <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                        <div class="menu-title">เครื่องมือบริหารจัดการหนี้</div>
-                        <div class="menu-desc">มาตรการ แนวทาง<br>และเครื่องมือบริหารจัดการหนี้</div>
-                    </div>
-                </a>
-
-                <a href="" class="menu-item item-pink">
-                    <div class="menu-content">
-                        <img class="menu-icon" src="img/arrow.png" alt="Icon">
-                        <div class="menu-title">Dashboard</div>
-                        <div class="menu-desc">Dashboard สำหรับแสดงผล</div>
+                        <div class="menu-title">โปรแกรมคำนวนดอกเบี้ยผิดนัด</div>
+                        <div class="menu-desc">โปรแกรมสำหรับคำนวนดอกเบี้ยผิดนัด</div>
                     </div>
                 </a>
 
             </div>
         </div>
-
-        <!-- <a href="" class="footer-button">
-            <div class="footer-left">
-                <img class="footer-icon" src="img/perm.png" alt="Dashboard Icon">
-                <div class="footer-text">
-                    <h3>CDDWomen Dashboard</h3>
-                    <p>Dashboard สำหรับผู้บริหาร</p>
-                </div>
-            </div>
-            <div class="footer-arrow">❯</div>
-        </a> -->
 
     </div>
 
