@@ -41,17 +41,20 @@
             position: relative;
         }
 
-        /* --- 1. ส่วนหัว (Header) --- */
+        /* --- 1. ส่วนหัว (Header) ปรับปรุงให้จัดกึ่งกลางสมบูรณ์ --- */
         .header-section {
+            position: relative; /* สร้างกรอบอ้างอิงตำแหน่งให้โลโก้ */
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* บังคับให้ไอเทมหลักอยู่ตรงกลาง */
             align-items: center;
             margin-bottom: 35px;
+            min-height: 80px; /* คุมความสูงขั้นต่ำป้องกันการขยับ */
         }
 
         .header-title-container {
             text-align: center;
-            flex-grow: 1;
+            width: 100%; /* ให้พื้นที่ขยายเต็มเพื่อจัดจุด Center */
+            padding: 0 120px; /* เว้นระยะด้านข้างไว้เพื่อไม่ให้ข้อความยาวๆ ไปซ้อนกับโลโก้ */
         }
 
         .main-title {
@@ -75,7 +78,12 @@
             margin-top: 5px;
         }
 
+        /* ดึงโลโก้ออกมาลอยทางขวา ไม่ให้แย่งพื้นที่และเบียดจุดศูนย์กลาง */
         .logos-right {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             gap: 10px;
         }
@@ -85,11 +93,11 @@
             width: auto;
         }
 
-        /* --- 2. โครงสร้างเมนูวงกลมแบบเต็มแผ่น 4 ส่วน (4-Item Pie Menu Wheel) --- */
+        /* --- 2. โครงสร้างเมนูวงกลมแบบเต็มแผ่น 4 ส่วน --- */
         .menu-wheel-wrapper {
             position: relative;
             width: 100%;
-            max-width: 500px; /* ปรับขนาดสัดส่วนวงกลมให้กระชับพอดีตา */
+            max-width: 500px;
             margin: 40px auto;
             aspect-ratio: 1 / 1;
             display: grid;
@@ -103,7 +111,7 @@
             border-radius: 50%;
             display: grid;
             grid-template-areas: "layer";
-            overflow: hidden; /* ล็อคให้เป็นวงกลมสมบูรณ์ */
+            overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.06);
         }
 
@@ -113,15 +121,12 @@
             height: 100%;
             text-decoration: none;
             color: var(--text-dark);
-            
-            /* ตัดสัดส่วนกล่องเหลี่ยมให้เหลือแฉกสามเหลี่ยม 90 องศาพุ่งจากศูนย์กลาง */
             clip-path: polygon(50% 50%, 0% 0%, 100% 0%); 
-            
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: 55px; /* ดันเนื้อหาให้อยู่ในจุดที่เหมาะสมของแผ่นพาย */
+            padding-top: 55px;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
         }
@@ -131,7 +136,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            width: 190px; /* ขนาดพื้นที่กำลังดี ไม่ชิดขอบพายเกินไป */
+            width: 190px;
         }
 
         .menu-icon {
@@ -158,42 +163,24 @@
             line-height: 1.4;
         }
 
-        /* จัดมุมเฉียงกากบาท 4 ทิศทาง (ชิ้นละ 90 องศา) พร้อมดึง Content กลับมาตั้งตรง */
-        /* ชิ้นที่ 1: การเงินและลูกหนี้ (ขวาบน: 45°) */
-        .item-orange {
-            background-color: #FFF2D9;
-            transform: rotate(45deg);
-        }
+        /* จัดมุมเฉียงกากบาท 4 ทิศทาง */
+        .item-orange { background-color: #FFF2D9; transform: rotate(45deg); }
         .item-orange .menu-content { transform: rotate(-45deg) translateY(-5px); }
 
-        /* ชิ้นที่ 2: ศูนย์ช่วยเหลือและองค์ความรู้ (ขวาล่าง: 135°) */
-        .item-blue {
-            background-color: #E3F5FF;
-            transform: rotate(135deg);
-        }
+        .item-blue { background-color: #E3F5FF; transform: rotate(135deg); }
         .item-blue .menu-content { transform: rotate(-135deg) translateY(-5px); }
 
-        /* ชิ้นที่ 3: บริหารจัดการและกำกับติดตาม (ซ้ายล่าง: 225°) */
-        .item-green {
-            background-color: #E2F9F3;
-            transform: rotate(225deg);
-        }
+        .item-green { background-color: #E2F9F3; transform: rotate(225deg); }
         .item-green .menu-content { transform: rotate(-225deg) translateY(-5px); }
 
-        /* ชิ้นที่ 4: ตัวชี้วัดและการติดตามผล (ซ้ายบน: 315°) */
-        .item-pink {
-            background-color: #FFE6EE;
-            transform: rotate(315deg);
-        }
+        .item-pink { background-color: #FFE6EE; transform: rotate(315deg); }
         .item-pink .menu-content { transform: rotate(-315deg) translateY(-5px); }
 
-
-        /* Hover Effects: เมื่อดึงชิ้นเมนูใด ชิ้นนั้นจะยื่นตัวออกจากศูนย์กลางตามแนวองศา */
+        /* Hover Effects */
         .item-orange:hover { transform: rotate(45deg)  translateY(-15px); z-index: 5; }
         .item-blue:hover   { transform: rotate(135deg) translateY(-15px); z-index: 5; }
         .item-green:hover  { transform: rotate(225deg) translateY(-15px); z-index: 5; }
         .item-pink:hover   { transform: rotate(315deg) translateY(-15px); z-index: 5; }
-
 
         /* --- 3. แถบปุ่มด้านล่าง (Footer Button) --- */
         .footer-button {
@@ -222,34 +209,28 @@
             gap: 15px;
         }
 
-        .footer-icon {
-            width: 35px;
-            height: 35px;
-        }
+        .footer-icon { width: 35px; height: 35px; }
+        .footer-text h3 { font-size: 16px; font-weight: 600; }
+        .footer-text p { font-size: 12px; opacity: 0.9; }
+        .footer-arrow { font-size: 20px; font-weight: bold; }
 
-        .footer-text h3 {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .footer-text p {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .footer-arrow {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        /* Responsive: บนหน้าจอสมาร์ทโฟน จะคลี่การจัดวางออกมาเป็นแถวแนวตั้งเรียงลงมาให้อ่านง่าย */
+        /* Responsive: จัดการการแสดงผลบนสมาร์ทโฟน */
         @media (max-width: 650px) {
             .header-section {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
+                min-height: auto;
+            }
+            .header-title-container {
+                padding: 0; /* คืนค่าพื้นที่บนหน้าจอเล็ก */
             }
             .logos-right {
-                order: -1;
+                position: relative; /* ปลดลอยกลับมาจัดแถวปกติบนมือถือ */
+                right: auto;
+                top: auto;
+                transform: none;
+                order: -1; /* นำโลโก้ขึ้นไปอยู่ด้านบนหัวข้อ */
+                margin-bottom: 5px;
             }
             .main-title { font-size: 26px; }
             .sub-title-eng { font-size: 18px; }
@@ -310,7 +291,6 @@
         </header>
 
         <div class="menu-wheel-wrapper">
-
             <div class="donut-ring">
 
                 <a href="finance_debtors.html" class="menu-item item-orange">
@@ -346,7 +326,6 @@
                 </a>
 
             </div>
-
         </div>
 
         <a href="" class="footer-button">
