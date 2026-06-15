@@ -360,7 +360,7 @@ let provinceDataTable = null;
         tbody.innerHTML = "";
         provinces.forEach(p => {
           const provinceEncoded = encodeURIComponent(p.province);
-          const url = `https://wnxtfund.github.io/dm1/work2568/province.html?province=${provinceEncoded}`;
+          const url = `https://wnxtfund.github.io/dm1/indicators/province.html?province=${provinceEncoded}`;
           const tr = document.createElement("tr");
           
           // ✅ ส่วนนี้จะใช้ alignment จาก API ถ้ามี, หรือใช้ค่า default
