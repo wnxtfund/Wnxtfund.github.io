@@ -3,212 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDD Women Fund Dashboard (3 Items)</title>
+    <title>CDD Women Fund Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-pink: #E02B72;
-            --light-pink-bg: #FFF0F5;
-            --text-dark: #333333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        body {
-            background-color: var(--light-pink-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        :root { --primary-pink: #E02B72; --light-pink-bg: #FFF0F5; --text-dark: #333333; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: var(--light-pink-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
 
         .dashboard-container {
-            background: #ffffff;
-            width: 100%;
-            max-width: 900px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 40px;
-            position: relative;
+            background: #ffffff; width: 100%; max-width: 900px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; display: flex; flex-direction: column; align-items: center;
         }
 
-        .header-section {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 35px;
-            min-height: 80px;
-        }
+        .header-section { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; min-height: 80px; }
+        .header-title-container { text-align: center; width: 100%; padding: 0 120px; }
+        .main-title { color: var(--primary-pink); font-size: 32px; font-weight: 700; }
+        .sub-title-eng { color: var(--primary-pink); font-size: 20px; font-weight: 600; margin-top: -5px; display: block; }
+        .sub-title-th { color: #555; font-size: 13px; margin-top: 5px; }
+        .logos-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 10px; }
+        .logo-right-img { height: 50px; width: auto; }
+        .btn-back-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 6px; text-decoration: none; color: #666; font-size: 14px; font-weight: 600; background-color: #f4f4f6; padding: 8px 16px; border-radius: 50px; }
 
-        .header-title-container {
-            text-align: center;
-            width: 100%;
-            padding: 0 120px;
-        }
-
-        .main-title {
-            color: var(--primary-pink);
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .sub-title-eng {
-            color: var(--primary-pink);
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: -5px;
-            display: block;
-        }
-
-        .sub-title-th {
-            color: #555;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .logos-right {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .logo-right-img {
-            height: 50px;
-            width: auto;
-        }
-
-        /* --- โครงสร้างวงล้อ 3 ส่วนแบบสมมาตรพิกัดตรงจุด --- */
+        /* --- วงกลมทึบดั้งเดิม 3 ส่วน --- */
         .menu-wheel-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 40px auto;
-            aspect-ratio: 1 / 1;
-        }
-
-        /* แผ่นพายเฉลี่ยแผ่สีชิ้นละ 120 องศาเต็มวงพอดี */
-        .donut-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
+            position: relative; width: 450px; height: 450px; border-radius: 50%;
             background: conic-gradient(
                 #FFF2D9 0deg 120deg,
                 #E3F5FF 120deg 240deg,
                 #E2F9F3 240deg 360deg
             );
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin: 20px 0;
         }
 
-        .menu-item {
-            position: absolute;
-            width: 220px; /* ขยายบล็อกข้อความให้กว้างเต็มแผ่นพาย */
-            text-decoration: none;
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.2s ease;
-            z-index: 2;
-        }
+        .menu-slot { position: absolute; width: 150px; text-align: center; pointer-events: none; }
+        .menu-link { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-dark); pointer-events: auto; transition: transform 0.2s ease; }
+        .menu-link:hover { transform: scale(1.08); }
 
-        /* ดึงสัดส่วนพิกัดให้ปุ่มไปลอยเด่นอยู่กึ่งกลางสามเหลี่ยมของแต่ละชิ้น */
-        .item-orange { top: 18%; left: 52%; } /* ชิ้นขวาบน */
-        .item-blue   { top: 55%; left: 28%; } /* ชิ้นล่างกลาง */
-        .item-green  { top: 18%; left: 4%; }  /* ชิ้นซ้ายบน */
+        .slot-orange { top: 75px; right: 75px; }
+        .slot-blue   { bottom: 50px; left: 150px; }
+        .slot-green  { top: 75px; left: 75px; }
 
-        .menu-item:hover {
-            transform: scale(1.06);
-        }
+        .menu-icon { width: 50px; height: 50px; margin-bottom: 8px; object-fit: contain; }
+        .menu-title { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.4; }
 
-        .menu-icon {
-            width: 52px;
-            height: 52px;
-            margin-bottom: 12px;
-            object-fit: contain;
-            background: #ffffff;
-            padding: 9px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
+        .mobile-menu-list { display: none; }
 
-        .menu-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            line-height: 1.4;
-            color: #111111;
-        }
-
-        .menu-desc {
-            font-size: 11.5px;
-            color: #444444;
-            line-height: 1.4;
-        }
-
-        /* ปุ่มย้อนกลับด้านซ้ายบน (Back Button) */
-        .btn-back-left {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: #666666;
-            font-size: 15px;
-            font-weight: 600;
-            background-color: #f5f5f7;
-            padding: 10px 18px;
-            border-radius: 50px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-            z-index: 10;
-        }
-
-        .btn-back-left:hover {
-            background-color: var(--primary-pink);
-            color: #ffffff;
-            transform: translateY(-50%) translateX(-3px);
-            box-shadow: 0 4px 10px rgba(224, 43, 114, 0.2);
-        }
-
-        .btn-back-left svg {
-            fill: currentColor;
-            transition: transform 0.2s ease;
-        }
-
-        /* Responsive สำหรับหน้าจอมือถือ เปลี่ยนเป็น List เรียงลงมาเพื่อให้อ่านง่าย */
         @media (max-width: 768px) {
-            .header-section { flex-direction: column; gap: 10px; min-height: auto; }
+            .header-section { flex-direction: column; gap: 15px; min-height: auto; margin-bottom: 25px; }
             .header-title-container { padding: 0; }
-            .btn-back-left { position: relative; transform: none; top: auto; left: auto; margin-bottom: 5px; }
-            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; margin-bottom: 5px; }
-            .main-title { font-size: 26px; }
-            .sub-title-eng { font-size: 18px; }
+            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; }
+            .btn-back-left { position: relative; left: auto; top: auto; transform: none; margin-bottom: 10px; }
             
-            .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
-            .donut-ring { display: none; }
-            .menu-item { position: relative; width: 100%; top: auto !important; left: auto !important; flex-direction: row; text-align: left; padding: 18px 20px; border-radius: 16px; gap: 15px; }
-            .item-orange { background-color: #FFF2D9; }
-            .item-blue   { background-color: #E3F5FF; }
-            .item-green  { background-color: #E2F9F3; }
-            .menu-icon { margin-bottom: 0; }
+            .menu-wheel-wrapper { display: none; }
+            .mobile-menu-list { display: flex; flex-direction: column; width: 100%; gap: 12px; }
+            
+            .mobile-card { display: flex; align-items: center; padding: 16px 20px; border-radius: 12px; text-decoration: none; color: var(--text-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+            .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
+            .card-blue   { background-color: #E3F5FF; border-left: 5px solid #2196F3; }
+            .card-green  { background-color: #E2F9F3; border-left: 5px solid #4CAF50; }
+            
+            .mobile-card .m-icon { width: 36px; height: 36px; margin-right: 15px; object-fit: contain; }
+            .mobile-card .m-title { font-size: 14px; font-weight: 700; color: #111111; }
         }
     </style>
 </head>
@@ -216,18 +74,11 @@
 
     <div class="dashboard-container">
         <header class="header-section">
-
-            <a href="index.html" class="btn-back-left">
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                </svg>
-                ย้อนกลับ
-            </a>
-
+            <a href="index1.html" class="btn-back-left">ย้อนกลับ</a>
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">เครื่องมือบริหารจัดการหนี้</p>
+                <p class="sub-title-th">เครื่องมือสนับสนุนการดำเนินงาน</p>
             </div>
             <div class="logos-right">
                 <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
@@ -235,25 +86,41 @@
             </div>
         </header>
 
+        <!-- Desktop Wheel -->
         <div class="menu-wheel-wrapper">
-            <div class="donut-ring"></div>
+            <div class="menu-slot slot-orange">
+                <a href="" class="menu-link">
+                    <img class="menu-icon" src="img/q-and-a.png" alt="Icon">
+                    <div class="menu-title">ถาม-ตอบ</div>
+                </a>
+            </div>
+            <div class="menu-slot slot-blue">
+                <a href="" class="menu-link">
+                    <img class="menu-icon" src="img/list.png" alt="Icon">
+                    <div class="menu-title">มาตรการบริหารหนี้</div>
+                </a>
+            </div>
+            <div class="menu-slot slot-green">
+                <a href="" class="menu-link">
+                    <img class="menu-icon" src="img/budget.png" alt="Icon">
+                    <div class="menu-title">คำนวณดอกเบี้ย</div>
+                </a>
+            </div>
+        </div>
 
-            <a href="" class="menu-item item-orange">
-                <img class="menu-icon" src="img/q-and-a.png" alt="Icon">
-                <div class="menu-title">ถาม-ตอบ</div>
-                <div class="menu-desc">ถาม - ตอบ ปัญหา<br>เกี่ยวกับการดำเนินงาน</div>
+        <!-- Mobile List -->
+        <div class="mobile-menu-list">
+            <a href="" class="mobile-card card-orange">
+                <img class="m-icon" src="img/q-and-a.png" alt="Icon">
+                <div class="m-title">ถาม-ตอบ ปัญหาการดำเนินงาน</div>
             </a>
-
-            <a href="" class="menu-item item-blue">
-                <img class="menu-icon" src="img/list.png" alt="Icon">
-                <div class="menu-title">มาตรการบริหารจัดการหนี้</div>
-                <div class="menu-desc">มาตรการบริหารจัดการหนี้<br>สำหรับสำนักงานกองทุนฯ</div>
+            <a href="" class="mobile-card card-blue">
+                <img class="m-icon" src="img/list.png" alt="Icon">
+                <div class="m-title">มาตรการบริหารจัดการหนี้</div>
             </a>
-
-            <a href="" class="menu-item item-green">
-                <img class="menu-icon" src="img/budget.png" alt="Icon">
-                <div class="menu-title">โปรแกรมคำนวน<br>ดอกเบี้ยผิดนัด</div>
-                <div class="menu-desc">โปรแกรมระบบช่วยสำหรับ<br>คำนวนดอกเบี้ยผิดนัด</div>
+            <a href="" class="mobile-card card-green">
+                <img class="m-icon" src="img/budget.png" alt="Icon">
+                <div class="m-title">ระบบคำนวณดอกเบี้ยผิดนัด</div>
             </a>
         </div>
     </div>

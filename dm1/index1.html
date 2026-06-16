@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDD Women Fund Dashboard (4 Items)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-pink: #E02B72;
+            --light-pink-bg: #FFF0F5;
+            --text-dark: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-pink-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 40px;
+            position: relative;
+        }
+
+        /* --- 1. ส่วนหัว (Header) จัดกึ่งกลาง 100% --- */
+        .header-section {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 35px;
+            min-height: 80px;
+        }
+
+        .header-title-container {
+            text-align: center;
+            width: 100%;
+            padding: 0 120px; /* เว้นที่ให้โลโก้ด้านข้าง */
+        }
+
+        .main-title {
+            color: var(--primary-pink);
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .sub-title-eng {
+            color: var(--primary-pink);
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: -5px;
+            display: block;
+        }
+
+        .sub-title-th {
+            color: #555;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* โลโก้ด้านขวาแบบ Absolute ไม่ให้เบียดตรงกลาง */
+        .logos-right {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .logo-right-img {
+            height: 50px;
+            width: auto;
+        }
+
+        /* --- 2. โครงสร้างวงล้อ 4 ส่วน (4-Item Perfect Wheel) --- */
+        .menu-wheel-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 40px auto;
+            aspect-ratio: 1 / 1;
+        }
+
+        /* พื้นหลังแผ่นพายแบ่ง 4 ส่วนด้วย Conic Gradient */
+        .donut-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #FFF2D9 0deg 90deg,   /* ส่วนที่ 1: ส้ม */
+                #E3F5FF 90deg 180deg, /* ส่วนที่ 2: ฟ้า */
+                #E2F9F3 180deg 270deg, /* ส่วนที่ 3: เขียว */
+                #FFE6EE 270deg 360deg  /* ส่วนที่ 4: ชมพู */
+            );
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        }
+
+        /* การจัดวางเนื้อหาให้ลงล็อคกึ่งกลางของแต่ละ Quadrant */
+        .menu-item {
+            position: absolute;
+            width: 180px; /* คุมความกว้างไม่ให้ล้นชิ้นพาย */
+            text-decoration: none;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            /* ใช้จุดกึ่งกลางของตัวเองเป็นจุดอ้างอิง */
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s ease;
+            z-index: 2;
+        }
+
+        /* [พิกัดคำนวณใหม่สำหรับ 4 ส่วน] */
+        .item-orange { top: 30%; left: 70%; } /* บนขวา */
+        .item-blue   { top: 70%; left: 70%; } /* ล่างขวา */
+        .item-green  { top: 70%; left: 30%; } /* ล่างซ้าย */
+        .item-pink   { top: 30%; left: 30%; } /* บนซ้าย */
+
+        .menu-item:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+        }
+
+        .menu-icon {
+            width: 55px;
+            height: 55px;
+            margin-bottom: 12px;
+            object-fit: contain;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .menu-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #111;
+        }
+
+        .menu-desc {
+            font-size: 11.5px;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        /* Responsive สำหรับหน้าจอมือถือ เปลี่ยนเป็น List เรียงลงมาเพื่อให้อ่านง่าย */
+        @media (max-width: 768px) {
+            .header-section { flex-direction: column; gap: 10px; min-height: auto; }
+            .header-title-container { padding: 0; }
+            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; margin-bottom: 5px; }
+            .btn-back-left { position: relative; transform: none; top: auto; left: auto; margin-bottom: 5px; }
+            
+            .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
+            .donut-ring { display: none; }
+            .menu-item { 
+                position: relative; width: 100%; top: auto !important; left: auto !important; 
+                transform: none !important; flex-direction: row; text-align: left; 
+                padding: 18px 20px; border-radius: 16px; gap: 15px; 
+            }
+            .item-orange { background-color: #FFF2D9; }
+            .item-blue   { background-color: #E3F5FF; }
+            .item-green  { background-color: #E2F9F3; }
+            .item-pink   { background-color: #FFE6EE; }
+            .menu-icon { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <header class="header-section">
+            <div class="header-title-container">
+                <h1 class="main-title">CDD Women Fund</h1>
+                <span class="sub-title-eng">— Dashboard —</span>
+                <p class="sub-title-th">ฐานข้อมูล กองทุนพัฒนาบทบาทสตรีระดับประเทศ</p>
+            </div>
+            
+            <div class="logos-right">
+                <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
+                <img class="logo-right-img" src="img/logo.png" alt="Gov Logo 2">
+            </div>
+        </header>
+
+        <div class="menu-wheel-wrapper">
+            <div class="donut-ring"></div>
+
+            <a href="indicators.html" class="menu-item item-orange">
+                <img class="menu-icon" src="img/moneybag.png" alt="Icon">
+                <div class="menu-title">ตัวชี้วัดและการประเมินผล</div>
+                <div class="menu-desc"></div>
+            </a>
+
+            <a href="debt.html" class="menu-item item-blue">
+                <img class="menu-icon" src="img/chat.png" alt="Icon">
+                <div class="menu-title">การบริหารเงินทุนและหนี้</div>
+                <div class="menu-desc"></div>
+            </a>
+
+            <a href="tools.html" class="menu-item item-green">
+                <img class="menu-icon" src="img/checklist.png" alt="Icon">
+                <div class="menu-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
+                <div class="menu-desc"></div>
+            </a>
+
+            <a href="dashboard.html" class="menu-item item-pink">
+                <img class="menu-icon" src="img/data-analysis.png" alt="Icon">
+                <div class="menu-title">ผลการดำเนินงานและ Dashboard</div>
+                <div class="menu-desc"></div>
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

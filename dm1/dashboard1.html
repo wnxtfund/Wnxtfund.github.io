@@ -100,6 +100,7 @@
             width: 450px;
             height: 450px;
             border-radius: 50%;
+            /* แบ่งพื้นที่เป็น 4 ส่วนเท่ากันแบบดั้งเดิม (ไม่มีรูตรงกลาง) */
             background: conic-gradient(
                 #FFE6EE 0deg 90deg,
                 #FFF2D9 90deg 180deg,
@@ -110,20 +111,22 @@
             margin: 20px 0;
         }
 
+        /* จัดพิกัดกล่องเนื้อหาภายในวงกลม */
         .menu-slot {
             position: absolute;
             width: 160px;
             text-align: center;
-            pointer-events: none;
+            pointer-events: none; /* ปล่อยให้คลิกทะลุไปโดนลิงก์ข้างใน */
         }
 
+        /* ลิงก์เฉพาะตัวหนังสือและไอคอน */
         .menu-link {
             display: inline-flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
             color: var(--text-dark);
-            pointer-events: auto;
+            pointer-events: auto; /* เปิดให้คลิกได้เฉพาะตัวโครงสร้างลิงก์ */
             transition: transform 0.2s ease;
         }
 
@@ -150,6 +153,7 @@
             line-height: 1.4;
         }
 
+        /* ซ่อนเมนูเวอร์ชันมือถือในหน้าจอคอม */
         .mobile-menu-list {
             display: none;
         }
@@ -171,10 +175,12 @@
                 order: -1;
             }
 
+            /* ซ่อนรูปแบบวงกลมบนมือถือ */
             .menu-wheel-wrapper {
                 display: none;
             }
 
+            /* เปิดใช้งานเมนูสี่เหลี่ยมเรียงลงมาสำหรับมือถือ */
             .mobile-menu-list {
                 display: flex;
                 flex-direction: column;
@@ -194,6 +200,7 @@
                 transition: transform 0.2s ease;
             }
 
+            /* สีพื้นหลังสี่เหลี่ยมตามโซนสีเดิม */
             .card-pink   { background-color: #FFE6EE; border-left: 5px solid #E02B72; }
             .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
             .card-blue   { background-color: #E3F5FF; border-left: 5px solid #2196F3; }
@@ -231,52 +238,50 @@
             </div>
         </header>
 
-        <!-- [คอมพิวเตอร์] แสดงแบบวงกลมทึบดั้งเดิม ลิงก์เฉพาะตัวหนังสือ -->
         <div class="menu-wheel-wrapper">
             <div class="menu-slot slot-pink">
-                <a href="dashboard1.html" class="menu-link">
+                <a href="dashboard.html" class="menu-link">
                     <img class="menu-icon" src="img/data-analysis.png" alt="Icon">
                     <div class="menu-title">ผลการดำเนินงาน<br>& Dashboard</div>
                 </a>
             </div>
 
             <div class="menu-slot slot-orange">
-                <a href="indicators1.html" class="menu-link">
+                <a href="indicators.html" class="menu-link">
                     <img class="menu-icon" src="img/moneybag.png" alt="Icon">
                     <div class="menu-title">ตัวชี้วัดและ<br>การประเมินผล</div>
                 </a>
             </div>
 
             <div class="menu-slot slot-blue">
-                <a href="debt1.html" class="menu-link">
+                <a href="debt.html" class="menu-link">
                     <img class="menu-icon" src="img/chat.png" alt="Icon">
                     <div class="menu-title">การบริหาร<br>เงินทุนและหนี้</div>
                 </a>
             </div>
 
             <div class="menu-slot slot-green">
-                <a href="tools1.html" class="menu-link">
+                <a href="tools.html" class="menu-link">
                     <img class="menu-icon" src="img/checklist.png" alt="Icon">
                     <div class="menu-title">เครื่องมือสนับสนุน<br>การปฏิบัติงาน</div>
                 </a>
             </div>
         </div>
 
-        <!-- [มือถือ] แสดงแบบกล่องสี่เหลี่ยมแนวยาวอ่านง่าย -->
         <div class="mobile-menu-list">
-            <a href="dashboard1.html" class="mobile-card card-pink">
+            <a href="dashboard.html" class="mobile-card card-pink">
                 <img class="m-icon" src="img/data-analysis.png" alt="Icon">
                 <div class="m-title">ผลการดำเนินงาน & Dashboard</div>
             </a>
-            <a href="indicators1.html" class="mobile-card card-orange">
+            <a href="indicators.html" class="mobile-card card-orange">
                 <img class="m-icon" src="img/moneybag.png" alt="Icon">
                 <div class="m-title">ตัวชี้วัดและการประเมินผล</div>
             </a>
-            <a href="debt1.html" class="mobile-card card-blue">
+            <a href="debt.html" class="mobile-card card-blue">
                 <img class="m-icon" src="img/chat.png" alt="Icon">
                 <div class="m-title">การบริหารเงินทุนและหนี้</div>
             </a>
-            <a href="tools1.html" class="mobile-card card-green">
+            <a href="tools.html" class="mobile-card card-green">
                 <img class="m-icon" src="img/checklist.png" alt="Icon">
                 <div class="m-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
             </a>
