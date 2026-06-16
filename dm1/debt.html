@@ -193,17 +193,18 @@
             transition: transform 0.2s ease;
         }
 
-        /* Responsive สำหรับมือถือ */
-        @media (max-width: 650px) {
+        /* Responsive สำหรับหน้าจอมือถือ เปลี่ยนเป็น List เรียงลงมาเพื่อให้อ่านง่าย */
+        @media (max-width: 768px) {
             .header-section { flex-direction: column; gap: 10px; min-height: auto; }
             .header-title-container { padding: 0; }
+            .btn-back-left { position: relative; transform: none; top: auto; left: auto; margin-bottom: 5px; }
             .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; margin-bottom: 5px; }
             .main-title { font-size: 26px; }
             .sub-title-eng { font-size: 18px; }
             
             .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
             .donut-ring { display: none; }
-            .menu-item { position: relative; width: 100%; top: auto !important; left: auto !important; flex-direction: row; text-align: left; padding: 15px 20px; border-radius: 16px; gap: 15px; }
+            .menu-item { position: relative; width: 100%; top: auto !important; left: auto !important; flex-direction: row; text-align: left; padding: 18px 20px; border-radius: 16px; gap: 15px; }
             .item-orange { background-color: #FFF2D9; }
             .item-blue   { background-color: #E3F5FF; }
             .item-green  { background-color: #E2F9F3; }
