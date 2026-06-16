@@ -9,12 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary-pink: #E02B72;
-            --light-pink-bg: #FFF0F5;
-            --text-dark: #333333;
-        }
-
+        :root { --primary-pink: #E02B72; --light-pink-bg: #FFF0F5; --text-dark: #333333; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
         body { background-color: var(--light-pink-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
 
@@ -30,40 +25,32 @@
         .sub-title-th { color: #555; font-size: 13px; margin-top: 5px; }
         .logos-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 10px; }
         .logo-right-img { height: 50px; width: auto; }
+        .btn-back-left { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 6px; text-decoration: none; color: #666; font-size: 14px; font-weight: 600; background-color: #f4f4f6; padding: 8px 16px; border-radius: 50px; }
 
-        .btn-back-left {
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            display: flex; align-items: center; gap: 6px; text-decoration: none; color: #666;
-            font-size: 14px; font-weight: 600; background-color: #f4f4f6; padding: 8px 16px; border-radius: 50px;
-        }
-
-        /* --- วงกลมทึบดั้งเดิม --- */
+        /* --- วงกลมทึบดั้งเดิม 3 ส่วน --- */
         .menu-wheel-wrapper {
             position: relative; width: 450px; height: 450px; border-radius: 50%;
             background: conic-gradient(
-                #E3F5FF 0deg 90deg,
-                #E2F9F3 90deg 180deg,
-                #FFF2D9 180deg 270deg,
-                #FFEBFF 270deg 360deg
+                #FFF2D9 0deg 120deg,
+                #E3F5FF 120deg 240deg,
+                #E2F9F3 240deg 360deg
             );
             box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin: 20px 0;
         }
 
-        .menu-slot { position: absolute; width: 160px; text-align: center; pointer-events: none; }
+        .menu-slot { position: absolute; width: 150px; text-align: center; pointer-events: none; }
         .menu-link { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-dark); pointer-events: auto; transition: transform 0.2s ease; }
         .menu-link:hover { transform: scale(1.08); }
 
-        .slot-blue   { top: 55px; left: 55px; }
-        .slot-green  { top: 55px; right: 55px; }
-        .slot-orange { bottom: 55px; right: 55px; }
-        .slot-pink   { bottom: 55px; left: 55px; }
+        .slot-orange { top: 75px; right: 75px; }
+        .slot-blue   { bottom: 50px; left: 150px; }
+        .slot-green  { top: 75px; left: 75px; }
 
         .menu-icon { width: 50px; height: 50px; margin-bottom: 8px; object-fit: contain; }
         .menu-title { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.4; }
 
         .mobile-menu-list { display: none; }
 
-        /* --- Responsive มือถือเป็นสี่เหลี่ยม --- */
         @media (max-width: 768px) {
             .header-section { flex-direction: column; gap: 15px; min-height: auto; margin-bottom: 25px; }
             .header-title-container { padding: 0; }
@@ -74,10 +61,9 @@
             .mobile-menu-list { display: flex; flex-direction: column; width: 100%; gap: 12px; }
             
             .mobile-card { display: flex; align-items: center; padding: 16px 20px; border-radius: 12px; text-decoration: none; color: var(--text-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+            .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
             .card-blue   { background-color: #E3F5FF; border-left: 5px solid #2196F3; }
             .card-green  { background-color: #E2F9F3; border-left: 5px solid #4CAF50; }
-            .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
-            .card-pink   { background-color: #FFEBFF; border-left: 5px solid #E02B72; }
             
             .mobile-card .m-icon { width: 36px; height: 36px; margin-right: 15px; object-fit: contain; }
             .mobile-card .m-title { font-size: 14px; font-weight: 700; color: #111111; }
@@ -88,11 +74,11 @@
 
     <div class="dashboard-container">
         <header class="header-section">
-            <a href="index1.html" class="btn-back-left">ย้อนกลับ</a>
+            <a href="index_a1.html" class="btn-back-left">ย้อนกลับ</a>
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">ผลการดำเนินงาน และ Dashboard</p>
+                <p class="sub-title-th">การบริหารเงินทุนและหนี้</p>
             </div>
             <div class="logos-right">
                 <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
@@ -102,49 +88,39 @@
 
         <!-- Desktop Wheel -->
         <div class="menu-wheel-wrapper">
+            <div class="menu-slot slot-orange">
+                <a href="debt/Disb2569.html" class="menu-link">
+                    <img class="menu-icon" src="img/documents.png" alt="Icon">
+                    <div class="menu-title">ร้อยละการเบิกจ่าย<br>เงินทุนหมุนเวียน 2569</div>
+                </a>
+            </div>
             <div class="menu-slot slot-blue">
-                <a href="dashboard/CDDWomen2569.html" class="menu-link">
+                <a href="https://thititwf-creator.github.io/Due-Dep-sys/summary.html" class="menu-link">
                     <img class="menu-icon" src="img/kpi.png" alt="Icon">
-                    <div class="menu-title">ผลดำเนินงาน<br>ทุนหมุนเวียน 2569</div>
+                    <div class="menu-title">ร้อยละการชำระคืน<br>เงินต้น 2569</div>
                 </a>
             </div>
             <div class="menu-slot slot-green">
-                <a href="https://sites.google.com/view/twdf" class="menu-link">
+                <a href="debt/KPI2569.html" class="menu-link">
                     <img class="menu-icon" src="img/interface.png" alt="Icon">
-                    <div class="menu-title">CDDWomen<br>Dashboard</div>
-                </a>
-            </div>
-            <div class="menu-slot slot-orange">
-                <a href="https://script.google.com/macros/s/AKfycbzR_wvsZSiGTA9tonwAsdSS2rqyYTEnK25llZArVkiyOrIAah7oUJMUUbDnpWRtjBnJ/exec" class="menu-link">
-                    <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                    <div class="menu-title">Dashboard<br>แยกจังหวัด</div>
-                </a>
-            </div>
-            <div class="menu-slot slot-pink">
-                <a href="dashboard/CDDWomen2568.html" class="menu-link">
-                    <img class="menu-icon" src="img/documents.png" alt="Icon">
-                    <div class="menu-title">ผลดำเนินงาน<br>ทุนหมุนเวียน 2568</div>
+                    <div class="menu-title">ร้อยละหนี้<br>ค้างชำระ 2569</div>
                 </a>
             </div>
         </div>
 
         <!-- Mobile List -->
         <div class="mobile-menu-list">
-            <a href="dashboard/CDDWomen2569.html" class="mobile-card card-blue">
-                <img class="m-icon" src="img/kpi.png" alt="Icon">
-                <div class="m-title">ผลดำเนินงาน ทุนหมุนเวียน 2569</div>
-            </a>
-            <a href="https://sites.google.com/view/twdf" class="mobile-card card-green">
-                <img class="m-icon" src="img/interface.png" alt="Icon">
-                <div class="m-title">CDDWomen Dashboard</div>
-            </a>
-            <a href="https://script.google.com/macros/s/AKfycbzR_wvsZSiGTA9tonwAsdSS2rqyYTEnK25llZArVkiyOrIAah7oUJMUUbDnpWRtjBnJ/exec" class="mobile-card card-orange">
-                <img class="m-icon" src="img/checklist.png" alt="Icon">
-                <div class="m-title">Dashboard แยกจังหวัด</div>
-            </a>
-            <a href="dashboard/CDDWomen2568.html" class="mobile-card card-pink">
+            <a href="debt/Disb2569.html" class="mobile-card card-orange">
                 <img class="m-icon" src="img/documents.png" alt="Icon">
-                <div class="m-title">ผลดำเนินงาน ทุนหมุนเวียน 2568</div>
+                <div class="m-title">ร้อยละการเบิกจ่ายเงินทุนหมุนเวียน 2569</div>
+            </a>
+            <a href="https://thititwf-creator.github.io/Due-Dep-sys/summary.html" class="mobile-card card-blue">
+                <img class="m-icon" src="img/kpi.png" alt="Icon">
+                <div class="m-title">ร้อยละการชำระคืนเงินต้น 2569</div>
+            </a>
+            <a href="debt/KPI2569.html" class="mobile-card card-green">
+                <img class="m-icon" src="img/interface.png" alt="Icon">
+                <div class="m-title">ร้อยละหนี้ค้างชำระ 2569</div>
             </a>
         </div>
     </div>
