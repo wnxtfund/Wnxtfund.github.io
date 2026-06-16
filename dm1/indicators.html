@@ -34,7 +34,7 @@
         .dashboard-container {
             background: #ffffff;
             width: 100%;
-            max-width: 950px;
+            max-width: 900px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             padding: 40px;
@@ -90,7 +90,77 @@
             width: auto;
         }
 
-        /* ปุ่มย้อนกลับด้านซ้ายบน (Back Button) กลับมาแล้วครับ */
+        /* --- โครงสร้างวงล้อ 3 ส่วนแบบสมมาตรพิกัดตรงจุด --- */
+        .menu-wheel-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 40px auto;
+            aspect-ratio: 1 / 1;
+        }
+
+        /* แผ่นพายเฉลี่ยแผ่สีชิ้นละ 120 องศาเต็มวงพอดี */
+        .donut-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #FFF2D9 0deg 120deg,
+                #E3F5FF 120deg 240deg,
+                #E2F9F3 240deg 360deg
+            );
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        }
+
+        .menu-item {
+            position: absolute;
+            width: 220px; /* ขยายบล็อกข้อความให้กว้างเต็มแผ่นพาย */
+            text-decoration: none;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s ease;
+            z-index: 2;
+        }
+
+        /* ดึงสัดส่วนพิกัดให้ปุ่มไปลอยเด่นอยู่กึ่งกลางสามเหลี่ยมของแต่ละชิ้น */
+        .item-orange { top: 18%; left: 52%; } /* ชิ้นขวาบน */
+        .item-blue   { top: 55%; left: 28%; } /* ชิ้นล่างกลาง */
+        .item-green  { top: 18%; left: 4%; }  /* ชิ้นซ้ายบน */
+
+        .menu-item:hover {
+            transform: scale(1.06);
+        }
+
+        .menu-icon {
+            width: 52px;
+            height: 52px;
+            margin-bottom: 12px;
+            object-fit: contain;
+            background: #ffffff;
+            padding: 9px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .menu-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            color: #111111;
+        }
+
+        .menu-desc {
+            font-size: 11.5px;
+            color: #444444;
+            line-height: 1.4;
+        }
+
+        /* ปุ่มย้อนกลับด้านซ้ายบน (Back Button) */
         .btn-back-left {
             position: absolute;
             left: 0;
@@ -120,80 +190,7 @@
 
         .btn-back-left svg {
             fill: currentColor;
-        }
-
-        /* --- โครงสร้างวงล้อ 4 ส่วนแบบวงกลมทึบเต็มวง (4-Item Full Circle) --- */
-        .menu-wheel-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 40px auto;
-            aspect-ratio: 1 / 1;
-        }
-
-        /* พื้นหลังแผ่นพายวงกลมทึบเต็มวง (ไม่มีการเจาะรูตรงกลาง) */
-        .donut-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: conic-gradient(
-                #FFF2D9 0deg 90deg,     /* ชิ้นที่ 1: ส้ม (ขวาบน) */
-                #E3F5FF 90deg 180deg,   /* ชิ้นที่ 2: ฟ้า (ขวาล่าง) */
-                #E2F9F3 180deg 270deg,  /* ชิ้นที่ 3: เขียว (ซ้ายล่าง) */
-                #FFEBF0 270deg 360deg   /* ชิ้นที่ 4: ชมพู (ซ้ายบน) */
-            );
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-        }
-
-        /* จัดระเบียบบล็อกเนื้อหาให้ลงล็อคด้วยตำแหน่งแบบจุดกึ่งกลางของแต่ละ Quadrant */
-        .menu-item {
-            position: absolute;
-            width: 195px; 
-            text-decoration: none;
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transform: translate(-50%, -50%);
             transition: transform 0.2s ease;
-            z-index: 2;
-        }
-
-        /* [พิกัดคำนวณสมมาตรสำหรับวงกลมรูปแบบสมบูรณ์] */
-        .item-orange { top: 30%; left: 70%; } /* ชิ้นที่ 1: ขวาบน */
-        .item-blue   { top: 70%; left: 70%; } /* ชิ้นที่ 2: ขวาล่าง */
-        .item-green  { top: 70%; left: 30%; } /* ชิ้นที่ 3: ซ้ายล่าง */
-        .item-pink   { top: 30%; left: 30%; } /* ชิ้นที่ 4: ซ้ายบน */
-
-        .menu-item:hover {
-            transform: translate(-50%, -50%) scale(1.08);
-        }
-
-        .menu-icon {
-            width: 52px;
-            height: 52px;
-            margin-bottom: 12px;
-            object-fit: contain;
-            background: #ffffff;
-            padding: 9px;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
-        .menu-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            line-height: 1.4;
-            color: #111111;
-        }
-
-        .menu-desc {
-            font-size: 11.5px;
-            color: #555555;
-            line-height: 1.4;
         }
 
         /* Responsive สำหรับหน้าจอมือถือ เปลี่ยนเป็น List เรียงลงมาเพื่อให้อ่านง่าย */
@@ -207,16 +204,10 @@
             
             .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
             .donut-ring { display: none; }
-            .menu-item { 
-                position: relative; width: 100%; top: auto !important; left: auto !important; 
-                transform: none !important; flex-direction: row; text-align: left; 
-                padding: 18px 20px; border-radius: 16px; gap: 15px; 
-            }
-            
+            .menu-item { position: relative; width: 100%; top: auto !important; left: auto !important; flex-direction: row; text-align: left; padding: 18px 20px; border-radius: 16px; gap: 15px; }
             .item-orange { background-color: #FFF2D9; }
             .item-blue   { background-color: #E3F5FF; }
             .item-green  { background-color: #E2F9F3; }
-            .item-pink   { background-color: #FFEBF0; }
             .menu-icon { margin-bottom: 0; }
         }
     </style>
