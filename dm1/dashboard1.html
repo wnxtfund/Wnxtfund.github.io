@@ -15,278 +15,138 @@
             --text-dark: #333333;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        body {
-            background-color: var(--light-pink-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: var(--light-pink-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
 
         .dashboard-container {
-            background: #ffffff;
-            width: 100%;
-            max-width: 900px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: #ffffff; width: 100%; max-width: 900px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- Header --- */
-        .header-section {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 40px;
-            min-height: 80px;
+        .header-section { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; min-height: 80px; }
+        .header-title-container { text-align: center; width: 100%; padding: 0 120px; }
+        .main-title { color: var(--primary-pink); font-size: 32px; font-weight: 700; }
+        .sub-title-eng { color: var(--primary-pink); font-size: 20px; font-weight: 600; margin-top: -5px; display: block; }
+        .sub-title-th { color: #555; font-size: 13px; margin-top: 5px; }
+        .logos-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 10px; }
+        .logo-right-img { height: 50px; width: auto; }
+
+        .btn-back-left {
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center; gap: 6px; text-decoration: none; color: #666;
+            font-size: 14px; font-weight: 600; background-color: #f4f4f6; padding: 8px 16px; border-radius: 50px;
         }
 
-        .header-title-container {
-            text-align: center;
-            width: 100%;
-            padding: 0 120px;
-        }
-
-        .main-title {
-            color: var(--primary-pink);
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .sub-title-eng {
-            color: var(--primary-pink);
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: -5px;
-            display: block;
-        }
-
-        .sub-title-th {
-            color: #555;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .logos-right {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .logo-right-img {
-            height: 50px;
-            width: auto;
-        }
-
-        /* --- รูปแบบวงกลมดั้งเดิม (Desktop เฉพาะคอมพิวเตอร์) --- */
+        /* --- วงกลมทึบดั้งเดิม --- */
         .menu-wheel-wrapper {
-            position: relative;
-            width: 450px;
-            height: 450px;
-            border-radius: 50%;
-            /* แบ่งพื้นที่เป็น 4 ส่วนเท่ากันแบบดั้งเดิม (ไม่มีรูตรงกลาง) */
+            position: relative; width: 450px; height: 450px; border-radius: 50%;
             background: conic-gradient(
-                #FFE6EE 0deg 90deg,
-                #FFF2D9 90deg 180deg,
-                #E3F5FF 180deg 270deg,
-                #E2F9F3 270deg 360deg
+                #E3F5FF 0deg 90deg,
+                #E2F9F3 90deg 180deg,
+                #FFF2D9 180deg 270deg,
+                #FFEBFF 270deg 360deg
             );
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin: 20px 0;
         }
 
-        /* จัดพิกัดกล่องเนื้อหาภายในวงกลม */
-        .menu-slot {
-            position: absolute;
-            width: 160px;
-            text-align: center;
-            pointer-events: none; /* ปล่อยให้คลิกทะลุไปโดนลิงก์ข้างใน */
-        }
+        .menu-slot { position: absolute; width: 160px; text-align: center; pointer-events: none; }
+        .menu-link { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-dark); pointer-events: auto; transition: transform 0.2s ease; }
+        .menu-link:hover { transform: scale(1.08); }
 
-        /* ลิงก์เฉพาะตัวหนังสือและไอคอน */
-        .menu-link {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-dark);
-            pointer-events: auto; /* เปิดให้คลิกได้เฉพาะตัวโครงสร้างลิงก์ */
-            transition: transform 0.2s ease;
-        }
+        .slot-blue   { top: 55px; left: 55px; }
+        .slot-green  { top: 55px; right: 55px; }
+        .slot-orange { bottom: 55px; right: 55px; }
+        .slot-pink   { bottom: 55px; left: 55px; }
 
-        .menu-link:hover {
-            transform: scale(1.08);
-        }
+        .menu-icon { width: 50px; height: 50px; margin-bottom: 8px; object-fit: contain; }
+        .menu-title { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.4; }
 
-        .slot-pink   { top: 55px; left: 55px; }
-        .slot-orange { top: 55px; right: 55px; }
-        .slot-blue   { bottom: 55px; right: 55px; }
-        .slot-green  { bottom: 55px; left: 55px; }
+        .mobile-menu-list { display: none; }
 
-        .menu-icon {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-            object-fit: contain;
-        }
-
-        .menu-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #111111;
-            line-height: 1.4;
-        }
-
-        /* ซ่อนเมนูเวอร์ชันมือถือในหน้าจอคอม */
-        .mobile-menu-list {
-            display: none;
-        }
-
-        /* --- RESPONSIVE: ปรับเป็นสี่เหลี่ยมในมือถือ --- */
+        /* --- Responsive มือถือเป็นสี่เหลี่ยม --- */
         @media (max-width: 768px) {
-            .header-section {
-                flex-direction: column;
-                gap: 15px;
-                min-height: auto;
-                margin-bottom: 25px;
-            }
+            .header-section { flex-direction: column; gap: 15px; min-height: auto; margin-bottom: 25px; }
             .header-title-container { padding: 0; }
-            .logos-right {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
-                order: -1;
-            }
-
-            /* ซ่อนรูปแบบวงกลมบนมือถือ */
-            .menu-wheel-wrapper {
-                display: none;
-            }
-
-            /* เปิดใช้งานเมนูสี่เหลี่ยมเรียงลงมาสำหรับมือถือ */
-            .mobile-menu-list {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                gap: 12px;
-                margin-top: 10px;
-            }
-
-            .mobile-card {
-                display: flex;
-                align-items: center;
-                padding: 16px 20px;
-                border-radius: 12px;
-                text-decoration: none;
-                color: var(--text-dark);
-                box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-                transition: transform 0.2s ease;
-            }
-
-            /* สีพื้นหลังสี่เหลี่ยมตามโซนสีเดิม */
-            .card-pink   { background-color: #FFE6EE; border-left: 5px solid #E02B72; }
-            .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
+            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; }
+            .btn-back-left { position: relative; left: auto; top: auto; transform: none; margin-bottom: 10px; }
+            
+            .menu-wheel-wrapper { display: none; }
+            .mobile-menu-list { display: flex; flex-direction: column; width: 100%; gap: 12px; }
+            
+            .mobile-card { display: flex; align-items: center; padding: 16px 20px; border-radius: 12px; text-decoration: none; color: var(--text-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
             .card-blue   { background-color: #E3F5FF; border-left: 5px solid #2196F3; }
             .card-green  { background-color: #E2F9F3; border-left: 5px solid #4CAF50; }
-
-            .mobile-card .m-icon {
-                width: 36px;
-                height: 36px;
-                margin-right: 15px;
-                object-fit: contain;
-            }
-
-            .mobile-card .m-title {
-                font-size: 15px;
-                font-weight: 700;
-                color: #111111;
-            }
+            .card-orange { background-color: #FFF2D9; border-left: 5px solid #FF9800; }
+            .card-pink   { background-color: #FFEBFF; border-left: 5px solid #E02B72; }
+            
+            .mobile-card .m-icon { width: 36px; height: 36px; margin-right: 15px; object-fit: contain; }
+            .mobile-card .m-title { font-size: 14px; font-weight: 700; color: #111111; }
         }
     </style>
 </head>
 <body>
 
     <div class="dashboard-container">
-        
         <header class="header-section">
+            <a href="index1.html" class="btn-back-left">ย้อนกลับ</a>
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">ฐานข้อมูล กองทุนพัฒนาบทบาทสตรีระดับประเทศ</p>
+                <p class="sub-title-th">ผลการดำเนินงาน และ Dashboard</p>
             </div>
-            
             <div class="logos-right">
                 <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
                 <img class="logo-right-img" src="img/logo.png" alt="Gov Logo 2">
             </div>
         </header>
 
+        <!-- Desktop Wheel -->
         <div class="menu-wheel-wrapper">
-            <div class="menu-slot slot-pink">
-                <a href="dashboard.html" class="menu-link">
-                    <img class="menu-icon" src="img/data-analysis.png" alt="Icon">
-                    <div class="menu-title">ผลการดำเนินงาน<br>& Dashboard</div>
-                </a>
-            </div>
-
-            <div class="menu-slot slot-orange">
-                <a href="indicators.html" class="menu-link">
-                    <img class="menu-icon" src="img/moneybag.png" alt="Icon">
-                    <div class="menu-title">ตัวชี้วัดและ<br>การประเมินผล</div>
-                </a>
-            </div>
-
             <div class="menu-slot slot-blue">
-                <a href="debt.html" class="menu-link">
-                    <img class="menu-icon" src="img/chat.png" alt="Icon">
-                    <div class="menu-title">การบริหาร<br>เงินทุนและหนี้</div>
+                <a href="dashboard/CDDWomen2569.html" class="menu-link">
+                    <img class="menu-icon" src="img/kpi.png" alt="Icon">
+                    <div class="menu-title">ผลดำเนินงาน<br>ทุนหมุนเวียน 2569</div>
                 </a>
             </div>
-
             <div class="menu-slot slot-green">
-                <a href="tools.html" class="menu-link">
+                <a href="https://sites.google.com/view/twdf" class="menu-link">
+                    <img class="menu-icon" src="img/interface.png" alt="Icon">
+                    <div class="menu-title">CDDWomen<br>Dashboard</div>
+                </a>
+            </div>
+            <div class="menu-slot slot-orange">
+                <a href="https://script.google.com/macros/s/AKfycbzR_wvsZSiGTA9tonwAsdSS2rqyYTEnK25llZArVkiyOrIAah7oUJMUUbDnpWRtjBnJ/exec" class="menu-link">
                     <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                    <div class="menu-title">เครื่องมือสนับสนุน<br>การปฏิบัติงาน</div>
+                    <div class="menu-title">Dashboard<br>แยกจังหวัด</div>
+                </a>
+            </div>
+            <div class="menu-slot slot-pink">
+                <a href="dashboard/CDDWomen2568.html" class="menu-link">
+                    <img class="menu-icon" src="img/documents.png" alt="Icon">
+                    <div class="menu-title">ผลดำเนินงาน<br>ทุนหมุนเวียน 2568</div>
                 </a>
             </div>
         </div>
 
+        <!-- Mobile List -->
         <div class="mobile-menu-list">
-            <a href="dashboard.html" class="mobile-card card-pink">
-                <img class="m-icon" src="img/data-analysis.png" alt="Icon">
-                <div class="m-title">ผลการดำเนินงาน & Dashboard</div>
+            <a href="dashboard/CDDWomen2569.html" class="mobile-card card-blue">
+                <img class="m-icon" src="img/kpi.png" alt="Icon">
+                <div class="m-title">ผลดำเนินงาน ทุนหมุนเวียน 2569</div>
             </a>
-            <a href="indicators.html" class="mobile-card card-orange">
-                <img class="m-icon" src="img/moneybag.png" alt="Icon">
-                <div class="m-title">ตัวชี้วัดและการประเมินผล</div>
+            <a href="https://sites.google.com/view/twdf" class="mobile-card card-green">
+                <img class="m-icon" src="img/interface.png" alt="Icon">
+                <div class="m-title">CDDWomen Dashboard</div>
             </a>
-            <a href="debt.html" class="mobile-card card-blue">
-                <img class="m-icon" src="img/chat.png" alt="Icon">
-                <div class="m-title">การบริหารเงินทุนและหนี้</div>
-            </a>
-            <a href="tools.html" class="mobile-card card-green">
+            <a href="https://script.google.com/macros/s/AKfycbzR_wvsZSiGTA9tonwAsdSS2rqyYTEnK25llZArVkiyOrIAah7oUJMUUbDnpWRtjBnJ/exec" class="mobile-card card-orange">
                 <img class="m-icon" src="img/checklist.png" alt="Icon">
-                <div class="m-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
+                <div class="m-title">Dashboard แยกจังหวัด</div>
+            </a>
+            <a href="dashboard/CDDWomen2568.html" class="mobile-card card-pink">
+                <img class="m-icon" src="img/documents.png" alt="Icon">
+                <div class="m-title">ผลดำเนินงาน ทุนหมุนเวียน 2568</div>
             </a>
         </div>
-
     </div>
 
 </body>
