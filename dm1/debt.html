@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDD Women Fund Dashboard (6 Items Fixed)</title>
+    <title>CDD Women Fund Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
         .dashboard-container {
             background: #ffffff;
             width: 100%;
-            max-width: 950px;
+            max-width: 900px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             padding: 40px;
@@ -90,86 +90,74 @@
             width: auto;
         }
 
-        /* --- โครงสร้างวงล้อเมนู --- */
+        /* --- โครงสร้างวงล้อ 3 ส่วนแบบสมมาตรพิกัดตรงจุด --- */
         .menu-wheel-wrapper {
             position: relative;
             width: 100%;
-            max-width: 540px; 
+            max-width: 500px;
             margin: 40px auto;
             aspect-ratio: 1 / 1;
         }
 
+        /* แผ่นพายเฉลี่ยแผ่สีชิ้นละ 120 องศาเต็มวงพอดี */
         .donut-ring {
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: 50%;
             background: conic-gradient(
-                #FFF2D9 0deg 60deg,
-                #E3F5FF 60deg 120deg,
-                #E2F9F3 120deg 180deg,
-                #FFE6EE 180deg 240deg,
-                #F1EAFF 240deg 300deg,
-                #E6F7FF 300deg 360deg
+                #FFF2D9 0deg 120deg,
+                #E3F5FF 120deg 240deg,
+                #E2F9F3 240deg 360deg
             );
             box-shadow: 0 10px 25px rgba(0,0,0,0.06);
         }
 
-        /* เมนูไอเทมเดี่ยว */
         .menu-item {
             position: absolute;
-            width: 150px; /* ปรับขนาดหน้ากว้างให้กระชับเข้าจุดกึ่งกลาง */
+            width: 220px; /* ขยายบล็อกข้อความให้กว้างเต็มแผ่นพาย */
             text-decoration: none;
             color: var(--text-dark);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            /* ใช้ transform-translate เพื่อให้จุดอ้างอิงอยู่กึ่งกลางบล็อกข้อความพอดี */
-            transform: translate(-50%, -50%);
-            transition: transform 0.2s ease, filter 0.2s ease;
+            transition: transform 0.2s ease;
             z-index: 2;
         }
 
-        /* [พิกัดคำนวณใหม่แบบ Perfect Center]
-           คำนวณจากจุดศูนย์กลางวงกลม (50%, 50%) กระจายออกไปที่รัศมีประมาณ 28-30% ในมุมของแต่ละชิ้นพาย
-        */
-        .item-1 { top: 24%; left: 65%; }  /* ชิ้นที่ 1 (0° - 60°) */
-        .item-2 { top: 50%; left: 76%; }  /* ชิ้นที่ 2 (60° - 120°) */
-        .item-3 { top: 76%; left: 65%; }  /* ชิ้นที่ 3 (120° - 180°) */
-        .item-4 { top: 76%; left: 35%; }  /* ชิ้นที่ 4 (180° - 240°) */
-        .item-5 { top: 50%; left: 24%; }  /* ชิ้นที่ 5 (240° - 300°) */
-        .item-6 { top: 24%; left: 35%; }  /* ชิ้นที่ 6 (300° - 360°) */
+        /* ดึงสัดส่วนพิกัดให้ปุ่มไปลอยเด่นอยู่กึ่งกลางสามเหลี่ยมของแต่ละชิ้น */
+        .item-orange { top: 18%; left: 52%; } /* ชิ้นขวาบน */
+        .item-blue   { top: 55%; left: 28%; } /* ชิ้นล่างกลาง */
+        .item-green  { top: 18%; left: 4%; }  /* ชิ้นซ้ายบน */
 
-        /* เอฟเฟกต์Hover ขยายตัวจากจุดศูนย์กลางเดิมของตัวเอง ไม่เบี้ยวโย้ */
         .menu-item:hover {
-            transform: translate(-50%, -50%) scale(1.08);
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+            transform: scale(1.06);
         }
 
         .menu-icon {
-            width: 46px;
-            height: 46px;
-            margin-bottom: 8px;
+            width: 52px;
+            height: 52px;
+            margin-bottom: 12px;
             object-fit: contain;
             background: #ffffff;
-            padding: 8px;
+            padding: 9px;
             border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .menu-title {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 700;
-            color: #222222;
-            margin-bottom: 4px;
-            line-height: 1.3;
+            margin-bottom: 6px;
+            line-height: 1.4;
+            color: #111111;
         }
 
         .menu-desc {
-            font-size: 10.5px;
-            color: #555555;
-            line-height: 1.3;
+            font-size: 11.5px;
+            color: #444444;
+            line-height: 1.4;
         }
 
         /* ปุ่มย้อนกลับด้านซ้ายบน (Back Button) */
@@ -205,7 +193,7 @@
             transition: transform 0.2s ease;
         }
 
-        /* Responsive มือถือ (คลี่เป็นรายการแนวตั้งเรียบร้อย) */
+        /* Responsive สำหรับมือถือ */
         @media (max-width: 650px) {
             .header-section { flex-direction: column; gap: 10px; min-height: auto; }
             .header-title-container { padding: 0; }
@@ -213,29 +201,12 @@
             .main-title { font-size: 26px; }
             .sub-title-eng { font-size: 18px; }
             
-            .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 12px; margin: 20px auto; }
+            .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
             .donut-ring { display: none; }
-            
-            .menu-item { 
-                position: relative; 
-                width: 100%; 
-                top: auto !important; 
-                left: auto !important; 
-                transform: none !important; 
-                flex-direction: row; 
-                text-align: left; 
-                padding: 15px 20px; 
-                border-radius: 14px; 
-                gap: 15px; 
-            }
-            .menu-item:hover { transform: translateY(-2px) !important; }
-            
-            .item-1 { background-color: #FFF2D9; }
-            .item-2 { background-color: #E3F5FF; }
-            .item-3 { background-color: #E2F9F3; }
-            .item-4 { background-color: #FFE6EE; }
-            .item-5 { background-color: #F1EAFF; }
-            .item-6 { background-color: #E6F7FF; }
+            .menu-item { position: relative; width: 100%; top: auto !important; left: auto !important; flex-direction: row; text-align: left; padding: 15px 20px; border-radius: 16px; gap: 15px; }
+            .item-orange { background-color: #FFF2D9; }
+            .item-blue   { background-color: #E3F5FF; }
+            .item-green  { background-color: #E2F9F3; }
             .menu-icon { margin-bottom: 0; }
         }
     </style>
@@ -244,18 +215,18 @@
 
     <div class="dashboard-container">
         <header class="header-section">
-            
-        <a href="index.html" class="btn-back-left">
+
+            <a href="index.html" class="btn-back-left">
                 <svg width="16" height="16" viewBox="0 0 24 24">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                 </svg>
                 ย้อนกลับ
             </a>
-
+            
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">ผลการดำเนินงานกองทุนพัฒนาบทบาทสตรี ปี 2569</p>
+                <p class="sub-title-th">การบริหารเงินทุนและหนี้</p>
             </div>
             <div class="logos-right">
                 <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
@@ -264,44 +235,35 @@
         </header>
 
         <div class="menu-wheel-wrapper">
-            <div class="donut-ring"></div>
+            <div class="donut-ring">
 
-            <a href="work2569/CDDWomen2569.html" class="menu-item item-1">
-                <img class="menu-icon" src="img/report.png" alt="Icon">
-                <div class="menu-title">ผลการดำเนินงาน<br>ทุนหมุนเวียน</div>
-                <div class="menu-desc">ผลการดำเนินงานปี 2569</div>
-            </a>
+                <a href="debt/Disb2569.html" class="menu-item item-orange">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/documents.png" alt="Icon">
+                        <div class="menu-title">ร้อยละการเบิกจ่ายเงินทุนหมุนเวียน 2569</div>
+                        <div class="menu-desc"></div>
+                    </div>
+                </a>
 
-            <a href="work2569/Disb2569.html" class="menu-item item-2">
-                <img class="menu-icon" src="img/cash-flow.png" alt="Icon">
-                <div class="menu-title">ร้อยละการเบิกจ่าย<br>เงินทุนหมุนเวียน</div>
-                <div class="menu-desc">การเบิกจ่ายในปี 2569</div>
-            </a>
+                <a href="https://thititwf-creator.github.io/Due-Dep-sys/summary.html" class="menu-item item-blue">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/kpi.png" alt="Icon">
+                        <div class="menu-title">ร้อยละการชำระคืนเงินต้น 2569</div>
+                        <div class="menu-desc"></div>
+                    </div>
+                </a>
 
-            <a href="work2569/report2.html" class="menu-item item-3">
-                <img class="menu-icon" src="img/target.png" alt="Icon">
-                <div class="menu-title">ตัวชี้วัด<br>การปฏิบัติราชการ</div>
-                <div class="menu-desc">ตัวชี้วัดในปี 2569</div>
-            </a>
+                <a href="debt/KPI2569.html" class="menu-item item-green">
+                    <div class="menu-content">
+                        <img class="menu-icon" src="img/interface.png" alt="Icon">
+                        <div class="menu-title">ร้อยละหนี้ค้างชำระ 2569</div>
+                        <div class="menu-desc"></div>
+                    </div>
+                </a>
 
-            <a href="https://thititwf-creator.github.io/Due-Dep-sys/summary.html" class="menu-item item-4">
-                <img class="menu-icon" src="img/refund.png" alt="Icon">
-                <div class="menu-title">ร้อยละการชำระ<br>คืนเงินต้น</div>
-                <div class="menu-desc">การชำระคืนปี 2569</div>
-            </a>
-
-            <a href="work2569/mainpoints.html" class="menu-item item-5">
-                <img class="menu-icon" src="img/loudspeaker.png" alt="Icon">
-                <div class="menu-title">ประเด็นเน้นย้ำ<br>5+1</div>
-                <div class="menu-desc">ประเด็นสำคัญปี 2569</div>
-            </a>
-
-            <a href="" class="menu-item item-6">
-                <img class="menu-icon" src="img/warning.png" alt="Icon">
-                <div class="menu-title">ร้อยละหนี้<br>ค้างชำระ</div>
-                <div class="menu-desc">หนี้ค้างชำระปี 2569</div>
-            </a>
+            </div>
         </div>
+
     </div>
 
 </body>

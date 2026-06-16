@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>CDD Women Fund – เลือกจังหวัด</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet"/>
+
+<style>
+body{
+margin:0;
+font-family:'Sarabun',sans-serif;
+background:linear-gradient(to bottom right,#ffe6f0,#f8bbd0,#f3e5f5);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+width:420px;
+padding:30px;
+background:#fff;
+border-radius:20px;
+text-align:center;
+box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+
+.logo-box{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-bottom:15px;
+}
+
+.logo-box img{
+width:80px;
+}
+
+h2{
+color:#d63384;
+}
+
+select{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid #f48fb1;
+background:#fff5f8;
+font-size:1rem;
+margin-bottom:18px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#ec407a;
+color:#fff;
+border:none;
+border-radius:12px;
+font-size:1.2rem;
+cursor:pointer;
+}
+
+button:hover{
+background:#d81b60;
+}
+
+.hint{
+margin-top:14px;
+font-size:0.9rem;
+color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="logo-box">
+<img src="./img/cdd.png">
+<img src="./img/logo.png">
+</div>
+
+<h2>เลือกจังหวัด (ส่วนกลาง)</h2>
+
+<select id="provinceSelect">
+<option value="">-- เลือกจังหวัด --</option>
+</select>
+
+<button onclick="openProvince()">เปิดข้อมูลจังหวัด</button>
+
+<div class="hint">
+* สำหรับผู้ใช้งานสิทธิ์ส่วนกลาง สามารถเลือกดูได้ทุกจังหวัด
+</div>
+
+</div>
+
+<script>
+
+const API_URL="https://script.google.com/macros/s/AKfycby-hXuokpXdI9HnrNw1-6dye45st2IfRsEsXJOdMNOgt_w4yRNVK6kX1w-EIq00JyQ/exec";
+
+// ตรวจ role
+const role=sessionStorage.getItem("role");
+
+if(role!=="admin"){
+alert("ไม่มีสิทธิ์เข้าใช้งานหน้านี้");
+window.location.href="portal.html";
+}
+
+// โหลดจังหวัด
+async function loadProvinces(){
+
+const res=await fetch(`${API_URL}?action=getProvinces`);
+const data=await res.json();
+
+const select=document.getElementById("provinceSelect");
+
+data.provinces.forEach(p=>{
+const opt=document.createElement("option");
+opt.value=p;
+opt.textContent=p;
+select.appendChild(opt);
+});
+
+}
+
+document.addEventListener("DOMContentLoaded",loadProvinces);
+
+
+// เปิดจังหวัด
+function openProvince(){
+
+const province=document.getElementById("provinceSelect").value;
+
+if(!province){
+alert("กรุณาเลือกจังหวัด");
+return;
+}
+
+let id = sessionStorage.getItem("id");
+
+if (!id) {
+  id = crypto.randomUUID();
+  sessionStorage.setItem("id", id);
+}
+
+window.open(
+  `province2569.html?p=${encodeURIComponent(province)}&id=${id}`,
+  "_blank"
+);
+
+}
+
+</script>
+
+</body>
+</html>
