@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDD Women Fund Dashboard (4 Items)</title>
+    <title>CDD Women Fund Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -34,27 +34,26 @@
         .dashboard-container {
             background: #ffffff;
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             padding: 40px;
-            position: relative;
         }
 
-        /* --- 1. ส่วนหัว (Header) จัดกึ่งกลาง 100% --- */
+        /* --- ส่วนหัว (Header) --- */
         .header-section {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
             min-height: 80px;
         }
 
         .header-title-container {
             text-align: center;
             width: 100%;
-            padding: 0 120px; /* เว้นที่ให้โลโก้ด้านข้าง */
+            padding: 0 120px;
         }
 
         .main-title {
@@ -77,7 +76,6 @@
             margin-top: 5px;
         }
 
-        /* โลโก้ด้านขวาแบบ Absolute ไม่ให้เบียดตรงกลาง */
         .logos-right {
             position: absolute;
             right: 0;
@@ -92,98 +90,73 @@
             width: auto;
         }
 
-        /* --- 2. โครงสร้างวงล้อ 4 ส่วน (4-Item Perfect Wheel) --- */
-        .menu-wheel-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 40px auto;
-            aspect-ratio: 1 / 1;
+        /* --- โครงสร้างการ์ดสี่เหลี่ยม (Grid Layout) --- */
+        .menu-grid-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 20px 0;
         }
 
-        /* พื้นหลังแผ่นพายแบ่ง 4 ส่วนด้วย Conic Gradient */
-        .donut-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-            background: conic-gradient(
-                #FFF2D9 0deg 90deg,   /* ส่วนที่ 1: ส้ม */
-                #E3F5FF 90deg 180deg, /* ส่วนที่ 2: ฟ้า */
-                #E2F9F3 180deg 270deg, /* ส่วนที่ 3: เขียว */
-                #FFE6EE 270deg 360deg  /* ส่วนที่ 4: ชมพู */
-            );
-            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-        }
-
-        /* การจัดวางเนื้อหาให้ลงล็อคกึ่งกลางของแต่ละ Quadrant */
         .menu-item {
-            position: absolute;
-            width: 180px; /* คุมความกว้างไม่ให้ล้นชิ้นพาย */
             text-decoration: none;
             color: var(--text-dark);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            /* ใช้จุดกึ่งกลางของตัวเองเป็นจุดอ้างอิง */
-            transform: translate(-50%, -50%);
-            transition: transform 0.2s ease;
-            z-index: 2;
+            padding: 35px 25px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
-        /* [พิกัดคำนวณใหม่สำหรับ 4 ส่วน] */
-        .item-orange { top: 30%; left: 70%; } /* บนขวา */
-        .item-blue   { top: 70%; left: 70%; } /* ล่างขวา */
-        .item-green  { top: 70%; left: 30%; } /* ล่างซ้าย */
-        .item-pink   { top: 30%; left: 30%; } /* บนซ้าย */
+        /* โทนสีพื้นหลังสี่เหลี่ยมพาสเทลตามธีมเดิม */
+        .item-orange { background-color: #FFF2D9; }
+        .item-blue   { background-color: #E3F5FF; }
+        .item-green  { background-color: #E2F9F3; }
+        .item-pink   { background-color: #FFE6EE; }
 
         .menu-item:hover {
-            transform: translate(-50%, -50%) scale(1.08);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
         }
 
         .menu-icon {
-            width: 55px;
-            height: 55px;
-            margin-bottom: 12px;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
             object-fit: contain;
             background: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            padding: 12px;
+            border-radius: 14px; /* ปรับไอคอนเป็นสี่เหลี่ยมมุมมนเข้ากับธีม */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
         }
 
         .menu-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 4px;
-            color: #111;
+            margin-bottom: 6px;
+            color: #111111;
         }
 
         .menu-desc {
-            font-size: 11.5px;
-            color: #444;
-            line-height: 1.4;
+            font-size: 13px;
+            color: #555555;
+            line-height: 1.5;
         }
 
-        /* Responsive สำหรับหน้าจอมือถือ เปลี่ยนเป็น List เรียงลงมาเพื่อให้อ่านง่าย */
+        /* Responsive สำหรับมือถือ */
         @media (max-width: 768px) {
-            .header-section { flex-direction: column; gap: 10px; min-height: auto; }
+            .header-section { flex-direction: column; gap: 15px; min-height: auto; }
             .header-title-container { padding: 0; }
-            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; margin-bottom: 5px; }
+            .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; }
+            .main-title { font-size: 26px; }
             
-            .menu-wheel-wrapper { display: flex; flex-direction: column; height: auto; gap: 15px; margin: 20px auto; }
-            .donut-ring { display: none; }
-            .menu-item { 
-                position: relative; width: 100%; top: auto !important; left: auto !important; 
-                transform: none !important; flex-direction: row; text-align: left; 
-                padding: 18px 20px; border-radius: 16px; gap: 15px; 
-            }
-            .item-orange { background-color: #FFF2D9; }
-            .item-blue   { background-color: #E3F5FF; }
-            .item-green  { background-color: #E2F9F3; }
-            .item-pink   { background-color: #FFE6EE; }
-            .menu-icon { margin-bottom: 0; }
+            .menu-grid-wrapper { grid-template-columns: 1fr; gap: 15px; }
+            .menu-item { flex-direction: row; text-align: left; padding: 20px; gap: 15px; align-items: center; }
+            .menu-icon { margin-bottom: 0; width: 50px; height: 50px; padding: 10px; }
         }
     </style>
 </head>
@@ -204,31 +177,38 @@
             </div>
         </header>
 
-        <div class="menu-wheel-wrapper">
-            <div class="donut-ring"></div>
+        <div class="menu-grid-wrapper">
 
             <a href="indicators.html" class="menu-item item-orange">
                 <img class="menu-icon" src="img/moneybag.png" alt="Icon">
-                <div class="menu-title">ตัวชี้วัดและการประเมินผล</div>
-                <div class="menu-desc"></div>
+                <div class="menu-text-wrapper">
+                    <div class="menu-title">ตัวชี้วัดและการประเมินผล</div>
+                    <div class="menu-desc">ระบบติดตามตัวชี้วัดและประเมินผลการปฏิบัติราชการ</div>
+                </div>
             </a>
 
             <a href="debt.html" class="menu-item item-blue">
                 <img class="menu-icon" src="img/chat.png" alt="Icon">
-                <div class="menu-title">การบริหารเงินทุนและหนี้</div>
-                <div class="menu-desc"></div>
+                <div class="menu-text-wrapper">
+                    <div class="menu-title">การบริหารเงินทุนและหนี้</div>
+                    <div class="menu-desc">ข้อมูลภาพรวมการบริหารจัดการหนี้และเงินหมุนเวียน</div>
+                </div>
             </a>
 
             <a href="tools.html" class="menu-item item-green">
                 <img class="menu-icon" src="img/checklist.png" alt="Icon">
-                <div class="menu-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
-                <div class="menu-desc"></div>
+                <div class="menu-text-wrapper">
+                    <div class="menu-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
+                    <div class="menu-desc">โปรแกรมและมาตรการช่วยเหลือกองทุนฯ</div>
+                </div>
             </a>
 
             <a href="dashboard.html" class="menu-item item-pink">
                 <img class="menu-icon" src="img/data-analysis.png" alt="Icon">
-                <div class="menu-title">ผลการดำเนินงานและ Dashboard</div>
-                <div class="menu-desc"></div>
+                <div class="menu-text-wrapper">
+                    <div class="menu-title">ผลการดำเนินงานและ Dashboard</div>
+                    <div class="menu-desc">สรุปผลข้อมูลสถิติในรูปแบบแดชบอร์ด</div>
+                </div>
             </a>
 
         </div>
