@@ -130,6 +130,7 @@
         }
 
         .menu-item {
+            position: relative; /* เพิ่มเพื่อให้ลูกๆ ที่ทำ absolute อ้างอิงพื้นที่ได้ถูกต้อง */
             text-decoration: none;
             color: var(--text-dark);
             display: flex;
@@ -141,6 +142,21 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
             border: 1px solid rgba(0, 0, 0, 0.03);
+            overflow: hidden; /* ป้องกันเนื้อหา Dropdown ล้นออกนอกขอบโค้งของการ์ด */
+        }
+
+        /* ปรับแต่งสไตล์โครงสร้าง Select ให้คลุมทั้งพื้นที่แบบไร้รอยต่อ */
+        .menu-select-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+            -webkit-appearance: none; /* ลบสไตล์ดั้งเดิมของระบบ iOS/Android */
+            appearance: none;
         }
 
         .item-orange {
@@ -169,6 +185,12 @@
             padding: 12px;
             border-radius: 14px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            z-index: 2;
+        }
+
+        .menu-text-wrapper {
+            width: 100%;
+            z-index: 2;
         }
 
         .menu-title {
@@ -177,6 +199,10 @@
             margin-bottom: 6px;
             line-height: 1.4;
             color: #111111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
         }
 
         .menu-desc {
@@ -203,6 +229,10 @@
                 top: auto;
                 left: auto;
                 margin-bottom: 5px;
+            }
+
+            .btn-back-left:hover {
+                transform: none;
             }
 
             .logos-right {
@@ -236,6 +266,11 @@
                 height: 50px;
                 padding: 10px;
             }
+
+            .menu-title {
+                justify-content: space-between;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -264,6 +299,7 @@
 
         <div class="menu-grid-wrapper">
 
+            <!-- ไอเทมที่ 1 -->
             <a href="tools/q&a.html" class="menu-item item-orange">
                 <img class="menu-icon" src="img/q-and-a.png" alt="Icon">
                 <div class="menu-text-wrapper">
@@ -272,9 +308,9 @@
                 </div>
             </a>
 
-            <div class="menu-item item-blue relative cursor-pointer">
-                <select onchange="if(this.value) window.location.href=this.value;"
-                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+            <!-- ไอเทมที่ 2 (แก้ไขในส่วนนี้ให้รองรับการเปลี่ยนหน้าจอแบบกลมกลืน) -->
+            <div class="menu-item item-blue">
+                <select onchange="if(this.value) window.location.href=this.value;" class="menu-select-overlay">
                     <option value="" disabled selected>-- เลือกมาตรการที่ต้องการ --</option>
                     <option value="tools/law001.html">🔹 รายการหน้าย่อยที่ 1</option>
                     <option value="tools/law002.html">🔹 รายการหน้าย่อยที่ 2</option>
@@ -284,15 +320,16 @@
                 </select>
 
                 <img class="menu-icon" src="img/list.png" alt="Icon">
-                <div class="menu-text-wrapper flex-1">
-                    <div class="menu-title flex justify-between items-center">
-                        มาตรการบริหารจัดการหนี้
-                        <span class="text-xs" id="caret-icon">▼</span>
+                <div class="menu-text-wrapper">
+                    <div class="menu-title">
+                        <span>มาตรการบริหารจัดการหนี้</span>
+                        <span class="text-xs" style="color: #666;">▼</span>
                     </div>
                     <div class="menu-desc">มาตรการบริหารจัดการหนี้<br>สำหรับสำนักงานกองทุนฯ</div>
                 </div>
             </div>
 
+            <!-- ไอเทมที่ 3 -->
             <a href="tools/missed_payment.html" class="menu-item item-green">
                 <img class="menu-icon" src="img/budget.png" alt="Icon">
                 <div class="menu-text-wrapper">
