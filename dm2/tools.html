@@ -272,70 +272,26 @@
                 </div>
             </a>
 
-            <div class="menu-item item-blue relative cursor-pointer" onclick="toggleDropdown(event)">
+            <div class="menu-item item-blue relative cursor-pointer">
+                <select onchange="if(this.value) window.location.href=this.value;"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <option value="" disabled selected>-- เลือกมาตรการที่ต้องการ --</option>
+                    <option value="tools/law001.html">🔹 รายการหน้าย่อยที่ 1</option>
+                    <option value="tools/law002.html">🔹 รายการหน้าย่อยที่ 2</option>
+                    <option value="tools/law003.html">🔹 รายการหน้าย่อยที่ 3</option>
+                    <option value="tools/law004.html">🔹 รายการหน้าย่อยที่ 4</option>
+                    <option value="tools/law005.html">🔹 รายการหน้าย่อยที่ 5</option>
+                </select>
+
                 <img class="menu-icon" src="img/list.png" alt="Icon">
                 <div class="menu-text-wrapper flex-1">
                     <div class="menu-title flex justify-between items-center">
                         มาตรการบริหารจัดการหนี้
-                        <span class="text-xs transition-transform duration-200" id="caret-icon">▼</span>
+                        <span class="text-xs" id="caret-icon">▼</span>
                     </div>
                     <div class="menu-desc">มาตรการบริหารจัดการหนี้<br>สำหรับสำนักงานกองทุนฯ</div>
                 </div>
-
-                <div id="debt-dropdown"
-                    class="hidden absolute left-0 top-full w-full bg-white border border-gray-200 rounded-b-xl shadow-xl z-50 overflow-hidden mt-1">
-                    <a href="tools/law001.html"
-                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 border-b border-gray-100 transition-colors">
-                        🔹 รายการหน้าย่อยที่ 1
-                    </a>
-                    <a href="tools/law002.html"
-                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 border-b border-gray-100 transition-colors">
-                        🔹 รายการหน้าย่อยที่ 2
-                    </a>
-                    <a href="tools/law003.html"
-                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors">
-                        🔹 รายการหน้าย่อยที่ 3
-                    </a>
-                    <a href="tools/law004.html"
-                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors">
-                        🔹 รายการหน้าย่อยที่ 4
-                    </a>
-                    <a href="tools/law005.html"
-                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors">
-                        🔹 รายการหน้าย่อยที่ 5
-                    </a>
-                </div>
             </div>
-
-            <script>
-                function toggleDropdown(event) {
-                    // ป้องกันไม่ให้ส่งผลกระทบกับอิลิเมนต์อื่น
-                    event.stopPropagation();
-
-                    const dropdown = document.getElementById('debt-dropdown');
-                    const caret = document.getElementById('caret-icon');
-
-                    // Toggle การแสดงผล
-                    dropdown.classList.toggle('hidden');
-
-                    // หมุนลูกศร (แถมลูกเล่นความสวยงามให้ครับ)
-                    if (dropdown.classList.contains('hidden')) {
-                        caret.style.transform = 'rotate(0deg)';
-                    } else {
-                        caret.style.transform = 'rotate(180deg)';
-                    }
-                }
-
-                // ปิด Dropdown อัตโนมัติเมื่อผู้ใช้คลิกพื้นที่อื่นภายนอกเมนู
-                window.addEventListener('click', () => {
-                    const dropdown = document.getElementById('debt-dropdown');
-                    const caret = document.getElementById('caret-icon');
-                    if (dropdown && !dropdown.classList.contains('hidden')) {
-                        dropdown.classList.add('hidden');
-                        caret.style.transform = 'rotate(0deg)';
-                    }
-                });
-            </script>
 
             <a href="tools/missed_payment.html" class="menu-item item-green">
                 <img class="menu-icon" src="img/budget.png" alt="Icon">
