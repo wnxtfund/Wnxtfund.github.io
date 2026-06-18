@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เลือกจังหวัด – CDD Women Fund</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #e91e63;
+      --deep-pink: #c2185b;
+      --navy: #1a237e;
+      --bg1: #fce4ec;
+      --bg2: #f5f5f5;
+      --card: #ffffff;
+      --text-muted: #666;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(to bottom right, var(--bg1), var(--bg2));
+    }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      background: linear-gradient(90deg, #1a237e, #283593);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .navbar button {
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .4);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Sarabun';
+      font-size: .85rem;
+      transition: .2s;
+    }
+
+    .navbar button:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    /* ===== Main ===== */
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 16px;
+    }
+
+    .card {
+      background: var(--card);
+      width: 100%;
+      max-width: 420px;
+      border-radius: 18px;
+      padding: 28px 26px 24px;
+      box-shadow: 0 10px 25px rgba(233, 30, 99, .18);
+      animation: fadeUp .4s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h3 {
+      text-align: center;
+      color: var(--deep-pink);
+      margin: 0 0 22px;
+      font-size: 1.25rem;
+    }
+
+    label {
+      font-size: .85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1.5px solid #ddd;
+      margin-bottom: 20px;
+      font-family: 'Sarabun';
+      font-size: .95rem;
+      transition: .2s;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 2px rgba(233, 30, 99, .15);
+    }
+
+    button.action {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    button.action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(233, 30, 99, .35);
+    }
+
+    button.action:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(233, 30, 99, .25);
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: .8rem;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">
+    <div>CDD Women Fund (Admin)</div>
+    <button onclick="logout()">ออกจากระบบ</button>
+  </div>
+
+  <div class="main">
+    <div class="card">
+      <h3>เลือกจังหวัด</h3>
+
+      <label for="provinceSelect">จังหวัด</label>
+      <select id="provinceSelect"></select>
+
+      <button class="action" onclick="go()">ตกลง</button>
+
+      <div class="note">
+        ระบบข้อมูลกองทุนพัฒนาบทบาทสตรี
+      </div>
+    </div>
+  </div>
+
+
+  <script src="js/config.js"></script>
+  <script>
+    // ===== admin only =====
+    const provincesRaw = localStorage.getItem("provinces");
+
+    if (!provincesRaw) {
+      alert("กรุณาเข้าสู่ระบบใหม่");
+      location.href = "login.html";
+    }
+
+    const provinces = JSON.parse(provincesRaw);
+    const provinceSelect = document.getElementById("provinceSelect");
+
+    provinceSelect.innerHTML =
+      `<option value="">-- กรุณาเลือกจังหวัด --</option>`;
+
+    provinces.forEach(p => {
+      provinceSelect.innerHTML +=
+        `<option value="${p}">${p}</option>`;
+    });
+
+    function go() {
+      const province = provinceSelect.value;
+      if (!province) {
+        alert("กรุณาเลือกจังหวัด");
+        return;
+      }
+
+      // 🔑 ขอ token จังหวัดจาก GAS
+      fetch(`${API}?getTokenOf=${encodeURIComponent(province)}`)
+        .then(r => r.json())
+        .then(res => {
+          if (!res.token) {
+            alert("ไม่พบ token จังหวัดนี้");
+            return;
+          }
+
+          // ✅ เข้า district ด้วย token จังหวัดจริง
+          location.href =
+            `district.html?province=${encodeURIComponent(res.province)}&token=${encodeURIComponent(res.token)}`;
+        })
+        .catch(() => {
+          alert("ไม่สามารถเชื่อมต่อระบบได้");
+        });
+    }
+
+    function logout() {
+      localStorage.clear();
+      location.href = "login.html";
+    }
+  </script>
+
+</body>
+
+</html>
