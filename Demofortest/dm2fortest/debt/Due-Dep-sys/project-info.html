@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อมูลรายโครงการ</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #e91e63;
+      --deep-pink: #d81b60;
+      --navy: #1a237e;
+      --bg: #f5f5f5;
+      --border: #d1c4e9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      margin: 0;
+    }
+
+    .navbar {
+      background: var(--navy);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .navbar .title {
+      font-weight: 700;
+    }
+
+    .navbar button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Sarabun';
+      font-size: .85rem;
+    }
+
+    .main {
+      max-width: 1300px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h2 {
+      color: var(--deep-pink);
+      margin-bottom: 10px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input {
+      flex: 1;
+      max-width: 360px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
+      font-size: .9rem;
+    }
+
+    .toolbar button {
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1000px;
+      border-collapse: collapse;
+      border: 2px solid var(--border);
+    }
+
+    th,
+    td {
+      border: 1.5px solid var(--border);
+      padding: 8px;
+      text-align: center;
+      white-space: nowrap;
+      font-size: .85rem;
+    }
+
+    th {
+      background: #fce4ec;
+      color: #880e4f;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    tbody tr:hover {
+      background: #f3e5f5;
+    }
+
+    mark {
+      background: #fff59d;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="navbar">
+    <div class="title">CDD Women Fund</div>
+    <div>
+      <button onclick="goBack()">← กลับสรุปรายอำเภอ</button>
+      <button onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <h2 id="title">ข้อมูลรายโครงการ</h2>
+
+    <div class="toolbar">
+      <input id="globalSearch" placeholder="🔍 ค้นหาโครงการ..." oninput="debouncedSearch()">
+      <p>* หมายเหตุ: NULL คือ ไม่มีข้อมูลในระบบ หรือค่าเป็น 0<br>
+      **สถานะการมีข้อมูลใน ค-ง คือ หากโครงการนั้นบันทึกข้อมูลใน KPI ไกล่เกลี่ย(ค),ดำเนินคดี(ง) จะขึ้นว่า มีข้อมูล และถูกตัดออกจากร้อยละ</p>
+      <button onclick="exportExcel()">📤 ส่งออก Excel</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="tbl">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const province = params.get("province");
+    const district = params.get("district");
+    const token = params.get("token");
+
+    if (!province || !token) {
+      alert("ข้อมูลไม่ครบ กรุณาเข้าสู่ระบบใหม่");
+      location.href = "login.html";
+    }
+
+    let tableData = [];
+    let headers = [];
+    let searchTimer = null;
+    let currentSort = { col: null, asc: true };
+
+    title.innerText = district
+      ? `รายโครงการ อำเภอ${district} จังหวัด${province}`
+      : `รายโครงการทั้งหมด จังหวัด${province}`;
+
+
+    fetch(`${API}?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`)
+      .then(r => r.json())
+      .then(res => {
+
+        // 🔽 กรองเฉพาะอำเภอ
+        tableData = district
+          ? res.data.filter(r => r["อำเภอ"] === district)
+          : res.data; // ทั้งจังหวัด
+
+
+        if (tableData.length === 0) {
+          alert("ไม่พบข้อมูลโครงการ");
+          return;
+        }
+
+        headers = Object.keys(tableData[0]);
+        renderTable(tableData);
+      });
+
+    function renderTable(data) {
+      const thead = document.querySelector("#tbl thead");
+      const tbody = document.querySelector("#tbl tbody");
+      const keyword = globalSearch.value.toLowerCase();
+
+      thead.innerHTML = `
+      <tr>
+        ${headers.map((h, i) => `<th onclick="sortTable(${i})">${h}</th>`).join("")}
+      </tr>
+    `;
+
+      tbody.innerHTML = "";
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        headers.forEach(h => {
+          let cell = String(row[h] ?? "");
+          if (keyword) {
+            const re = new RegExp(`(${keyword})`, "gi");
+            cell = cell.replace(re, "<mark>$1</mark>");
+          }
+          tr.innerHTML += `<td>${cell}</td>`;
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function debouncedSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const k = globalSearch.value.toLowerCase();
+        const filtered = tableData.filter(r =>
+          headers.some(h => String(r[h] ?? "").toLowerCase().includes(k))
+        );
+        renderTable(filtered);
+      }, 250);
+    }
+
+    function sortTable(colIndex) {
+      const key = headers[colIndex];
+      currentSort.asc = currentSort.col === key ? !currentSort.asc : true;
+      currentSort.col = key;
+
+      tableData.sort((a, b) => {
+        const v1 = a[key] ?? "";
+        const v2 = b[key] ?? "";
+        if (!isNaN(v1) && !isNaN(v2)) {
+          return currentSort.asc ? v1 - v2 : v2 - v1;
+        }
+        return currentSort.asc
+          ? String(v1).localeCompare(String(v2), "th")
+          : String(v2).localeCompare(String(v1), "th");
+      });
+
+      debouncedSearch();
+    }
+
+    function exportExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(tableData);
+      XLSX.utils.book_append_sheet(wb, ws, "รายโครงการ");
+      const fileName = district
+        ? `รายโครงการ_${province}_${district}.xlsx`
+        : `รายโครงการ_${province}_ทั้งหมด.xlsx`;
+
+      XLSX.writeFile(wb, fileName);
+
+    }
+
+    function goBack() {
+      location.href =
+        `district.html?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`;
+    }
+
+    function logout() {
+      location.href = "login.html";
+    }
+    // if (!district) {
+    //   document.getElementById("btnBack").style.display = "none";
+    // }
+
+  </script>
+
+</body>
+
+</html>

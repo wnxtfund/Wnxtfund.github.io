@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ – CDD Women Fund</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #e91e63;
+      --deep-pink: #d81b60;
+      --navy: #1a237e;
+      --bg: #f5f5f5;
+      --card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: #000;
+      min-height: 100vh;
+    }
+
+    /* ===== Main ===== */
+    .main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    /* ===== Login Card ===== */
+    .login-card {
+      background: var(--card);
+      width: 100%;
+      max-width: 380px;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+    }
+
+    .login-card h3 {
+      text-align: center;
+      color: var(--deep-pink);
+      margin-bottom: 18px;
+    }
+
+    .login-card label {
+      font-size: .85rem;
+      color: #555;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-family: 'Sarabun';
+      font-size: .9rem;
+    }
+
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 2px rgba(233, 30, 99, .15);
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 10px;
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .login-card button:hover {
+      background: var(--deep-pink);
+    }
+
+    .login-note {
+      text-align: center;
+      font-size: .8rem;
+      color: #777;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <div class="login-card">
+      <h3>เข้าสู่ระบบ</h3>
+
+      <label for="user">Username</label>
+      <input id="user" placeholder="กรอกชื่อผู้ใช้">
+
+      <label for="pass">Password</label>
+      <input id="pass" type="password" placeholder="กรอกรหัสผ่าน">
+
+      <button onclick="login()">เข้าสู่ระบบ</button>
+
+      <div class="login-note">
+        ระบบข้อมูลกองทุนพัฒนาบทบาทสตรี
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script>
+    function login() {
+      fetch(API, {
+        method: "POST",
+        body: JSON.stringify({
+          username: user.value,
+          password: pass.value
+        })
+      })
+        .then(r => r.json())
+        .then(res => {
+          if (res.error) {
+            alert("Login ไม่สำเร็จ");
+            return;
+          }
+
+          if (res.role === "province") {
+            location.href =
+              `project-info.html?province=${encodeURIComponent(res.province)}&token=${res.token}`;
+          }
+
+          if (res.role === "admin") {
+            localStorage.setItem("adminToken", res.token);
+            localStorage.setItem("provinces", JSON.stringify(res.provinces));
+            location.href = "select-province.html";
+          }
+        });
+    }
+  </script>
+
+</body>
+
+</html>

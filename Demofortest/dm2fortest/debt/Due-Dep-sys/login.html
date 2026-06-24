@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <title>เข้าสู่ระบบ – CDD Women Fund</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pink: #e91e63;
+      --deep-pink: #c2185b;
+      --bg1: #fce4ec;
+      --bg2: #f5f5f5;
+      --card: #ffffff;
+      --text-muted: #666;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom right, var(--bg1), var(--bg2));
+    }
+
+    /* ===== Login Card ===== */
+    .login-card {
+      background: var(--card);
+      width: 100%;
+      max-width: 380px;
+      padding: 28px 26px 24px;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(233, 30, 99, .18);
+      animation: fadeUp .5s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h3 {
+      text-align: center;
+      color: var(--deep-pink);
+      margin: 0 0 22px;
+      font-size: 1.25rem;
+    }
+
+    label {
+      font-size: .85rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      margin: 6px 0 16px;
+      border-radius: 10px;
+      border: 1.5px solid #ddd;
+      font-family: 'Sarabun';
+      font-size: .95rem;
+      transition: .2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 2px rgba(233, 30, 99, .15);
+    }
+
+    button {
+      width: 100%;
+      padding: 11px;
+      background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(233, 30, 99, .35);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(233, 30, 99, .25);
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: .8rem;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-card">
+    <h3>เข้าสู่ระบบ</h3>
+
+    <label for="user">Username</label>
+    <input id="user" autocomplete="username">
+
+    <label for="pass">Password</label>
+    <input id="pass" type="password" autocomplete="current-password">
+
+    <button onclick="login()">เข้าสู่ระบบ</button>
+
+    <div class="note">
+      ระบบข้อมูลกองทุนพัฒนาบทบาทสตรี<br>
+      **ใช้ username และ password เดียวกันกับหนี้เกินกำหนดชำระ**
+    </div>
+  </div>
+
+
+  <script src="js/config.js"></script>
+  <script>
+    function login() {
+      fetch(API, {
+        method: "POST",
+        body: JSON.stringify({
+          username: user.value.trim(),
+          password: pass.value
+        })
+      })
+        .then(r => r.json())
+        .then(res => {
+
+          // ❌ login fail
+          if (!res || res.error) {
+            alert(res?.message || "Login ไม่สำเร็จ");
+            return;
+          }
+
+          const token = res.token;
+
+          /* =========================
+             🟢 user จังหวัด
+             ========================= */
+          if (res.role === "province" && res.province) {
+            location.href =
+              `district.html?province=${encodeURIComponent(res.province)}&token=${encodeURIComponent(token)}`;
+            return;
+          }
+
+          /* =========================
+             🟣 admin
+             ========================= */
+          if (res.role === "admin" && Array.isArray(res.provinces)) {
+            localStorage.setItem("adminToken", token);
+            localStorage.setItem("provinces", JSON.stringify(res.provinces));
+            location.href = "select-province.html";
+            return;
+          }
+
+          // fallback
+          alert("รูปแบบข้อมูลผู้ใช้ไม่ถูกต้อง");
+        })
+        .catch(() => {
+          alert("ไม่สามารถเชื่อมต่อระบบได้");
+        });
+    }
+  </script>
+
+</body>
+
+</html>

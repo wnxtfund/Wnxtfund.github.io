@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDD Women Fund Dashboard</title>
+    <title>CDD Women Fund Dashboard (3 Items)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -40,7 +40,6 @@
             padding: 40px;
         }
 
-        /* --- ส่วนหัว (Header) --- */
         .header-section {
             position: relative;
             display: flex;
@@ -90,11 +89,42 @@
             width: auto;
         }
 
-        /* --- โครงสร้างการ์ดสี่เหลี่ยม (Grid Layout) --- */
+        .btn-back-left {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #666666;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #f5f5f7;
+            padding: 10px 18px;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            z-index: 10;
+        }
+
+        .btn-back-left:hover {
+            background-color: var(--primary-pink);
+            color: #ffffff;
+            transform: translateY(-50%) translateX(-3px);
+            box-shadow: 0 4px 10px rgba(224, 43, 114, 0.2);
+        }
+
+        .btn-back-left svg {
+            fill: currentColor;
+        }
+
+        /* --- โครงสร้างการ์ดสี่เหลี่ยม 3 คอลัมน์ (Grid Layout) --- */
         .menu-grid-wrapper {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin: 20px 0;
         }
 
@@ -105,18 +135,16 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            padding: 35px 25px;
+            padding: 35px 20px;
             border-radius: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             border: 1px solid rgba(0,0,0,0.03);
         }
 
-        /* โทนสีพื้นหลังสี่เหลี่ยมพาสเทลตามธีมเดิม */
         .item-orange { background-color: #FFF2D9; }
         .item-blue   { background-color: #E3F5FF; }
         .item-green  { background-color: #E2F9F3; }
-        .item-pink   { background-color: #FFE6EE; }
 
         .menu-item:hover {
             transform: translateY(-5px);
@@ -130,27 +158,29 @@
             object-fit: contain;
             background: #ffffff;
             padding: 12px;
-            border-radius: 14px; /* ปรับไอคอนเป็นสี่เหลี่ยมมุมมนเข้ากับธีม */
+            border-radius: 14px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.06);
         }
 
         .menu-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             margin-bottom: 6px;
+            line-height: 1.4;
             color: #111111;
         }
 
         .menu-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: #555555;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         /* Responsive สำหรับมือถือ */
         @media (max-width: 768px) {
             .header-section { flex-direction: column; gap: 15px; min-height: auto; }
             .header-title-container { padding: 0; }
+            .btn-back-left { position: relative; transform: none; top: auto; left: auto; margin-bottom: 5px; }
             .logos-right { position: relative; right: auto; top: auto; transform: none; order: -1; }
             .main-title { font-size: 26px; }
             
@@ -163,14 +193,19 @@
 <body>
 
     <div class="dashboard-container">
-        
         <header class="header-section">
+            <a href="index.html" class="btn-back-left">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                ย้อนกลับ
+            </a>
+
             <div class="header-title-container">
                 <h1 class="main-title">CDD Women Fund</h1>
                 <span class="sub-title-eng">— Dashboard —</span>
-                <p class="sub-title-th">ฐานข้อมูล กองทุนพัฒนาบทบาทสตรีระดับประเทศ</p>
+                <p class="sub-title-th">ตัวชี้วัดและการประเมินผล</p>
             </div>
-            
             <div class="logos-right">
                 <img class="logo-right-img" src="img/cdd.png" alt="Gov Logo 1">
                 <img class="logo-right-img" src="img/logo.png" alt="Gov Logo 2">
@@ -179,40 +214,31 @@
 
         <div class="menu-grid-wrapper">
 
-            <a href="indicators.html" class="menu-item item-orange">
-                <img class="menu-icon" src="img/moneybag.png" alt="Icon">
+            <a href="indicators/CDDWomenpod2568.html" class="menu-item item-orange">
+                <img class="menu-icon" src="img/documents.png" alt="Icon">
                 <div class="menu-text-wrapper">
-                    <div class="menu-title">ตัวชี้วัดและการประเมินผล</div>
-                    <div class="menu-desc">ระบบติดตามตัวชี้วัดและประเมินผลการปฏิบัติราชการ</div>
+                    <div class="menu-title">ตัวชี้วัดปฏิบัติราชการ พ.ศ.2568</div>
+                    <div class="menu-desc"></div>
                 </div>
             </a>
 
-            <a href="debt.html" class="menu-item item-blue">
-                <img class="menu-icon" src="img/chat.png" alt="Icon">
+            <a href="indicators/report.html" class="menu-item item-blue">
+                <img class="menu-icon" src="img/kpi.png" alt="Icon">
                 <div class="menu-text-wrapper">
-                    <div class="menu-title">การบริหารเงินทุนและหนี้</div>
-                    <div class="menu-desc">ข้อมูลภาพรวมการบริหารจัดการหนี้และเงินหมุนเวียน</div>
+                    <div class="menu-title">ตัวชี้วัดปฏิบัติราชการ พ.ศ.2569</div>
+                    <div class="menu-desc"></div>
                 </div>
             </a>
 
-            <a href="tools.html" class="menu-item item-green">
-                <img class="menu-icon" src="img/checklist.png" alt="Icon">
+            <a href="indicators/mainpoints.html" class="menu-item item-green">
+                <img class="menu-icon" src="img/interface.png" alt="Icon">
                 <div class="menu-text-wrapper">
-                    <div class="menu-title">เครื่องมือสนับสนุนการปฏิบัติงาน</div>
-                    <div class="menu-desc">โปรแกรมและมาตรการช่วยเหลือกองทุนฯ</div>
-                </div>
-            </a>
-
-            <a href="dashboard.html" class="menu-item item-pink">
-                <img class="menu-icon" src="img/data-analysis.png" alt="Icon">
-                <div class="menu-text-wrapper">
-                    <div class="menu-title">ผลการดำเนินงานและ Dashboard</div>
-                    <div class="menu-desc">สรุปผลข้อมูลสถิติในรูปแบบแดชบอร์ด</div>
+                    <div class="menu-title">ประเด็นเน้นย้ำ 5+1</div>
+                    <div class="menu-desc"></div>
                 </div>
             </a>
 
         </div>
-
     </div>
 
 </body>

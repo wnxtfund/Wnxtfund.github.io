@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CDD Women Fund – คำถามที่พบบ่อย</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        :root {
+            --pink: #e91e63;
+            --light-pink: #f8bbd0;
+            --deep-pink: #f06292;
+            --bg-gradient: linear-gradient(to bottom right, #fce4ec, #f3e5f5);
+            --card-bg: #ffffff;
+            --text-dark: #000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+        }
+
+        .logo-container img {
+            margin-left: 10px;
+            max-height: 55px;
+        }
+
+        /* ===== Toolbar ===== */
+        .toolbar {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .toolbar button {
+            background-color: var(--light-pink);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 14px;
+            color: #880e4f;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .toolbar button:hover {
+            background-color: #f48fb1;
+        }
+
+        .toolbar img {
+            height: 16px;
+        }
+
+        /* ===== Search ===== */
+        .search-wrapper {
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-family: 'Sarabun';
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--deep-pink);
+        }
+
+        /* ===== Category Buttons ===== */
+        .category-buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .category-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--deep-pink);
+            background-color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category-btn.active {
+            background-color: var(--deep-pink);
+            color: white;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-container {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .faq-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #eee;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .faq-item:hover {
+            background-color: rgba(248, 187, 208, 0.35);
+        }
+
+        .loading-text {
+            text-align: center;
+            color: #555;
+        }
+
+        /* ===== Modal ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 640px;
+            padding: 20px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            right: 16px;
+            top: 8px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .modal-question {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--pink);
+            margin-bottom: 12px;
+        }
+
+        .modal-answer {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ===== Mobile ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            .main-container {
+                padding: 14px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .header h2 {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <div class="header">
+            <div>
+                <h1>
+                    <span style="color:navy;">CDD</span>
+                    <span style="color:deeppink;">Women</span>
+                    <span style="color:red;">Fund</span>
+                </h1>
+                <h2>คำถามที่พบบ่อย (FAQ)</h2>
+            </div>
+
+            <div class="logo-container">
+                <img src="https://i.postimg.cc/507bjy9Z/cdd.png" width="50">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s"
+                    width="60">
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button onclick="window.location.href='../index.html'">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png">
+                กลับสู่เมนูหลัก
+            </button>
+        </div>
+
+        <div class="search-wrapper">
+            <input type="search" id="searchInput" class="search-box" placeholder="ค้นหาคำถาม..." disabled>
+        </div>
+
+        <div id="categoryButtons" class="category-buttons-container"></div>
+
+        <div id="faqContainer" class="faq-container">
+            <p class="loading-text">กำลังโหลดคำถาม...</p>
+        </div>
+
+    </div>
+
+    <div id="qaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modalQuestion" class="modal-question"></div>
+            <div id="modalAnswer" class="modal-answer"></div>
+        </div>
+    </div>
+
+    <script src="q&a.js"></script>
+
+</body>
+
+</html>
