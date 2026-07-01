@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -18,8 +16,6 @@
             --bg1: #fce4ec;
             --bg2: #f5f5f5;
             --border: #d1c4e9;
-            --green: #2e7d32;
-            --deep-green: #1b5e20;
         }
 
         * {
@@ -83,76 +79,11 @@
             font-weight: 700;
             margin-bottom: 14px;
             transition: transform .15s ease, box-shadow .15s ease;
-            margin-right: 8px;
         }
 
         .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 14px rgba(233, 30, 99, .35);
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, var(--green), var(--deep-green));
-        }
-
-        .btn-download:hover {
-            box-shadow: 0 6px 14px rgba(46, 125, 50, 0.35);
-        }
-
-        /* ===== Filter Section ===== */
-        .filter-container {
-            background: #fff;
-            padding: 16px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .filter-group label {
-            font-weight: 700;
-            color: var(--navy);
-            font-size: 0.95rem;
-        }
-
-        .filter-group input[type="date"] {
-            font-family: 'Sarabun';
-            padding: 6px 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.9rem;
-            outline: none;
-            background-color: #fff;
-        }
-
-        .filter-group input[type="date"]:focus {
-            border-color: var(--pink);
-        }
-
-        .btn-clear {
-            background: #757575;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 14px;
-            cursor: pointer;
-            font-family: 'Sarabun';
-            font-size: 0.85rem;
-            transition: 0.2s;
-            font-weight: 700;
-        }
-
-        .btn-clear:hover {
-            background: #424242;
         }
 
         /* ===== Table ===== */
@@ -165,7 +96,7 @@
 
         table {
             width: 100%;
-            min-width: 1000px;
+            min-width: 1000px; /* ปรับลดขนาดความกว้างขั้นต่ำลงเนื่องจากคอลัมน์น้อยลง */
             border-collapse: collapse;
             border: 2px solid var(--border);
         }
@@ -211,27 +142,9 @@
     <div class="main">
         <h2 id="title">กำลังโหลดข้อมูล…</h2>
         <p>*หมายเหตุ เงินต้นที่รับคืนถึง ณ วันที่ 30 ก.ย. 69</p>
-        
-        <div style="margin-bottom: 5px;">
-            <button class="btn" onclick="goAllProjects()">
-                ดูโครงการทั้งหมด
-            </button>
-            <button class="btn btn-download" onclick="downloadExcel()">
-                📊 ดาวน์โหลดข้อมูล (Excel File)
-            </button>
-        </div>
-
-        <div class="filter-container">
-            <div class="filter-group">
-                <label>ค้นหากำหนดชำระ ตั้งแต่วันที่:</label>
-                <input type="date" id="startDate" onchange="filterData()">
-            </div>
-            <div class="filter-group">
-                <label>ถึงวันที่:</label>
-                <input type="date" id="endDate" onchange="filterData()">
-            </div>
-            <button class="btn-clear" onclick="clearFilter()">ล้างตัวกรอง</button>
-        </div>
+        <button class="btn" onclick="goAllProjects()">
+            ดูโครงการทั้งหมด
+        </button>
 
         <div class="table-wrapper">
             <table id="tbl">
@@ -255,54 +168,45 @@
 
         title.innerText = `สรุปรายอำเภอ จังหวัด${province}`;
 
-        let rawApiData = [];
-        let currentCalculatedData = []; 
-
         const START = new Date("2025-10-01");
         const SEP30 = new Date("2026-09-30");
 
         fetch(`${API}?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`)
             .then(r => r.json())
             .then(res => {
-                rawApiData = res.data || [];
-                const summary = summarizeByDistrict(rawApiData);
+                const summary = summarizeByDistrict(res.data);
                 renderTable(summary);
             });
 
-        function summarizeByDistrict(data, customStart = null, customEnd = null) {
+        function summarizeByDistrict(data) {
             const map = {};
-
-            const filterStart = customStart ? new Date(customStart) : START;
-            const filterEnd = customEnd ? new Date(customEnd) : SEP30;
 
             data.forEach(r => {
                 if (r["สถานะการมีข้อมูลใน ค-ง"] !== "ไม่มีข้อมูล") return;
 
                 const district = r["อำเภอ"];
                 const due = new Date(r["กำหนดชำระ"]);
-                if (isNaN(due)) return;
+                if (isNaN(due) || due < START) return;
 
-                if (due >= filterStart && due <= filterEnd) {
-                    if (!map[district]) {
-                        map[district] = { expect_sep: 0, paid: 0 };
-                    }
+                if (!map[district]) {
+                    map[district] = { expect_sep: 0, paid: 0 };
+                }
 
-                    const expect = Number(r["เงินต้นที่คาดว่าจะได้"] || 0);
-                    const paid = Number(r["เงินต้นรับคืน"] || 0);
+                const expect = Number(r["เงินต้นที่คาดว่าจะได้"] || 0);
+                const paid = Number(r["เงินต้นรับคืน"] || 0);
 
+                if (due <= SEP30) {
                     map[district].expect_sep += expect;
                     map[district].paid += paid;
                 }
             });
 
-            currentCalculatedData = Object.entries(map).map(([d, v]) => ({
+            return Object.entries(map).map(([d, v]) => ({
                 อำเภอ: d,
                 "เงินต้นที่ได้รับชำระคืนแล้ว": v.paid,
                 "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69": v.expect_sep,
                 "ร้อยละ (30 ก.ย. 69)": v.expect_sep ? v.paid * 100 / v.expect_sep : 0
             }));
-
-            return currentCalculatedData;
         }
 
         function renderTable(data) {
@@ -310,15 +214,7 @@
             const tbody = tbl.querySelector("tbody");
             const tfoot = tbl.querySelector("tfoot");
 
-            thead.innerHTML = "";
-            tbody.innerHTML = "";
-            tfoot.innerHTML = "";
-
-            if (!data || data.length === 0) {
-                thead.innerHTML = `<tr><th>ข้อมูล</th></tr>`;
-                tbody.innerHTML = `<tr><td>ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>`;
-                return;
-            }
+            if (!data || data.length === 0) return;
 
             const headers = [...Object.keys(data[0]), "ดูโครงการ"];
 
@@ -328,6 +224,7 @@
             let sum_expect_sep = 0;
             let sum_paid = 0;
 
+            tbody.innerHTML = "";
             data.forEach(r => {
                 const tr = document.createElement("tr");
 
@@ -358,100 +255,14 @@
             const percent_sep = sum_expect_sep ? sum_paid * 100 / sum_expect_sep : 0;
 
             tfoot.innerHTML = `
-                <tr>
-                    <td><strong>รวมทั้งจังหวัด</strong></td>
-                    <td>${sum_paid.toLocaleString()}</td>
-                    <td>${sum_expect_sep.toLocaleString()}</td>
-                    <td>${percent_sep.toFixed(2)}</td>
-                    <td>-</td>
-                </tr>
-            `;
-        }
-
-        function filterData() {
-            const startVal = document.getElementById("startDate").value;
-            const endVal = document.getElementById("endDate").value;
-
-            const customStart = startVal ? startVal : "1970-01-01";
-            const customEnd = endVal ? endVal : "2099-12-31";
-
-            const filteredSummary = summarizeByDistrict(rawApiData, customStart, customEnd);
-            renderTable(filteredSummary);
-        }
-
-        function clearFilter() {
-            document.getElementById("startDate").value = "";
-            document.getElementById("endDate").value = "";
-            const summary = summarizeByDistrict(rawApiData);
-            renderTable(summary);
-        }
-
-        // แก้ไขฟังก์ชันการแปลงวันที่ในชื่อไฟล์จาก yyyy-mm-dd เป็น dd-mm-yyyy 
-        function formatGlobalDate(dateString) {
-            if (!dateString) return "";
-            const parts = dateString.split("-"); // input type="date" จะได้ค่าเป็น yyyy-mm-dd เสมอ
-            if (parts.length === 3) {
-                return `${parts[2]}-${parts[1]}-${parts[i]}`; // สลับโครงสร้างเป็น dd-mm-yyyy 
-            }
-            return dateString;
-        }
-
-        function downloadExcel() {
-            if (!currentCalculatedData || currentCalculatedData.length === 0) {
-                alert("ไม่มีข้อมูลสำหรับดาวน์โหลดในช่วงเวลาดังกล่าว");
-                return;
-            }
-
-            const excelRows = [];
-            
-            excelRows.push([
-                "อำเภอ", 
-                "เงินต้นที่ได้รับชำระคืนแล้ว", 
-                "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69", 
-                "ร้อยละ (30 ก.ย. 69)"
-            ]);
-
-            let totalPaid = 0;
-            let totalExpect = 0;
-
-            currentCalculatedData.forEach(r => {
-                excelRows.push([
-                    r.อำเภอ,
-                    r["เงินต้นที่ได้รับชำระคืนแล้ว"],
-                    r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"],
-                    Number(r["ร้อยละ (30 ก.ย. 69)"].toFixed(2))
-                ]);
-
-                totalPaid += r["เงินต้นที่ได้รับชำระคืนแล้ว"];
-                totalExpect += r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"];
-            });
-
-            const totalPercent = totalExpect ? Number((totalPaid * 100 / totalExpect).toFixed(2)) : 0;
-            excelRows.push([
-                "รวมทั้งจังหวัด",
-                totalPaid,
-                totalExpect,
-                totalPercent
-            ]);
-
-            const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "สรุปรายอำเภอ");
-
-            const max_columns = excelRows[0].length;
-            const wscols = [];
-            for (let i = 0; i < max_columns; i++) {
-                wscols.push({ wch: 25 }); 
-            }
-            worksheet['!cols'] = wscols;
-
-            const startInput = document.getElementById("startDate").value;
-            const endInput = document.getElementById("endDate").value;
-            
-            const displayStart = startInput ? formatGlobalDate(startInput) : "เริ่มต้น";
-            const displayEnd = endInput ? formatGlobalDate(endInput) : "สิ้นสุด";
-
-            XLSX.writeFile(workbook, `สรุปรายอำเภอ_จังหวัด${province}_(${displayStart}_ถึง_${displayEnd}).xlsx`);
+            <tr>
+                <td><strong>รวมทั้งจังหวัด</strong></td>
+                <td>${sum_paid.toLocaleString()}</td>
+                <td>${sum_expect_sep.toLocaleString()}</td>
+                <td>${percent_sep.toFixed(2)}</td>
+                <td>-</td>
+            </tr>
+        `;
         }
 
         function goProject(district) {
@@ -467,6 +278,7 @@
             location.href =
                 `project-info.html?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`;
         }
+
     </script>
 
 </body>
