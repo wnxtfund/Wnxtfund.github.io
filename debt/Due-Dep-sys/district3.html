@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 
     <style>
         :root {
@@ -16,6 +20,8 @@
             --bg1: #fce4ec;
             --bg2: #f5f5f5;
             --border: #d1c4e9;
+            --green: #2e7d32;
+            --deep-green: #1b5e20;
         }
 
         * {
@@ -79,11 +85,20 @@
             font-weight: 700;
             margin-bottom: 14px;
             transition: transform .15s ease, box-shadow .15s ease;
+            margin-right: 8px;
         }
 
         .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 14px rgba(233, 30, 99, .35);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--green), var(--deep-green));
+        }
+
+        .btn-download:hover {
+            box-shadow: 0 6px 14px rgba(46, 125, 50, 0.35);
         }
 
         /* ===== Filter Section ===== */
@@ -111,16 +126,21 @@
             font-size: 0.95rem;
         }
 
-        .filter-group input[type="date"] {
+        /* ตกแต่งกล่องปฏิทินใหม่ */
+        .filter-group input.thai-date-picker {
             font-family: 'Sarabun';
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 0.9rem;
             outline: none;
+            background-color: #fff;
+            cursor: pointer;
+            width: 160px;
+            text-align: center;
         }
 
-        .filter-group input[type="date"]:focus {
+        .filter-group input.thai-date-picker:focus {
             border-color: var(--pink);
         }
 
@@ -129,11 +149,12 @@
             color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 6px 12px;
+            padding: 8px 14px;
             cursor: pointer;
             font-family: 'Sarabun';
             font-size: 0.85rem;
             transition: 0.2s;
+            font-weight: 700;
         }
 
         .btn-clear:hover {
@@ -183,6 +204,11 @@
             background: #f8bbd0;
             color: #4a0033;
         }
+
+        /* ปรับแต่งปี พ.ศ. ในตัวปฏิทิน Flatpickr */
+        .flatpickr-calendar {
+            font-family: 'Sarabun', sans-serif !important;
+        }
     </style>
 </head>
 
@@ -197,18 +223,23 @@
         <h2 id="title">กำลังโหลดข้อมูล…</h2>
         <p>*หมายเหตุ เงินต้นที่รับคืนถึง ณ วันที่ 30 ก.ย. 69</p>
         
-        <button class="btn" onclick="goAllProjects()">
-            ดูโครงการทั้งหมด
-        </button>
+        <div style="margin-bottom: 5px;">
+            <button class="btn" onclick="goAllProjects()">
+                ดูโครงการทั้งหมด
+            </button>
+            <button class="btn btn-download" onclick="downloadCSV()">
+                📥 ดาวน์โหลดข้อมูล (Excel/CSV)
+            </button>
+        </div>
 
         <div class="filter-container">
             <div class="filter-group">
                 <label>ค้นหากำหนดชำระ ตั้งแต่วันที่:</label>
-                <input type="date" id="startDate" onchange="filterData()">
+                <input type="text" id="startDate" class="thai-date-picker" placeholder="เลือกวันที่เริ่มต้น">
             </div>
             <div class="filter-group">
                 <label>ถึงวันที่:</label>
-                <input type="date" id="endDate" onchange="filterData()">
+                <input type="text" id="endDate" class="thai-date-picker" placeholder="เลือกวันที่สิ้นสุด">
             </div>
             <button class="btn-clear" onclick="clearFilter()">ล้างตัวกรอง</button>
         </div>
@@ -235,17 +266,58 @@
 
         title.innerText = `สรุปรายอำเภอ จังหวัด${province}`;
 
-        // เก็บรหัสดิบจาก API ไว้เพื่อใช้กรองข้อมูลซ้ำได้โดยไม่ต้องเรียก fetch ใหม่
         let rawApiData = [];
+        let currentCalculatedData = []; // เก็บข้อมูลที่คำนวณและกรองแล้วไว้สำหรับดาวน์โหลด
+        let startPicker, endPicker;
 
         const START = new Date("2025-10-01");
         const SEP30 = new Date("2026-09-30");
+
+        // เปิดใช้งานระบบปฏิทินไทย พ.ศ.
+        document.addEventListener("DOMContentLoaded", function() {
+            const flatpickrConfig = {
+                locale: "th",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d ม.ค. Y",
+                // แปลงปี ค.ศ. เป็น พ.ศ. ในหน้าต่างปฏิทินให้ผู้ใช้เห็น
+                onReady: function(selectedDates, dateStr, instance) {
+                    const yearSelects = instance.calendarContainer.querySelectorAll('.flatpickr-monthDropdown-months');
+                    instance.yearElements.forEach(elem => {
+                        if(elem.value) {
+                            elem.value = parseInt(elem.value) + 543;
+                        }
+                    });
+                },
+                onYearChange: function(selectedDates, dateStr, instance) {
+                    setTimeout(() => {
+                        instance.yearElements.forEach(elem => {
+                            if(elem.value) {
+                                elem.value = parseInt(instance.currentYear) + 543;
+                            }
+                        });
+                    }, 0);
+                },
+                onOpen: function(selectedDates, dateStr, instance) {
+                    instance.yearElements.forEach(elem => {
+                        if(elem.value) {
+                            elem.value = parseInt(instance.currentYear) + 543;
+                        }
+                    });
+                },
+                onChange: function(selectedDates, dateStr, instance) {
+                    filterData();
+                }
+            };
+
+            startPicker = flatpickr("#startDate", flatpickrConfig);
+            endPicker = flatpickr("#endDate", flatpickrConfig);
+        });
 
         fetch(`${API}?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`)
             .then(r => r.json())
             .then(res => {
                 rawApiData = res.data || [];
-                // รันครั้งแรกด้วยเงื่อนไขปกติ
                 const summary = summarizeByDistrict(rawApiData);
                 renderTable(summary);
             });
@@ -253,7 +325,6 @@
         function summarizeByDistrict(data, customStart = null, customEnd = null) {
             const map = {};
 
-            // กำหนดช่วงเวลา (ถ้าไม่มีการระบุจากอินพุต ค้นหา ให้ใช้ช่วงเวลาเริ่มต้นของระบบคือ 1 ต.ค. 2568 - 30 ก.ย. 2569)
             const filterStart = customStart ? new Date(customStart) : START;
             const filterEnd = customEnd ? new Date(customEnd) : SEP30;
 
@@ -264,7 +335,6 @@
                 const due = new Date(r["กำหนดชำระ"]);
                 if (isNaN(due)) return;
 
-                // ตรวจสอบว่า "กำหนดชำระ" อยู่ในช่วงวันที่ระบุหรือไม่
                 if (due >= filterStart && due <= filterEnd) {
                     if (!map[district]) {
                         map[district] = { expect_sep: 0, paid: 0 };
@@ -278,12 +348,14 @@
                 }
             });
 
-            return Object.entries(map).map(([d, v]) => ({
+            currentCalculatedData = Object.entries(map).map(([d, v]) => ({
                 อำเภอ: d,
                 "เงินต้นที่ได้รับชำระคืนแล้ว": v.paid,
                 "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69": v.expect_sep,
                 "ร้อยละ (30 ก.ย. 69)": v.expect_sep ? v.paid * 100 / v.expect_sep : 0
             }));
+
+            return currentCalculatedData;
         }
 
         function renderTable(data) {
@@ -291,7 +363,6 @@
             const tbody = tbl.querySelector("tbody");
             const tfoot = tbl.querySelector("tfoot");
 
-            // เคลียร์ค่าข้อมูลเก่าในตารางก่อนหน้า
             thead.innerHTML = "";
             tbody.innerHTML = "";
             tfoot.innerHTML = "";
@@ -350,12 +421,10 @@
             `;
         }
 
-        // ฟังก์ชันเมื่อมีการปรับเปลี่ยนค่าในช่องค้นหาวันที่
         function filterData() {
             const startVal = document.getElementById("startDate").value;
             const endVal = document.getElementById("endDate").value;
 
-            // หากกรอกไม่ครบสองช่อง จะตั้งค่า Default เป็นค่าที่กว้างที่สุด (หรือช่วงตั้งต้น) เพื่อไม่ให้ตารางบั๊ก
             const customStart = startVal ? startVal : "1970-01-01";
             const customEnd = endVal ? endVal : "2099-12-31";
 
@@ -363,12 +432,57 @@
             renderTable(filteredSummary);
         }
 
-        // ฟังก์ชันล้างตัวกรองกลับสู่ค่าเริ่มต้นของระบบ (30 ก.ย. 69)
         function clearFilter() {
-            document.getElementById("startDate").value = "";
-            document.getElementById("endDate").value = "";
+            if (startPicker) startPicker.clear();
+            if (endPicker) endPicker.clear();
             const summary = summarizeByDistrict(rawApiData);
             renderTable(summary);
+        }
+
+        // ฟังก์ชันดาวน์โหลดไฟล์ CSV รองรับภาษาไทยเปิดใน Excel ได้โดยตรง ไม่เป็นภาษาต่างดาว
+        function downloadCSV() {
+            if (!currentCalculatedData || currentCalculatedData.length === 0) {
+                alert("ไม่มีข้อมูลสำหรับดาวน์โหลดในช่วงเวลาดังกล่าว");
+                return;
+            }
+
+            // ตั้งหัวคอลัมน์ในไฟล์ Excel
+            const headers = ["อำเภอ", "เงินต้นที่ได้รับชำระคืนแล้ว", "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69", "ร้อยละ (30 ก.ย. 69)"];
+            let csvContent = headers.join(",") + "\n";
+
+            let totalPaid = 0;
+            let totalExpect = 0;
+
+            // วนลูปดึงข้อมูลรายอำเภอ
+            currentCalculatedData.forEach(r => {
+                const row = [
+                    `"${r.อำเภอ}"`,
+                    r["เงินต้นที่ได้รับชำระคืนแล้ว"],
+                    r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"],
+                    r["ร้อยละ (30 ก.ย. 69)"].toFixed(2)
+                ];
+                csvContent += row.join(",") + "\n";
+
+                totalPaid += r["เงินต้นที่ได้รับชำระคืนแล้ว"];
+                totalExpect += r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"];
+            });
+
+            // เพิ่มแถวผลรวมทั้งจังหวัดท้ายไฟล์
+            const totalPercent = totalExpect ? (totalPaid * 100 / totalExpect).toFixed(2) : "0.00";
+            csvContent += `"${"รวมทั้งจังหวัด"}",${totalPaid},${totalExpect},${totalPercent}\n`;
+
+            // ใส่รหัส BOM (\uFEFF) นำหน้าไฟล์ เพื่อบังคับให้ Excel เปิดอ่านภาษาไทยได้ถูกต้อง ไม่เป็นภาษาต่างดาว
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            
+            // ตั้งชื่อไฟล์ตามช่วงเวลาและจังหวัดที่กรองอยู่
+            const startVal = document.getElementById("startDate").value || "เริ่มต้น";
+            const endVal = document.getElementById("endDate").value || "สิ้นสุด";
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `สรุปรายอำเภอ_จังหวัด${province}_(${startVal}_ถึง_${endVal}).csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function goProject(district) {
