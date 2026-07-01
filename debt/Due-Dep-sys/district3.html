@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -122,7 +124,6 @@
             font-size: 0.95rem;
         }
 
-        /* ปฏิทินแบบดั้งเดิม (Native HTML5) */
         .filter-group input[type="date"] {
             font-family: 'Sarabun';
             padding: 6px 10px;
@@ -215,8 +216,8 @@
             <button class="btn" onclick="goAllProjects()">
                 ดูโครงการทั้งหมด
             </button>
-            <button class="btn btn-download" onclick="downloadCSV()">
-                📥 ดาวน์โหลดข้อมูล (Excel/CSV)
+            <button class="btn btn-download" onclick="downloadExcel()">
+                📊 ดาวน์โหลดข้อมูล (Excel File)
             </button>
         </div>
 
@@ -255,7 +256,7 @@
         title.innerText = `สรุปรายอำเภอ จังหวัด${province}`;
 
         let rawApiData = [];
-        let currentCalculatedData = []; // เก็บข้อมูลที่คำนวณกรองแล้วไว้สำหรับ Export
+        let currentCalculatedData = []; 
 
         const START = new Date("2025-10-01");
         const SEP30 = new Date("2026-09-30");
@@ -385,61 +386,72 @@
             renderTable(summary);
         }
 
-        // ฟังก์ชันช่วยแปลงฟอร์แมตวันที่ yyyy-mm-dd -> dd-mm-yyyy สำหรับใช้แสดงในชื่อไฟล์ดาวน์โหลด
+        // แก้ไขฟังก์ชันการแปลงวันที่ในชื่อไฟล์จาก yyyy-mm-dd เป็น dd-mm-yyyy 
         function formatGlobalDate(dateString) {
             if (!dateString) return "";
-            const parts = dateString.split("-"); // [yyyy, mm, dd]
+            const parts = dateString.split("-"); // input type="date" จะได้ค่าเป็น yyyy-mm-dd เสมอ
             if (parts.length === 3) {
-                return `${parts[2]}-${parts[1]}-${parts[0]}`; // dd-mm-yyyy
+                return `${parts[2]}-${parts[1]}-${parts[i]}`; // สลับโครงสร้างเป็น dd-mm-yyyy 
             }
             return dateString;
         }
 
-        // ฟังก์ชันดาวน์โหลดไฟล์ CSV รองรับภาษาไทยและเปิดใช้งานใน Excel ได้โดยตรง
-        function downloadCSV() {
+        function downloadExcel() {
             if (!currentCalculatedData || currentCalculatedData.length === 0) {
                 alert("ไม่มีข้อมูลสำหรับดาวน์โหลดในช่วงเวลาดังกล่าว");
                 return;
             }
 
-            const headers = ["อำเภอ", "เงินต้นที่ได้รับชำระคืนแล้ว", "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69", "ร้อยละ (30 ก.ย. 69)"];
-            let csvContent = headers.join(",") + "\n";
+            const excelRows = [];
+            
+            excelRows.push([
+                "อำเภอ", 
+                "เงินต้นที่ได้รับชำระคืนแล้ว", 
+                "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69", 
+                "ร้อยละ (30 ก.ย. 69)"
+            ]);
 
             let totalPaid = 0;
             let totalExpect = 0;
 
             currentCalculatedData.forEach(r => {
-                const row = [
-                    `"${r.อำเภอ}"`,
+                excelRows.push([
+                    r.อำเภอ,
                     r["เงินต้นที่ได้รับชำระคืนแล้ว"],
                     r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"],
-                    r["ร้อยละ (30 ก.ย. 69)"].toFixed(2)
-                ];
-                csvContent += row.join(",") + "\n";
+                    Number(r["ร้อยละ (30 ก.ย. 69)"].toFixed(2))
+                ]);
 
                 totalPaid += r["เงินต้นที่ได้รับชำระคืนแล้ว"];
                 totalExpect += r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"];
             });
 
-            const totalPercent = totalExpect ? (totalPaid * 100 / totalExpect).toFixed(2) : "0.00";
-            csvContent += `"${"รวมทั้งจังหวัด"}",${totalPaid},${totalExpect},${totalPercent}\n`;
+            const totalPercent = totalExpect ? Number((totalPaid * 100 / totalExpect).toFixed(2)) : 0;
+            excelRows.push([
+                "รวมทั้งจังหวัด",
+                totalPaid,
+                totalExpect,
+                totalPercent
+            ]);
 
-            // บังคับเข้ารหัส UTF-8 BOM (\uFEFF) เพื่อให้ Excel เปิดอ่านภาษาไทยได้สมบูรณ์
-            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            
-            // ดึงค่าวันที่ปัจจุบันในช่องและแปลงให้อยู่ในรูปแบบ dd-mm-yyyy
+            const worksheet = XLSX.utils.aoa_to_sheet(excelRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "สรุปรายอำเภอ");
+
+            const max_columns = excelRows[0].length;
+            const wscols = [];
+            for (let i = 0; i < max_columns; i++) {
+                wscols.push({ wch: 25 }); 
+            }
+            worksheet['!cols'] = wscols;
+
             const startInput = document.getElementById("startDate").value;
             const endInput = document.getElementById("endDate").value;
             
             const displayStart = startInput ? formatGlobalDate(startInput) : "เริ่มต้น";
             const displayEnd = endInput ? formatGlobalDate(endInput) : "สิ้นสุด";
 
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `สรุปรายอำเภอ_จังหวัด${province}_(${displayStart}_ถึง_${displayEnd}).csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            XLSX.writeFile(workbook, `สรุปรายอำเภอ_จังหวัด${province}_(${displayStart}_ถึง_${displayEnd}).xlsx`);
         }
 
         function goProject(district) {
