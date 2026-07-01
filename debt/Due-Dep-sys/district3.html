@@ -7,10 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 
     <style>
         :root {
@@ -126,21 +122,18 @@
             font-size: 0.95rem;
         }
 
-        /* ตกแต่งกล่องปฏิทินใหม่ */
-        .filter-group input.thai-date-picker {
+        /* ปฏิทินแบบดั้งเดิม (Native HTML5) */
+        .filter-group input[type="date"] {
             font-family: 'Sarabun';
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 0.9rem;
             outline: none;
             background-color: #fff;
-            cursor: pointer;
-            width: 160px;
-            text-align: center;
         }
 
-        .filter-group input.thai-date-picker:focus {
+        .filter-group input[type="date"]:focus {
             border-color: var(--pink);
         }
 
@@ -204,11 +197,6 @@
             background: #f8bbd0;
             color: #4a0033;
         }
-
-        /* ปรับแต่งปี พ.ศ. ในตัวปฏิทิน Flatpickr */
-        .flatpickr-calendar {
-            font-family: 'Sarabun', sans-serif !important;
-        }
     </style>
 </head>
 
@@ -235,11 +223,11 @@
         <div class="filter-container">
             <div class="filter-group">
                 <label>ค้นหากำหนดชำระ ตั้งแต่วันที่:</label>
-                <input type="text" id="startDate" class="thai-date-picker" placeholder="เลือกวันที่เริ่มต้น">
+                <input type="date" id="startDate" onchange="filterData()">
             </div>
             <div class="filter-group">
                 <label>ถึงวันที่:</label>
-                <input type="text" id="endDate" class="thai-date-picker" placeholder="เลือกวันที่สิ้นสุด">
+                <input type="date" id="endDate" onchange="filterData()">
             </div>
             <button class="btn-clear" onclick="clearFilter()">ล้างตัวกรอง</button>
         </div>
@@ -267,52 +255,10 @@
         title.innerText = `สรุปรายอำเภอ จังหวัด${province}`;
 
         let rawApiData = [];
-        let currentCalculatedData = []; // เก็บข้อมูลที่คำนวณและกรองแล้วไว้สำหรับดาวน์โหลด
-        let startPicker, endPicker;
+        let currentCalculatedData = []; // เก็บข้อมูลที่คำนวณกรองแล้วไว้สำหรับ Export
 
         const START = new Date("2025-10-01");
         const SEP30 = new Date("2026-09-30");
-
-        // เปิดใช้งานระบบปฏิทินไทย พ.ศ.
-        document.addEventListener("DOMContentLoaded", function() {
-            const flatpickrConfig = {
-                locale: "th",
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d ม.ค. Y",
-                // แปลงปี ค.ศ. เป็น พ.ศ. ในหน้าต่างปฏิทินให้ผู้ใช้เห็น
-                onReady: function(selectedDates, dateStr, instance) {
-                    const yearSelects = instance.calendarContainer.querySelectorAll('.flatpickr-monthDropdown-months');
-                    instance.yearElements.forEach(elem => {
-                        if(elem.value) {
-                            elem.value = parseInt(elem.value) + 543;
-                        }
-                    });
-                },
-                onYearChange: function(selectedDates, dateStr, instance) {
-                    setTimeout(() => {
-                        instance.yearElements.forEach(elem => {
-                            if(elem.value) {
-                                elem.value = parseInt(instance.currentYear) + 543;
-                            }
-                        });
-                    }, 0);
-                },
-                onOpen: function(selectedDates, dateStr, instance) {
-                    instance.yearElements.forEach(elem => {
-                        if(elem.value) {
-                            elem.value = parseInt(instance.currentYear) + 543;
-                        }
-                    });
-                },
-                onChange: function(selectedDates, dateStr, instance) {
-                    filterData();
-                }
-            };
-
-            startPicker = flatpickr("#startDate", flatpickrConfig);
-            endPicker = flatpickr("#endDate", flatpickrConfig);
-        });
 
         fetch(`${API}?province=${encodeURIComponent(province)}&token=${encodeURIComponent(token)}`)
             .then(r => r.json())
@@ -433,27 +379,35 @@
         }
 
         function clearFilter() {
-            if (startPicker) startPicker.clear();
-            if (endPicker) endPicker.clear();
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
             const summary = summarizeByDistrict(rawApiData);
             renderTable(summary);
         }
 
-        // ฟังก์ชันดาวน์โหลดไฟล์ CSV รองรับภาษาไทยเปิดใน Excel ได้โดยตรง ไม่เป็นภาษาต่างดาว
+        // ฟังก์ชันช่วยแปลงฟอร์แมตวันที่ yyyy-mm-dd -> dd-mm-yyyy สำหรับใช้แสดงในชื่อไฟล์ดาวน์โหลด
+        function formatGlobalDate(dateString) {
+            if (!dateString) return "";
+            const parts = dateString.split("-"); // [yyyy, mm, dd]
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`; // dd-mm-yyyy
+            }
+            return dateString;
+        }
+
+        // ฟังก์ชันดาวน์โหลดไฟล์ CSV รองรับภาษาไทยและเปิดใช้งานใน Excel ได้โดยตรง
         function downloadCSV() {
             if (!currentCalculatedData || currentCalculatedData.length === 0) {
                 alert("ไม่มีข้อมูลสำหรับดาวน์โหลดในช่วงเวลาดังกล่าว");
                 return;
             }
 
-            // ตั้งหัวคอลัมน์ในไฟล์ Excel
             const headers = ["อำเภอ", "เงินต้นที่ได้รับชำระคืนแล้ว", "เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69", "ร้อยละ (30 ก.ย. 69)"];
             let csvContent = headers.join(",") + "\n";
 
             let totalPaid = 0;
             let totalExpect = 0;
 
-            // วนลูปดึงข้อมูลรายอำเภอ
             currentCalculatedData.forEach(r => {
                 const row = [
                     `"${r.อำเภอ}"`,
@@ -467,19 +421,22 @@
                 totalExpect += r["เงินต้นเป้าหมายการรับชำระคืน ณ 30 ก.ย. 69"];
             });
 
-            // เพิ่มแถวผลรวมทั้งจังหวัดท้ายไฟล์
             const totalPercent = totalExpect ? (totalPaid * 100 / totalExpect).toFixed(2) : "0.00";
             csvContent += `"${"รวมทั้งจังหวัด"}",${totalPaid},${totalExpect},${totalPercent}\n`;
 
-            // ใส่รหัส BOM (\uFEFF) นำหน้าไฟล์ เพื่อบังคับให้ Excel เปิดอ่านภาษาไทยได้ถูกต้อง ไม่เป็นภาษาต่างดาว
+            // บังคับเข้ารหัส UTF-8 BOM (\uFEFF) เพื่อให้ Excel เปิดอ่านภาษาไทยได้สมบูรณ์
             const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             
-            // ตั้งชื่อไฟล์ตามช่วงเวลาและจังหวัดที่กรองอยู่
-            const startVal = document.getElementById("startDate").value || "เริ่มต้น";
-            const endVal = document.getElementById("endDate").value || "สิ้นสุด";
+            // ดึงค่าวันที่ปัจจุบันในช่องและแปลงให้อยู่ในรูปแบบ dd-mm-yyyy
+            const startInput = document.getElementById("startDate").value;
+            const endInput = document.getElementById("endDate").value;
+            
+            const displayStart = startInput ? formatGlobalDate(startInput) : "เริ่มต้น";
+            const displayEnd = endInput ? formatGlobalDate(endInput) : "สิ้นสุด";
+
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `สรุปรายอำเภอ_จังหวัด${province}_(${startVal}_ถึง_${endVal}).csv`);
+            link.setAttribute("download", `สรุปรายอำเภอ_จังหวัด${province}_(${displayStart}_ถึง_${displayEnd}).csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
