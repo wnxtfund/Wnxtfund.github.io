@@ -130,7 +130,7 @@
             object-fit: contain;
             background: #ffffff;
             padding: 12px;
-            border-radius: 14px;
+            border-radius: 14px; /* ปรับไอคอนเป็นสี่เหลี่ยมมุมมนเข้ากับธีม */
             box-shadow: 0 4px 10px rgba(0,0,0,0.06);
         }
 
@@ -147,34 +147,6 @@
             line-height: 1.5;
         }
 
-        /* --- สไตล์กล่องสถิติขนาดเล็ก (Visitor Counter Widget) ด้านล่าง --- */
-        .stats-footer-widget {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .stat-badge {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(224, 43, 114, 0.2);
-            padding: 8px 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .stat-badge span {
-            color: #E02B72;
-            font-size: 1rem;
-        }
-
         /* Responsive สำหรับมือถือ */
         @media (max-width: 768px) {
             .header-section { flex-direction: column; gap: 15px; min-height: auto; }
@@ -185,7 +157,6 @@
             .menu-grid-wrapper { grid-template-columns: 1fr; gap: 15px; }
             .menu-item { flex-direction: row; text-align: left; padding: 20px; gap: 15px; align-items: center; }
             .menu-icon { margin-bottom: 0; width: 50px; height: 50px; padding: 10px; }
-            .stats-footer-widget { justify-content: center; }
         }
     </style>
 </head>
@@ -242,57 +213,7 @@
 
         </div>
 
-        <!-- 🔹 กล่องแสดงสถิติขนาดเล็ก (Widget) ด้านล่าง -->
-        <div class="stats-footer-widget">
-            <div class="stat-badge">
-                👁️ ผู้เข้าชมหน้านี้: <span id="page-view-counter">-</span> ครั้ง
-            </div>
-            <div class="stat-badge">
-                📊 ยอดรวมเว็บไซต์: <span id="total-view-counter">-</span> ครั้ง
-            </div>
-        </div>
-
     </div>
 
-    <script>
-        // 🔹 สคริปต์เชื่อมต่อเก็บและดึงสถิติ Google Apps Script
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbytPcI-xPBIBovQ4z1DJWheE-xZlSaYaAzByEQ9WrOG5lnX2LHxxmg7c5nTPxqLUuQ/exec";
-        const CURRENT_PAGE = "Menu.html";
-
-        function trackVisit() {
-            const payload = {
-                page: CURRENT_PAGE,
-                action: "view"
-            };
-
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            }).catch(error => console.error("Tracking Error:", error));
-        }
-
-        function fetchViews() {
-            fetch(`${WEB_APP_URL}?page=${encodeURIComponent(CURRENT_PAGE)}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("page-view-counter").innerText = data.pageViews;
-                    document.getElementById("total-view-counter").innerText = data.totalViews;
-                })
-                .catch(error => {
-                    console.error("Fetch Error:", error);
-                    document.getElementById("page-view-counter").innerText = "-";
-                    document.getElementById("total-view-counter").innerText = "-";
-                });
-        }
-
-        window.onload = function() {
-            trackVisit();
-            setTimeout(fetchViews, 500); 
-        };
-    </script>
 </body>
 </html>
