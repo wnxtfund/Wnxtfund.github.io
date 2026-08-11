@@ -788,28 +788,45 @@ document.getElementById('overdue-card5').textContent = formatNumber(overview.R2,
 
         /* === Donut Chart === */
         if (donutChartInstance) donutChartInstance.destroy();
-        const ctx = document.getElementById('donutChart').getContext('2d');
-        donutChartInstance = new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: pieChartData.map(p => p.province),
-            datasets: [{
-              data: pieChartData.map(p => parseFloat(p.percent) || 0),
-              backgroundColor: ['#FF202B', '#87FEBC', '#FFB6B7', '#FFDD63', '#F68B71', '#DAB9E6', '#A0E8E8', '#ADFF2F', '#FFFF00', '#FFA500']
-            }]
-
-          },
-
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'bottom' },
-              tooltip: { callbacks: { label: c => `${c.label}: ${parseFloat(c.raw).toFixed(2)}%` } }
+const ctx = document.getElementById('donutChart').getContext('2d');
+donutChartInstance = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: pieChartData.map(p => p.province),
+    datasets: [{
+      data: pieChartData.map(p => parseFloat(p.percent) || 0),
+      backgroundColor: ['#FF202B', '#87FEBC', '#FFB6B7', '#FFDD63', '#F68B71', '#DAB9E6', '#A0E8E8', '#ADFF2F', '#FFFF00', '#FFA500']
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { 
+        position: 'bottom',
+        labels: {
+          generateLabels: function(chart) {
+            const data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              return data.labels.map(function(label, i) {
+                const value = data.datasets[0].data[i];
+                return {
+                  text: `${label} (${parseFloat(value).toFixed(2)}%)`,
+                  fillStyle: data.datasets[0].backgroundColor[i],
+                  strokeStyle: data.datasets[0].backgroundColor[i],
+                  lineWidth: 0,
+                  hidden: isNaN(data.datasets[0].data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                  index: i
+                };
+              });
             }
-
+            return [];
           }
-
-        });
+        }
+      },
+      tooltip: { callbacks: { label: c => `${c.label}: ${parseFloat(c.raw).toFixed(2)}%` } }
+    }
+  }
+});
 
 
         /* === สร้างตาราง === */
