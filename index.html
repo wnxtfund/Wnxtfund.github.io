@@ -112,7 +112,6 @@
             border: 1px solid rgba(0,0,0,0.03);
         }
 
-        /* โทนสีพื้นหลังสี่เหลี่ยมพาสเทลตามธีมเดิม */
         .item-orange { background-color: #FFF2D9; }
         .item-blue   { background-color: #E3F5FF; }
         .item-green  { background-color: #E2F9F3; }
@@ -242,13 +241,13 @@
 
         </div>
 
-        <!-- 🔹 กล่องแสดงสถิติขนาดเล็ก (Widget) ด้านล่าง -->
+        <!-- 🔹 กล่องแสดงสถิติ (อัปเดตเป็น ยอดวันนี้ / ทั้งหมด) -->
         <div class="stats-footer-widget">
             <div class="stat-badge">
-                👁️ ผู้เข้าชมหน้านี้: <span id="page-view-counter">-</span> ครั้ง
+                👁️ วันนี้: <span id="today-page-view">-</span> | ทั้งหมด: <span id="page-view-counter">-</span> ครั้ง
             </div>
             <div class="stat-badge">
-                📊 ยอดรวมเว็บไซต์: <span id="total-view-counter">-</span> ครั้ง
+                📊 เว็บไซต์ (วันนี้: <span id="today-total-view">-</span> | ทั้งหมด: <span id="total-view-counter">-</span>) ครั้ง
             </div>
         </div>
 
@@ -256,7 +255,7 @@
 
     <script>
         // 🔹 สคริปต์เชื่อมต่อเก็บและดึงสถิติ Google Apps Script
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZf6AJPEz10u6SzvGNjhgctqRQwxa27L5yinE-_QjyM2xgqQAIDZRChL_kAn4Prp9e/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3Hah6vxT52ORvMBSizMe9gOSrc7B2IVLBAAWkI-HoVEsegT3drsAoCPvHY_5aJUeJ/exec";
         const CURRENT_PAGE = "Menu.html";
 
         function trackVisit() {
@@ -279,12 +278,16 @@
             fetch(`${WEB_APP_URL}?page=${encodeURIComponent(CURRENT_PAGE)}`)
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("today-page-view").innerText = data.todayPageViews;
                     document.getElementById("page-view-counter").innerText = data.pageViews;
+                    document.getElementById("today-total-view").innerText = data.todayTotalViews;
                     document.getElementById("total-view-counter").innerText = data.totalViews;
                 })
                 .catch(error => {
                     console.error("Fetch Error:", error);
+                    document.getElementById("today-page-view").innerText = "-";
                     document.getElementById("page-view-counter").innerText = "-";
+                    document.getElementById("today-total-view").innerText = "-";
                     document.getElementById("total-view-counter").innerText = "-";
                 });
         }
