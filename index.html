@@ -146,32 +146,26 @@
             line-height: 1.5;
         }
 
-        /* --- สไตล์กล่องสถิติขนาดเล็ก (Visitor Counter Widget) ด้านล่าง --- */
+        /* --- สไตล์กล่องสถิติขนาดเล็กด้านล่าง --- */
         .stats-footer-widget {
             display: flex;
             justify-content: flex-end;
-            gap: 15px;
             margin-top: 30px;
-            flex-wrap: wrap;
         }
 
         .stat-badge {
             background: rgba(255, 255, 255, 0.85);
             border: 1px solid rgba(224, 43, 114, 0.2);
-            padding: 8px 15px;
+            padding: 8px 18px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #333;
             font-weight: bold;
         }
 
         .stat-badge span {
             color: #E02B72;
-            font-size: 1rem;
         }
 
         /* Responsive สำหรับมือถือ */
@@ -241,21 +235,17 @@
 
         </div>
 
-        <!-- 🔹 กล่องแสดงสถิติ (อัปเดตเป็น ยอดวันนี้ / ทั้งหมด) -->
+        <!-- 🔹 แสดงผล วันนี้ ... ทั้งหมด ... -->
         <div class="stats-footer-widget">
             <div class="stat-badge">
-                👁️ วันนี้: <span id="today-page-view">-</span> | ทั้งหมด: <span id="page-view-counter">-</span> ครั้ง
-            </div>
-            <div class="stat-badge">
-                📊 เว็บไซต์ (วันนี้: <span id="today-total-view">-</span> | ทั้งหมด: <span id="total-view-counter">-</span>) ครั้ง
+                📊 วันนี้: <span id="today-page-view">-</span> | ทั้งหมด: <span id="page-view-counter">-</span> ครั้ง
             </div>
         </div>
 
     </div>
 
     <script>
-        // 🔹 สคริปต์เชื่อมต่อเก็บและดึงสถิติ Google Apps Script
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3Hah6vxT52ORvMBSizMe9gOSrc7B2IVLBAAWkI-HoVEsegT3drsAoCPvHY_5aJUeJ/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxtQ2mbsSPF5iBYRmyEROikntdXn-WTnhVfPX4vi7xaHAY7z3UF9WtNSp8YJWCxAysf/exec";
         const CURRENT_PAGE = "Menu.html";
 
         function trackVisit() {
@@ -278,17 +268,14 @@
             fetch(`${WEB_APP_URL}?page=${encodeURIComponent(CURRENT_PAGE)}`)
                 .then(response => response.json())
                 .then(data => {
+                    // ใช้ตัวแปรให้สอดคล้องกับที่ GAS ส่งกลับมา
                     document.getElementById("today-page-view").innerText = data.todayPageViews;
                     document.getElementById("page-view-counter").innerText = data.pageViews;
-                    document.getElementById("today-total-view").innerText = data.todayTotalViews;
-                    document.getElementById("total-view-counter").innerText = data.totalViews;
                 })
                 .catch(error => {
                     console.error("Fetch Error:", error);
                     document.getElementById("today-page-view").innerText = "-";
                     document.getElementById("page-view-counter").innerText = "-";
-                    document.getElementById("today-total-view").innerText = "-";
-                    document.getElementById("total-view-counter").innerText = "-";
                 });
         }
 
