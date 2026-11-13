@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CDD Women Fund - รายงานการรับชำระคืนเงินต้น</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #d81b60;
+            --secondary-color: #ad1457;
+            --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #f3e5f5 50%, #e1bee7 100%);
+            --card-radius: 16px;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: #2c3e50;
+        }
+
+        .top-notice {
+            text-align: center;
+            background: #fff3cd;
+            padding: 8px 15px;
+            font-weight: bold;
+            color: #856404;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ffeeba;
+        }
+
+        .top-subnotice {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            background: #fff9e6;
+            padding: 4px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #f8bbd0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header-text h2 {
+            margin: 5px 0 0;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-container img {
+            height: 55px;
+            object-fit: contain;
+        }
+
+        .data-date {
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-align: right;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .left-tools button {
+            background-color: #f8bbd0;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            color: #880e4f;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-speed);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .left-tools button:hover {
+            background-color: #f48fb1;
+            transform: translateY(-2px);
+        }
+
+        .left-tools img {
+            height: 16px;
+        }
+
+        #log {
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-align: center;
+            font-size: 1rem;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fce4ec;
+            border-radius: 8px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: var(--card-radius);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform var(--transition-speed);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card .value {
+            font-size: 1.6rem;
+            color: #111;
+            margin-top: 8px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: right;
+            letter-spacing: -0.5px;
+        }
+
+        .card.pink { background: linear-gradient(135deg, #e91e63, #c2185b); }
+        .card.light-pink { background: linear-gradient(135deg, #ff6b8b, #fb6f92); }
+        .card.deep-pastel-pink { background: linear-gradient(135deg, #f06292, #ec407a); }
+
+        .main-visuals {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 1024px) {
+            .main-visuals {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .left {
+            background: white;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 340px !important;
+        }
+
+        .study-center-card {
+            background: linear-gradient(135deg, #f06292, #d81b60) !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .province-table-wrapper {
+            background: white;
+            padding: 25px;
+            border-radius: var(--card-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 30px;
+        }
+
+        .summary-table {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        .summary-table th {
+            background-color: #fce4ec !important;
+            color: #880e4f !important;
+            padding: 12px 10px;
+            border-bottom: 2px solid #f48fb1;
+            font-weight: bold;
+            text-align: center;
+            white-space: normal;
+        }
+
+        .summary-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f8bbd0;
+            color: #333;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .summary-table tr:hover td {
+            background-color: #fff0f3 !important;
+        }
+
+        #studyCenterTable tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #studyCenterTable tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        #studyCenterTable tbody tr.selected-row {
+            background-color: rgba(255, 255, 255, 0.4) !important;
+            font-weight: bold;
+        }
+
+        .clickable-header {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .center-name-link {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .align-left { text-align: left !important; }
+        .align-center { text-align: center !important; }
+        .align-right { text-align: right !important; }
+
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #f48fb1;
+            border-radius: 6px;
+            padding: 5px 10px;
+            outline: none;
+            background: #fff;
+        }
+
+        body.iframe-mode { background: transparent; }
+        body.iframe-mode .top-notice,
+        body.iframe-mode .top-subnotice,
+        body.iframe-mode .header,
+        body.iframe-mode .toolbar { display: none !important; }
+        body.iframe-mode .dashboard-container { padding: 10px; background: transparent; box-shadow: none; }
+    </style>
+
+    <script>
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (!provinceDataTable) return true;
+            const tableNode = provinceDataTable.table().node();
+            if (settings.nTable !== tableNode) return true;
+            if (!selectedCenterProvinces || selectedCenterProvinces.length === 0) return true;
+            const provinceName = String(data[1] || '').trim();
+            return selectedCenterProvinces.includes(provinceName);
+        });
+
+        const IS_IFRAME = window.self !== window.top;
+    </script>
+</head>
+
+<body>
+
+    <div class="dashboard-container scale-control">
+        <div class="header">
+            <div class="header-text">
+                <h1><span style="color: navy;">CDD</span><span style="color: deeppink;">Women</span><span style="color: red;">Fund</span></h1>
+                <h2><span style="color: black;">รายงาน </span><span style="color: deeppink;">การรับชำระคืนเงินต้น </span><span style="color: red;">รายจังหวัด</span></h2>
+                <div style="color: navy; font-weight: bold; font-size: 1.2rem; margin-top: 5px;">
+                    สรุปผลการดำเนินงานกองทุนพัฒนาบทบาทสตรีระดับประเทศ
+                </div>
+            </div>
+            <div class="logo-container">
+                <img src="https://i.postimg.cc/507bjy9Z/cdd.png" alt="CDD Logo" />
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZtkPBp_xmIFgEEmX2cyScE1QzabzZbtNdbQ&s" alt="Additional Logo" />
+            </div>
+        </div>
+
+        <div class="data-date" id="last-updated-text">
+            📅 กำลังโหลดวันที่...
+        </div>
+
+        <div class="toolbar">
+            <div class="left-tools">
+                <button onclick="window.open('../index.html','_blank')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="home"> กลับสู่เมนูหลัก
+                </button>
+            </div>
+        </div>
+
+        <div id="log">🔄 กำลังโหลดข้อมูลรายงานการรับชำระคืนเงินต้น...</div>
+
+        <!-- Cards สรุปผลภาพรวม -->
+        <div class="cards">
+            <div class="card pink">
+                เงินต้นที่คาดว่าจะได้รวม
+                <div class="value" id="sum-expected">-</div>
+            </div>
+
+            <div class="card light-pink">
+                เงินต้นรับคืนรวม
+                <div class="value" id="sum-returned">-</div>
+            </div>
+
+            <div class="card deep-pastel-pink" style="display: flex; flex-direction: column; justify-content: center;">
+                ร้อยละการรับชำระคืน (ภาพรวม)
+                <div class="value" id="avg-percentage" style="font-size: 2rem; color: #ad1457;">-</div>
+            </div>
+        </div>
+
+        <div class="main-visuals">
+            <div class="left">
+                <div class="section-title">📊 10 อันดับ ร้อยละการรับชำระคืนสูงสุด</div>
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <div class="card study-center-card" style="padding: 20px;">
+                <div style="font-weight: bold; color: white; font-size: 1.1rem; margin-bottom: 10px;">🏛️ ศูนย์ศึกษาและพัฒนาชุมชน</div>
+                <div style="max-width:100%; overflow:auto;">
+                    <table class="summary-table" id="studyCenterTable" style="color: black; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="clickable-header" title="คลิกเพื่อแสดงทุกจังหวัด" style="background: rgba(255,255,255,0.9) !important;">ศูนย์ศึกษาฯ</th>
+                                <th style="background: rgba(255,255,255,0.9) !important;">จว.</th>
+                                <th style="background: rgba(255,255,255,0.9) !important;">รายชื่อจังหวัด</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color: white;"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="province-table-wrapper">
+            <div class="section-title">📋 ตารางแสดงรายละเอียดการรับชำระคืนเงินต้น </div>
+            <table class="summary-table" id="provinceTable" style="width:100%;">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function resizeIframe() {
+            if (!IS_IFRAME) return;
+            window.parent.postMessage({ type: "resize-iframe", height: document.body.scrollHeight }, "*");
+        }
+        window.addEventListener("load", () => setTimeout(resizeIframe, 500));
+        window.addEventListener("resize", resizeIframe);
+        if (IS_IFRAME) { document.body.classList.add("iframe-mode"); }
+    </script>
+
+    <script>
+        // API URL ที่กำหนดให้
+        const API_URL = "https://script.google.com/macros/s/AKfycbwq-5uqub3P_aEB-EqNtBaOKwi3amSBM1wrdosRKNKCiV3Uet-nDNyZ081SW21y-EEX/exec";
+
+        let barChartInstance = null;
+        let provinceDataTable = null;
+        let selectedCenterProvinces = [];
+
+        const columnMap = {
+            no: "ที่",
+            province: "จังหวัด",
+            study_center: "ศูนย์ศึกษา",
+            expected_principal: "เงินต้นที่คาดว่าจะได้",
+            returned_principal: "เงินต้นรับคืน",
+            repayment_percentage: "ร้อยละการรับชำระคืน"
+        };
+
+        const orderedColumns = [
+            "no",
+            "province",
+            "study_center",
+            "expected_principal",
+            "returned_principal",
+            "repayment_percentage"
+        ];
+
+        const integerColumns = new Set(["no"]);
+
+        function formatNumber(num, decimals = 2) {
+            if (num === null || num === undefined || String(num).trim() === "") return "-";
+            const n = Number(String(num).replace(/[^0-9.-]/g, ""));
+            if (!isFinite(n)) return String(num);
+            return n.toLocaleString("th-TH", {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
+        function formatPercent(val) {
+            const num = parseFloat(String(val).replace(/[^0-9.-]/g, ''));
+            return isNaN(num) ? "-" : num.toFixed(2) + "%";
+        }
+
+        function buildStudyCenterTable(provinces) {
+            const centerMap = {};
+            provinces.forEach(p => {
+                const centerName = (p.study_center || "").trim();
+                const provName = (p.province || "").trim();
+                if (!centerName || !provName) return;
+
+                if (!centerMap[centerName]) {
+                    centerMap[centerName] = [];
+                }
+                if (!centerMap[centerName].includes(provName)) {
+                    centerMap[centerName].push(provName);
+                }
+            });
+
+            const tbody = document.querySelector("#studyCenterTable tbody");
+            tbody.innerHTML = "";
+
+            Object.keys(centerMap).sort().forEach(centerName => {
+                const provList = centerMap[centerName];
+                const tr = document.createElement("tr");
+                tr.setAttribute('data-provinces', provList.join('|'));
+                tr.innerHTML = `
+                    <td class="align-left" style="color:white;"><span class="center-name-link">${centerName}</span></td>
+                    <td class="align-center" style="color:white;">${provList.length}</td>
+                    <td class="align-left" style="color:white; font-size:0.85rem;">${provList.join(', ')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if ($.fn.DataTable.isDataTable('#studyCenterTable')) {
+                $('#studyCenterTable').DataTable().clear().destroy();
+            }
+
+            $('#studyCenterTable').DataTable({
+                paging: false,
+                scrollY: '280px',
+                scrollCollapse: true,
+                searching: true,
+                ordering: false,
+                info: false,
+                autoWidth: true
+            });
+
+            const $body = $('#studyCenterTable tbody');
+            $body.off('click').on('click', 'tr', function () {
+                if (!provinceDataTable) return;
+                const isSelected = $(this).hasClass('selected-row');
+                $body.find('tr').removeClass('selected-row');
+
+                if (!isSelected) {
+                    $(this).addClass('selected-row');
+                    const provincesAttr = ($(this).attr('data-provinces') || '').split('|').map(p => p.trim()).filter(Boolean);
+                    selectedCenterProvinces = provincesAttr;
+                    provinceDataTable.draw();
+                } else {
+                    selectedCenterProvinces = [];
+                    provinceDataTable.draw();
+                }
+            });
+
+            $('.clickable-header').off('click').on('click', function () {
+                if (!provinceDataTable) return;
+                $body.find('tr').removeClass('selected-row');
+                selectedCenterProvinces = [];
+                provinceDataTable.draw();
+            });
+        }
+
+        async function fetchData() {
+            const logEl = document.getElementById("log");
+            logEl.textContent = "🔄 กำลังโหลดข้อมูลรายงาน...";
+            try {
+                const res = await fetch(API_URL);
+                const result = await res.json();
+
+                if (result.status === 'error') {
+                    console.error("Apps Script Error:", result.message);
+                    logEl.textContent = "❌ โหลดข้อมูลไม่สำเร็จ: " + result.message;
+                    return;
+                }
+
+                // แสดงวันที่จากเซลล์ A2 ตามที่ API ส่งมา
+                if (result.report_date_a2) {
+                    document.getElementById('last-updated-text').textContent = "📅 " + result.report_date_a2;
+                }
+
+                const provinces = result.data || [];
+
+                let sumExpected = 0;
+                let sumReturned = 0;
+
+                provinces.forEach(p => {
+                    sumExpected += Number(p.expected_principal) || 0;
+                    sumReturned += Number(p.returned_principal) || 0;
+                });
+
+                // คำนวณร้อยละภาพรวมจากผลรวม
+                const totalPercent = sumExpected > 0 ? (sumReturned * 100) / sumExpected : 0;
+
+                document.getElementById('sum-expected').textContent = formatNumber(sumExpected, 2);
+                document.getElementById('sum-returned').textContent = formatNumber(sumReturned, 2);
+                document.getElementById('avg-percentage').textContent = formatPercent(totalPercent);
+
+                // กราฟ 10 อันดับร้อยละการรับชำระคืนสูงสุด
+                const sortedForChart = [...provinces]
+                    .sort((a, b) => (Number(b.repayment_percentage) || 0) - (Number(a.repayment_percentage) || 0))
+                    .slice(0, 10);
+
+                if (barChartInstance) barChartInstance.destroy();
+                const ctx = document.getElementById('barChart').getContext('2d');
+                barChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedForChart.map(p => `${p.province} (${parseFloat(p.repayment_percentage || 0).toFixed(2)}%)`),
+                        datasets: [{
+                            label: 'ร้อยละการรับชำระคืน (%)',
+                            data: sortedForChart.map(p => parseFloat(p.repayment_percentage) || 0),
+                            backgroundColor: ['#e91e63', '#f06292', '#ff6b8b', '#ffa726', '#ff9800', '#ba68c8', '#9575cd', '#64b5f6', '#4db6ac', '#81c784'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: c => ` ร้อยละ: ${parseFloat(c.raw).toFixed(2)}%`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: value => value + '%' }
+                            },
+                            x: { ticks: { font: { size: 11 } } }
+                        }
+                    }
+                });
+
+                buildStudyCenterTable(provinces);
+
+                const table = document.querySelector("#provinceTable");
+                const thead = table.querySelector("thead");
+                const tbody = table.querySelector("tbody");
+                tbody.innerHTML = "";
+
+                if (provinces.length === 0) {
+                    thead.innerHTML = "<tr><th>จังหวัด</th><th>ไม่มีข้อมูล</th></tr>";
+                    logEl.textContent = "⚠️ ไม่มีข้อมูลในรายงาน";
+                    return;
+                }
+
+                const headerHtml = orderedColumns.map(k => `<th>${columnMap[k] || k}</th>`).join("");
+                thead.innerHTML = `<tr>${headerHtml}</tr>`;
+
+                provinces.forEach(p => {
+                    const rowHTML = orderedColumns.map(k => {
+                        const raw = p[k];
+                        if (k === "province") {
+                            const display = (raw === null || raw === undefined || raw === "") ? "-" : raw;
+                            return `<td class="align-left" style="font-weight:500;">${display}</td>`;
+                        }
+
+                        if (k === "study_center") {
+                            return `<td class="align-left">${raw || "-"}</td>`;
+                        }
+
+                        if (k === "no") {
+                            return `<td class="align-center">${raw || "-"}</td>`;
+                        }
+
+                        if (k === "repayment_percentage") {
+                            return `<td class="align-right" style="font-weight:600; color:#ad1457;">${formatPercent(raw)}</td>`;
+                        }
+
+                        if (raw === null || raw === undefined || raw === "") return `<td class="align-right">-</td>`;
+
+                        const numericCandidate = Number(String(raw).replace(/[^0-9.-]/g, ''));
+                        if (isFinite(numericCandidate)) {
+                            const decimals = integerColumns.has(k) ? 0 : 2;
+                            return `<td class="align-right">${formatNumber(numericCandidate, decimals)}</td>`;
+                        } else {
+                            return `<td class="align-right">${String(raw)}</td>`;
+                        }
+                    }).join("");
+
+                    tbody.innerHTML += `<tr>${rowHTML}</tr>`;
+                });
+
+                if ($.fn.DataTable.isDataTable('#provinceTable')) $('#provinceTable').DataTable().clear().destroy();
+
+                provinceDataTable = $('#provinceTable').DataTable({
+                    paging: true,
+                    pageLength: 10,
+                    scrollX: true,
+                    scrollY: "420px",
+                    scrollCollapse: false,
+                    autoWidth: false,
+                    ordering: true,
+                    fixedColumns: { leftColumns: 2 },
+                    language: {
+                        search: "ค้นหาข้อมูล:",
+                        lengthMenu: "แสดง _MENU_ รายการต่อหน้า",
+                        info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+                        paginate: {
+                            first: "หน้าแรก",
+                            last: "หน้าสุดท้าย",
+                            next: "ถัดไป",
+                            previous: "ก่อนหน้า"
+                        }
+                    }
+                });
+
+                setTimeout(() => { if (provinceDataTable && provinceDataTable.columns) provinceDataTable.columns.adjust().draw(false); }, 200);
+                logEl.textContent = "✅ โหลดข้อมูลรายงานสำเร็จ";
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById("log").textContent = "❌ เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาตรวจสอบ API URL";
+            }
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
